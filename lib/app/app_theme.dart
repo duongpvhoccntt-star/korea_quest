@@ -17,6 +17,8 @@ abstract final class AppTheme {
       useMaterial3: true,
       colorScheme: scheme,
       scaffoldBackgroundColor: AppColors.cream,
+      fontFamily: 'Arial',
+      fontFamilyFallback: AppTypography.fontFallback,
       textTheme: AppTypography.textTheme,
       cardTheme: const CardThemeData(
         color: AppColors.paper,
