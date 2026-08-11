@@ -9,7 +9,7 @@ Future<void> main() async {
   if (SupabaseOptions.anonKey != 'YOUR_SUPABASE_ANON_KEY') {
     await Supabase.initialize(
       url: SupabaseOptions.url,
-      anonKey: SupabaseOptions.anonKey,
+      publishableKey: SupabaseOptions.anonKey,
     );
   }
 
