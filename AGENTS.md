@@ -26,7 +26,7 @@ Người dùng chọn địa điểm, hoàn thành các phần nội dung (Check
 | `go_router` | ^17.0.1 | Routing |
 | `flutter_localizations` | sdk | Đa ngôn ngữ |
 | `intl` | ^0.20.2 | Định dạng ngày/số |
-| `supabase_flutter` | ^2.17.1 | Backend (chưa kết nối thật) |
+| `supabase_flutter` | ^2.17.1 | Backend (schema đã có trên cloud, app chưa đọc dữ liệu thật) |
 | `cupertino_icons` | ^1.0.8 | Icons |
 
 - **Nền tảng ưu tiên:** Flutter Web.
@@ -110,12 +110,47 @@ Xem đầy đủ tại [`docs/TEAM_OWNERSHIP.md`](docs/TEAM_OWNERSHIP.md).
   - `lib/design_system/**`
   - `lib/shared/models/**`, `lib/shared/repositories/**`, `lib/shared/providers/**`
   - `lib/l10n/**`
-  - `README.md`, `AGENTS.md`
+  - `supabase/**` (migration, seed, pgTAP test)
+  - `README.md`, `AGENTS.md`, `docs/DATABASE_MODEL_DISCUSSION.md`
+
+### Database và model: luôn cập nhật tài liệu
+
+[`docs/DATABASE_MODEL_DISCUSSION.md`](docs/DATABASE_MODEL_DISCUSSION.md) là nguồn tham chiếu duy nhất của nhóm về schema, domain model và RPC. Tài liệu này **phải được cập nhật trong cùng một thay đổi (cùng commit hoặc cùng Pull Request)** với code, không để sang lần sau.
+
+**Bắt buộc cập nhật khi thay đổi bất kỳ mục nào dưới đây:**
+
+- Migration SQL trong `supabase/migrations/**`: thêm/xóa/sửa bảng, cột, kiểu dữ liệu, default, constraint, index, foreign key, enum.
+- RLS policy, helper function, RPC (tên, tham số, giá trị trả về, quyền execute).
+- Model Dart trong `lib/shared/models/**` hoặc `features/*/domain/**` khi thêm/xóa/đổi tên field, đổi kiểu, đổi nullability, đổi enum.
+- Repository interface trong `lib/shared/repositories/**` hoặc `features/*/data/**` khi đổi hợp đồng đọc/ghi dữ liệu.
+- Thuật ngữ nghiệp vụ mới hoặc đổi nghĩa thuật ngữ (đồng bộ thêm với [`CONTEXT.md`](CONTEXT.md)).
+- Chuyển một module từ mock repository sang Supabase thật.
+
+**Phần cần sửa tương ứng trong tài liệu:**
+
+| Loại thay đổi trong code | Mục cần cập nhật |
+| :--- | :--- |
+| Bảng, cột, constraint | Mục 4 ERD, mục 5 Data Dictionary |
+| Enum | Mục 6 Enum |
+| RPC, helper, RLS | Mục 11 RPC và helper, mục 12 Authentication và RLS |
+| Quy tắc validate publish, quiz | Mục 7 Cấu trúc nội dung, mục 8 Quiz Model |
+| Thuật ngữ | Mục 2 Ubiquitous Language |
+| Trạng thái triển khai (migration đã chạy, module đã bỏ mock) | Mục 13 Trạng thái hiện tại |
+| Quyết định kỹ thuật đã chốt | Mục 14 Các quyết định đã ghi nhận; xóa câu hỏi tương ứng ở mục 15 |
+
+**Cách thực hiện:**
+
+1. Đọc mục liên quan trong tài liệu trước khi sửa code để không phá vỡ quyết định đã chốt ở mục 14.
+2. Sửa code và tài liệu trong cùng một thay đổi. Cập nhật dòng "Nguồn đối chiếu" ở đầu tài liệu với tên migration mới và ngày sửa.
+3. Nếu thay đổi mâu thuẫn với tài liệu và bạn không phải owner, **dừng lại và hỏi**, đánh dấu `[CẦN XÁC NHẬN]` thay vì tự quyết.
+4. Ghi rõ trong kết quả bàn giao và Pull Request: "Đã cập nhật `docs/DATABASE_MODEL_DISCUSSION.md` mục X, Y".
+
+Không được coi thay đổi database/model là hoàn thành nếu tài liệu chưa được cập nhật.
 
 ### Bảo mật
 
 - **Không ghi secret, API key, `.env` thật, hoặc dữ liệu người dùng thật** vào bất kỳ file nào trong repository.
-- `supabase_flutter` đã có trong pubspec nhưng **chưa kết nối backend thật** — dùng mock repository.
+- Supabase project `KOREAQUEST` đã có schema trên cloud (xem mục 13 của `docs/DATABASE_MODEL_DISCUSSION.md`), nhưng Explore/Journey **vẫn đọc mock repository**. Không tự ý nối module sang Supabase thật khi chưa thống nhất với owner.
 
 ### Git
 
@@ -137,6 +172,12 @@ flutter build web
 
 Nếu có lỗi trong phạm vi công việc, sửa trước khi báo cáo hoàn thành.
 
+Ngoài ra, nếu thay đổi có chạm tới database hoặc model, xác nhận thêm:
+
+- [ ] `docs/DATABASE_MODEL_DISCUSSION.md` đã được cập nhật đúng mục (xem bảng ở phần "Database và model").
+- [ ] Dòng "Nguồn đối chiếu" ở đầu tài liệu đã ghi migration mới nhất và ngày sửa.
+- [ ] Pull Request có liệt kê các mục tài liệu đã sửa.
+
 ---
 
 ## Tài liệu tham chiếu
@@ -146,5 +187,9 @@ Nếu có lỗi trong phạm vi công việc, sửa trước khi báo cáo hoàn
 | Phân công chi tiết | [`docs/PHAN_CONG_CONG_VIEC.md`](docs/PHAN_CONG_CONG_VIEC.md) |
 | Ownership module | [`docs/TEAM_OWNERSHIP.md`](docs/TEAM_OWNERSHIP.md) |
 | Spec nền tảng | [`docs/FOUNDATION_SPEC.md`](docs/FOUNDATION_SPEC.md) |
+| **Database và domain model** (bắt buộc đồng bộ khi đổi schema/model) | [`docs/DATABASE_MODEL_DISCUSSION.md`](docs/DATABASE_MODEL_DISCUSSION.md) |
+| Kiến trúc | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
+| Quy trình Git | [`docs/GIT_WORKFLOW.md`](docs/GIT_WORKFLOW.md) |
+| Thuật ngữ nghiệp vụ (Ubiquitous Language) | [`CONTEXT.md`](CONTEXT.md) |
 | Prototype thiết kế | [`design-reference/koreaquest-prototype.html`](design-reference/koreaquest-prototype.html) |
 | README | [`README.md`](README.md) |
