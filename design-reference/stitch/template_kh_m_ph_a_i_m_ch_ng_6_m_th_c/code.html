@@ -1,0 +1,272 @@
+<!DOCTYPE html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Chặng 06: Ẩm thực - KoreaQuest</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&amp;family=Noto+Sans+KR:wght@500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#792445",
+                        "on-secondary-fixed-variant": "#004c69",
+                        "on-surface-variant": "#544247",
+                        "surface-bright": "#faf8ff",
+                        "primary-container": "#ff8fb3",
+                        "on-secondary-fixed": "#001e2c",
+                        "border-soft": "#E8E2DB",
+                        "on-tertiary-fixed": "#002115",
+                        "on-tertiary-fixed-variant": "#01513a",
+                        "surface-variant": "#d9e2ff",
+                        "tertiary-fixed-dim": "#91d4b6",
+                        "background": "#faf8ff",
+                        "outline-variant": "#d9c0c6",
+                        "surface": "#FFFFFF",
+                        "primary-fixed": "#ffd9e2",
+                        "secondary-container": "#77cdfd",
+                        "page-bg": "#FFF8F1",
+                        "primary-fixed-dim": "#ffb1c7",
+                        "secondary-fixed": "#c4e7ff",
+                        "locked-gray": "#BBC1CC",
+                        "surface-tint": "#9b3e60",
+                        "primary": "#9b3e60",
+                        "outline": "#877277",
+                        "on-tertiary-container": "#004e38",
+                        "surface-container-low": "#f2f3ff",
+                        "butter-yellow": "#FFD96A",
+                        "sky-light": "#DDF4FF",
+                        "surface-container": "#e9edff",
+                        "on-secondary-container": "#005777",
+                        "secondary-fixed-dim": "#7dd0ff",
+                        "on-primary-fixed": "#3e001c",
+                        "korean-blue": "#5876D8",
+                        "surface-container-highest": "#d9e2ff",
+                        "surface-dim": "#d0d9f9",
+                        "inverse-on-surface": "#edf0ff",
+                        "tertiary-fixed": "#acf1d1",
+                        "text-secondary": "#667085",
+                        "inverse-surface": "#263048",
+                        "tertiary-container": "#7cbfa2",
+                        "inverse-primary": "#ffb1c7",
+                        "on-error": "#ffffff",
+                        "korean-red": "#EF646B",
+                        "on-surface": "#111b32",
+                        "surface-container-high": "#e1e8ff",
+                        "on-background": "#111b32",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "pale-pink": "#FFDCE8",
+                        "secondary": "#00658b",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#7d2648",
+                        "tertiary": "#266a51",
+                        "on-tertiary": "#ffffff",
+                        "success-green": "#63C59A",
+                        "error-container": "#ffdad6"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "gutter": "16px",
+                        "unit": "8px",
+                        "container-padding": "24px"
+                    },
+                    fontFamily: {
+                        "display-hero": ["Be Vietnam Pro"],
+                        "body-main": ["Be Vietnam Pro"],
+                        "title-md": ["Be Vietnam Pro"],
+                        "label-bold": ["Be Vietnam Pro"],
+                        "korean-sub": ["Noto Sans KR"],
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Be Vietnam Pro"],
+                        "caption": ["Be Vietnam Pro"]
+                    },
+                    fontSize: {
+                        "display-hero": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-main": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "title-md": ["20px", { "lineHeight": "1.4", "fontWeight": "700" }],
+                        "label-bold": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "korean-sub": ["18px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "caption": ["12px", { "lineHeight": "1.4", "fontWeight": "500" }]
+                    }
+                }
+            }
+        };
+    </script>
+<style>
+        .journal-shadow {
+            box-shadow: 0 8px 24px rgba(40, 50, 74, 0.08);
+        }
+        .bg-pattern {
+            background-image: radial-gradient(#d9c0c6 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="bg-page-bg text-on-background min-h-screen flex flex-col font-body-main text-body-main relative overflow-x-hidden bg-pattern">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-50 bg-surface/90 backdrop-blur-md border-b border-border-soft journal-shadow"><div class="max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop"><div class="flex items-center justify-between py-3 border-b border-border-soft/60"><div class="flex items-center gap-3"><a class="w-10 h-10 rounded-full flex items-center justify-center text-text-secondary hover:text-primary hover:bg-pale-pink transition-colors" href="#" title="Quay lại"><span class="material-symbols-outlined">arrow_back</span></a><div><div class="font-title-md text-title-md font-bold text-primary flex items-center gap-2"><span class="">{{LOCATION_NAME}}</span></div><p class="text-caption font-label-bold text-text-secondary uppercase tracking-widest">Chặng 6/9</p></div></div><div class="flex items-center gap-3"><a class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border-soft bg-surface text-text-secondary hover:text-primary hover:border-primary text-sm font-label-bold transition-all" href="#"><span class="material-symbols-outlined text-sm">map</span><span class="hidden md:inline">Bản đồ</span></a><div class="w-9 h-9 rounded-full bg-pale-pink text-primary font-bold flex items-center justify-center border border-primary/30 text-sm shadow-sm">U</div></div></div><nav class="flex items-center justify-between gap-2 md:gap-4 py-3 overflow-x-auto no-scrollbar"><a href="#" class="flex flex-col items-center gap-1 min-w-[56px] text-center group"><span class="w-8 h-8 rounded-full bg-success-green/20 text-success-green flex items-center justify-center text-sm group-hover:bg-success-green/30 transition-colors"><span class="material-symbols-outlined text-sm font-bold">check</span></span><span class="text-xs font-label-bold text-text-secondary group-hover:text-primary transition-colors whitespace-nowrap">1. Mở đầu</span></a><div class="h-[2px] w-4 md:w-8 bg-success-green/40 self-center mb-4"></div><a href="#" class="flex flex-col items-center gap-1 min-w-[56px] text-center group"><span class="w-8 h-8 rounded-full bg-success-green/20 text-success-green flex items-center justify-center text-sm group-hover:bg-success-green/30 transition-colors"><span class="material-symbols-outlined text-sm font-bold">check</span></span><span class="text-xs font-label-bold text-text-secondary group-hover:text-primary transition-colors whitespace-nowrap">2. Tổng quan</span></a><div class="h-[2px] w-4 md:w-8 bg-success-green/40 self-center mb-4"></div><a href="#" class="flex flex-col items-center gap-1 min-w-[56px] text-center group"><span class="w-8 h-8 rounded-full bg-success-green/20 text-success-green flex items-center justify-center text-sm group-hover:bg-success-green/30 transition-colors"><span class="material-symbols-outlined text-sm font-bold">check</span></span><span class="text-xs font-label-bold text-text-secondary group-hover:text-primary transition-colors whitespace-nowrap">3. Lịch sử</span></a><div class="h-[2px] w-4 md:w-8 bg-success-green/40 self-center mb-4"></div><a href="#" class="flex flex-col items-center gap-1 min-w-[56px] text-center group"><span class="w-8 h-8 rounded-full bg-success-green/20 text-success-green flex items-center justify-center text-sm group-hover:bg-success-green/30 transition-colors"><span class="material-symbols-outlined text-sm font-bold">check</span></span><span class="text-xs font-label-bold text-text-secondary group-hover:text-primary transition-colors whitespace-nowrap">4. Điểm đến</span></a><div class="h-[2px] w-4 md:w-8 bg-success-green/40 self-center mb-4"></div><a href="#" class="flex flex-col items-center gap-1 min-w-[56px] text-center group"><span class="w-8 h-8 rounded-full bg-success-green/20 text-success-green flex items-center justify-center text-sm group-hover:bg-success-green/30 transition-colors"><span class="material-symbols-outlined text-sm font-bold">check</span></span><span class="text-xs font-label-bold text-text-secondary group-hover:text-primary transition-colors whitespace-nowrap">5. Trải nghiệm</span></a><div class="h-[2px] w-4 md:w-8 bg-primary/30 self-center mb-4"></div><a href="#" class="flex flex-col items-center gap-1 min-w-[56px] text-center group"><span class="w-8 h-8 rounded-full bg-primary text-on-primary font-bold flex items-center justify-center text-sm shadow-sm"><span class="material-symbols-outlined text-sm">restaurant</span></span><span class="text-xs font-label-bold text-primary whitespace-nowrap">6. Ẩm thực</span></a><div class="h-[2px] w-4 md:w-8 bg-border-soft self-center mb-4"></div><a href="#" class="flex flex-col items-center gap-1 min-w-[56px] text-center group opacity-60 hover:opacity-100 transition-opacity"><span class="w-8 h-8 rounded-full bg-border-soft text-text-secondary flex items-center justify-center text-sm font-bold">7</span><span class="text-xs font-label-bold text-text-secondary whitespace-nowrap">7. Fun Facts</span></a><div class="h-[2px] w-4 md:w-8 bg-border-soft self-center mb-4"></div><a href="#" class="flex flex-col items-center gap-1 min-w-[56px] text-center group opacity-60 hover:opacity-100 transition-opacity"><span class="w-8 h-8 rounded-full bg-border-soft text-text-secondary flex items-center justify-center text-sm font-bold">8</span><span class="text-xs font-label-bold text-text-secondary whitespace-nowrap">8. Quiz</span></a><div class="h-[2px] w-4 md:w-8 bg-border-soft self-center mb-4"></div><a href="#" class="flex flex-col items-center gap-1 min-w-[56px] text-center group opacity-60 hover:opacity-100 transition-opacity"><span class="w-8 h-8 rounded-full bg-border-soft text-text-secondary flex items-center justify-center text-sm font-bold">9</span><span class="text-xs font-label-bold text-text-secondary whitespace-nowrap">9. Du lịch</span></a></nav></div></header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop py-container-padding flex flex-col gap-8 relative z-10">
+<!-- Header Section -->
+<div class="flex flex-col gap-4 text-center items-center">
+<span class="font-label-bold text-label-bold text-secondary uppercase tracking-widest bg-sky-light px-4 py-1.5 rounded-full inline-block">
+                Chặng 06/9
+            </span>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">
+                Hương Vị Xứ Hàn
+            </h1>
+<p class="text-on-surface-variant max-w-2xl">
+                Khám phá bản giao hưởng của vị giác qua những món ăn truyền thống. Từ sự cay nồng của Kimchi đến vị đậm đà của Bulgogi.
+            </p>
+</div>
+<!-- Flavor Filter -->
+<div class="flex flex-wrap justify-center gap-3 py-4">
+<button class="font-label-bold text-label-bold px-6 py-2 rounded-full border-2 border-primary bg-pale-pink text-primary transition-all hover:bg-primary hover:text-on-primary">
+                Tất cả
+            </button>
+<button class="font-label-bold text-label-bold px-6 py-2 rounded-full border-2 border-transparent bg-surface text-on-surface-variant hover:bg-surface-container transition-all journal-shadow">
+                Cay nồng
+            </button>
+<button class="font-label-bold text-label-bold px-6 py-2 rounded-full border-2 border-transparent bg-surface text-on-surface-variant hover:bg-surface-container transition-all journal-shadow">
+                Đậm đà
+            </button>
+<button class="font-label-bold text-label-bold px-6 py-2 rounded-full border-2 border-transparent bg-surface text-on-surface-variant hover:bg-surface-container transition-all journal-shadow">
+                Thanh mát
+            </button>
+</div>
+<!-- Bento Grid / Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<article class="bg-surface rounded-[24px] overflow-hidden journal-shadow flex flex-col group transition-transform hover:-translate-y-1">
+<div class="relative h-48 w-full overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A beautiful top-down food photography shot of Korean Bibimbap in a hot stone bowl. Vivid colors of sliced carrots, spinach, bean sprouts, and a perfectly fried egg on top. Soft, warm natural lighting, pastel aesthetic background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGO44Wcq_IHJJSfAssui4mgkHlSmy_fSubFYeMrq7k40ufObx6CNdb2z3u_75NXyAamglZa1s4POhM4Q-Ie-SJDkQIn14fLrppbVoyrdzzo5F37GPTFKF2H2UtZLExpQ5j8BCyNqiRlUoKfu86_b1Zbcasd5BQgbIA_sEvX_AQt-zpNY3TN5frBf6ual-PFCEbelDa74DPQM00f90cx6NYi5qPMbZmuLh83261PKJOOx3v9mzEi4d7">
+<div class="absolute top-4 right-4 bg-surface/90 backdrop-blur-sm p-2 rounded-full shadow-sm text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+</div>
+<div class="p-container-padding flex flex-col gap-3 relative">
+<!-- Decorative stamp -->
+<div class="absolute -top-12 -right-4 w-16 h-16 opacity-20 pointer-events-none rotate-12">
+<span class="material-symbols-outlined text-6xl text-primary">local_post_office</span>
+</div>
+<h3 class="font-title-md text-title-md text-on-background">Bibimbap</h3>
+<p class="font-korean-sub text-korean-sub text-text-secondary">비빔밥</p>
+<div class="mt-2 flex flex-col gap-2">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-secondary text-sm mt-1">restaurant</span>
+<div>
+<span class="font-label-bold text-label-bold text-on-surface-variant block">Nguyên liệu:</span>
+<span class="text-sm text-text-secondary">Cơm trắng, rau củ xào, tương ớt Gochujang, trứng, thịt bò.</span>
+</div>
+</div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-korean-red text-sm mt-1">local_fire_department</span>
+<div>
+<span class="font-label-bold text-label-bold text-on-surface-variant block">Hương vị:</span>
+<span class="text-sm text-text-secondary">Cay nhẹ, hài hòa, đậm đà vị tương ớt nêm nếm.</span>
+</div>
+</div>
+</div>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="bg-surface rounded-[24px] overflow-hidden journal-shadow flex flex-col group transition-transform hover:-translate-y-1">
+<div class="relative h-48 w-full overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A cinematic close-up of Korean Tteokbokki, spicy rice cakes simmering in a rich, vibrant red sauce with fish cakes and scallions. Soft pastel lighting emphasizing the appetizing texture, modern journal aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuApVKXmvL-_ZLhEzISXZV4AEHYjvWzIHHNRrFTzktWWOeJgVaigw1qSWvrJOTMo6Ag_iikLm9dF-Kr2E8wy8n2M8QZ8hZswbX9vGVw-a3EBdsmuDPLu7z1m4QpPcXbTPZIdiStdCh4ggbFeBVtYvxGr8xY0Q72Ubw8KqUhP_s5NCmQxEBk6UxvAO9O2oP1eH_i6vIgM1Pf_Iyfx2Gu1z9qF3YKHde_oJDxlpp4eB6lt1xo2H-FMDrey">
+<div class="absolute top-4 right-4 bg-surface/90 backdrop-blur-sm p-2 rounded-full shadow-sm text-surface-variant">
+<span class="material-symbols-outlined">favorite</span>
+</div>
+</div>
+<div class="p-container-padding flex flex-col gap-3 relative">
+<h3 class="font-title-md text-title-md text-on-background">Tteokbokki</h3>
+<p class="font-korean-sub text-korean-sub text-text-secondary">떡볶이</p>
+<div class="mt-2 flex flex-col gap-2">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-secondary text-sm mt-1">restaurant</span>
+<div>
+<span class="font-label-bold text-label-bold text-on-surface-variant block">Nguyên liệu:</span>
+<span class="text-sm text-text-secondary">Bánh gạo dẻo, chả cá, hành lá, sốt ớt Gochujang.</span>
+</div>
+</div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-korean-red text-sm mt-1">local_fire_department</span>
+<div>
+<span class="font-label-bold text-label-bold text-on-surface-variant block">Hương vị:</span>
+<span class="text-sm text-text-secondary">Cay nồng, ngọt mặn đan xen, kết cấu dai dẻo vui miệng.</span>
+</div>
+</div>
+</div>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="bg-surface rounded-[24px] overflow-hidden journal-shadow flex flex-col group transition-transform hover:-translate-y-1">
+<div class="relative h-48 w-full overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A beautifully plated bowl of Naengmyeon, Korean cold noodles, in a stainless steel bowl with crushed ice broth, topped with sliced cucumber, pear, and a boiled egg. Crisp, refreshing lighting, pastel background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVznqzQJoEGX79L0n_945j2wBuSstDuPansIXtIkOtV7nl_yvyBooaFxDVs5zzGUVh7WJI2XdPRXSHNorm5J1ONatmgaetUtUtnTbi3jFpkN0v32OI0Qqb7YDOYCGTqEYFOAwQqfyE0iu7114IWKPMo_H3C2c_kfr3COGnljon9bGHr9YJPsDMXwg1NNrUDFDGXZyUNyF_uwITneJ5Pk-srhYTWx7kIcOJ2t41Abj0rgSdnTcYVcuB">
+<div class="absolute top-4 right-4 bg-surface/90 backdrop-blur-sm p-2 rounded-full shadow-sm text-surface-variant">
+<span class="material-symbols-outlined">favorite</span>
+</div>
+</div>
+<div class="p-container-padding flex flex-col gap-3 relative">
+<h3 class="font-title-md text-title-md text-on-background">Naengmyeon</h3>
+<p class="font-korean-sub text-korean-sub text-text-secondary">냉면</p>
+<div class="mt-2 flex flex-col gap-2">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-secondary text-sm mt-1">restaurant</span>
+<div>
+<span class="font-label-bold text-label-bold text-on-surface-variant block">Nguyên liệu:</span>
+<span class="text-sm text-text-secondary">Mỳ kiều mạch sợi mỏng, nước dùng lạnh đá, lê, dưa chuột.</span>
+</div>
+</div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-secondary-container text-sm mt-1">ac_unit</span>
+<div>
+<span class="font-label-bold text-label-bold text-on-surface-variant block">Hương vị:</span>
+<span class="text-sm text-text-secondary">Thanh mát, chua ngọt nhẹ, xua tan cái nóng mùa hè.</span>
+</div>
+</div>
+</div>
+</div>
+</article>
+</div>
+<!-- Bottom Action -->
+<div class="flex justify-center mt-8 pb-12">
+<button class="bg-primary text-on-primary font-label-bold text-label-bold px-8 py-4 rounded-full flex items-center gap-2 hover:bg-surface-tint transition-all journal-shadow hover:-translate-y-1">
+<span class="">Tiếp tục hành trình</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-container-padding mt-auto bg-surface-container flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop bg-surface-container dark:bg-surface-container-highest">
+<div class="font-display-hero text-title-md text-primary mb-4 md:mb-0">
+            KoreaQuest
+        </div>
+<div class="font-body-main text-caption text-text-secondary text-center mb-4 md:mb-0">
+            © 2024 KoreaQuest. Hành trình khám phá văn hóa Hàn Quốc.
+        </div>
+<nav class="flex gap-4">
+<a class="font-body-main text-caption text-on-surface-variant opacity-80 hover:opacity-100 transition-opacity hover:underline" href="#">Về chúng tôi</a>
+<a class="font-body-main text-caption text-on-surface-variant opacity-80 hover:opacity-100 transition-opacity hover:underline" href="#">Điều khoản</a>
+<a class="font-body-main text-caption text-on-surface-variant opacity-80 hover:opacity-100 transition-opacity hover:underline" href="#">Liên hệ</a>
+</nav>
+</footer>
+
+
+
+
+</body></html>

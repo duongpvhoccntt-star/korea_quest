@@ -1,0 +1,356 @@
+<!DOCTYPE html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>KoreaQuest - Chặng 03: Lịch sử</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&amp;family=Noto+Sans+KR:wght@500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-lowest": "#ffffff",
+                      "error": "#ba1a1a",
+                      "on-primary-container": "#792445",
+                      "on-secondary-fixed-variant": "#004c69",
+                      "on-surface-variant": "#544247",
+                      "surface-bright": "#faf8ff",
+                      "primary-container": "#ff8fb3",
+                      "on-secondary-fixed": "#001e2c",
+                      "border-soft": "#E8E2DB",
+                      "on-tertiary-fixed": "#002115",
+                      "on-tertiary-fixed-variant": "#01513a",
+                      "surface-variant": "#d9e2ff",
+                      "tertiary-fixed-dim": "#91d4b6",
+                      "background": "#faf8ff",
+                      "outline-variant": "#d9c0c6",
+                      "surface": "#FFFFFF",
+                      "primary-fixed": "#ffd9e2",
+                      "secondary-container": "#77cdfd",
+                      "page-bg": "#FFF8F1",
+                      "primary-fixed-dim": "#ffb1c7",
+                      "secondary-fixed": "#c4e7ff",
+                      "locked-gray": "#BBC1CC",
+                      "surface-tint": "#9b3e60",
+                      "primary": "#9b3e60",
+                      "outline": "#877277",
+                      "on-tertiary-container": "#004e38",
+                      "surface-container-low": "#f2f3ff",
+                      "butter-yellow": "#FFD96A",
+                      "sky-light": "#DDF4FF",
+                      "surface-container": "#e9edff",
+                      "on-secondary-container": "#005777",
+                      "secondary-fixed-dim": "#7dd0ff",
+                      "on-primary-fixed": "#3e001c",
+                      "korean-blue": "#5876D8",
+                      "surface-container-highest": "#d9e2ff",
+                      "surface-dim": "#d0d9f9",
+                      "inverse-on-surface": "#edf0ff",
+                      "tertiary-fixed": "#acf1d1",
+                      "text-secondary": "#667085",
+                      "inverse-surface": "#263048",
+                      "tertiary-container": "#7cbfa2",
+                      "inverse-primary": "#ffb1c7",
+                      "on-error": "#ffffff",
+                      "korean-red": "#EF646B",
+                      "on-surface": "#111b32",
+                      "surface-container-high": "#e1e8ff",
+                      "on-background": "#111b32",
+                      "on-error-container": "#93000a",
+                      "on-secondary": "#ffffff",
+                      "pale-pink": "#FFDCE8",
+                      "secondary": "#00658b",
+                      "on-primary": "#ffffff",
+                      "on-primary-fixed-variant": "#7d2648",
+                      "tertiary": "#266a51",
+                      "on-tertiary": "#ffffff",
+                      "success-green": "#63C59A",
+                      "error-container": "#ffdad6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "margin-desktop": "40px",
+                      "gutter": "16px",
+                      "unit": "8px",
+                      "container-padding": "24px"
+              },
+              "fontFamily": {
+                      "display-hero": [
+                              "Be Vietnam Pro"
+                      ],
+                      "body-main": [
+                              "Be Vietnam Pro"
+                      ],
+                      "title-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "label-bold": [
+                              "Be Vietnam Pro"
+                      ],
+                      "korean-sub": [
+                              "Noto Sans KR"
+                      ],
+                      "headline-lg": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-lg-mobile": [
+                              "Be Vietnam Pro"
+                      ],
+                      "caption": [
+                              "Be Vietnam Pro"
+                      ]
+              },
+              "fontSize": {
+                      "display-hero": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "body-main": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "title-md": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-bold": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "korean-sub": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "caption": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .timeline-curve {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background: repeating-linear-gradient(
+                to bottom,
+                #ffd9e2,
+                #ffd9e2 10px,
+                transparent 10px,
+                transparent 20px
+            );
+            transform: translateX(-50%);
+            z-index: 0;
+        }
+        
+        .timeline-node {
+            position: relative;
+            z-index: 10;
+        }
+
+        .journal-shadow {
+            box-shadow: 0 8px 24px rgba(40, 50, 74, 0.08);
+        }
+
+        .modal-shadow {
+            box-shadow: 0 16px 48px rgba(40, 50, 74, 0.12);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-page-bg text-on-surface font-body-main text-body-main min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-border-soft shadow-sm transition-all duration-200 ease-in-out"><div class="w-full max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop py-3"><div class="flex items-center justify-between"><div class="flex items-center gap-3"><button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container transition-colors text-on-surface"><span class="material-symbols-outlined">arrow_back</span></button><div><h1 class="font-title-md text-title-md font-bold text-on-surface">{{LOCATION_NAME}}</h1><p class="font-caption text-caption text-text-secondary">Chặng 3/9</p></div></div><div class="flex items-center gap-3"><button class="flex items-center gap-1 px-3 py-1.5 rounded-full border border-border-soft hover:bg-surface-container font-label-bold text-sm text-text-secondary transition-colors"><span class="material-symbols-outlined text-sm text-secondary">map</span>Bản đồ</button><div class="w-9 h-9 rounded-full bg-primary text-white font-bold flex items-center justify-center text-sm shadow-sm">U</div></div></div><div class="mt-3 overflow-x-auto pb-2 scrollbar-none"><div class="flex items-center justify-between min-w-[700px] px-2"><div class="flex flex-col items-center gap-1 group cursor-pointer"><div class="w-8 h-8 rounded-full bg-success-green text-white flex items-center justify-center text-xs font-bold shadow-sm"><span class="material-symbols-outlined text-sm">play_arrow</span></div><span class="font-caption text-xs text-text-secondary group-hover:text-primary transition-colors">Mở đầu</span></div><div class="h-0.5 flex-1 bg-success-green mx-1"></div><div class="flex flex-col items-center gap-1 group cursor-pointer"><div class="w-8 h-8 rounded-full bg-success-green text-white flex items-center justify-center text-xs font-bold shadow-sm"><span class="material-symbols-outlined text-sm">info</span></div><span class="font-caption text-xs text-text-secondary group-hover:text-primary transition-colors">Tổng quan</span></div><div class="h-0.5 flex-1 bg-primary mx-1"></div><div class="flex flex-col items-center gap-1 group cursor-pointer"><div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold shadow-md ring-2 ring-primary ring-offset-2"><span class="material-symbols-outlined text-sm">history_edu</span></div><span class="font-caption text-xs font-bold text-primary">Lịch sử</span></div><div class="h-0.5 flex-1 bg-border-soft mx-1"></div><div class="flex flex-col items-center gap-1 group cursor-pointer opacity-70 hover:opacity-100 transition-opacity"><div class="w-8 h-8 rounded-full bg-surface border-2 border-border-soft text-text-secondary flex items-center justify-center text-xs font-bold"><span class="material-symbols-outlined text-sm">location_on</span></div><span class="font-caption text-xs text-text-secondary group-hover:text-primary transition-colors">Điểm đến</span></div><div class="h-0.5 flex-1 bg-border-soft mx-1"></div><div class="flex flex-col items-center gap-1 group cursor-pointer opacity-70 hover:opacity-100 transition-opacity"><div class="w-8 h-8 rounded-full bg-surface border-2 border-border-soft text-text-secondary flex items-center justify-center text-xs font-bold"><span class="material-symbols-outlined text-sm">celebration</span></div><span class="font-caption text-xs text-text-secondary group-hover:text-primary transition-colors">Trải nghiệm</span></div><div class="h-0.5 flex-1 bg-border-soft mx-1"></div><div class="flex flex-col items-center gap-1 group cursor-pointer opacity-70 hover:opacity-100 transition-opacity"><div class="w-8 h-8 rounded-full bg-surface border-2 border-border-soft text-text-secondary flex items-center justify-center text-xs font-bold"><span class="material-symbols-outlined text-sm">restaurant</span></div><span class="font-caption text-xs text-text-secondary group-hover:text-primary transition-colors">Ẩm thực</span></div><div class="h-0.5 flex-1 bg-border-soft mx-1"></div><div class="flex flex-col items-center gap-1 group cursor-pointer opacity-70 hover:opacity-100 transition-opacity"><div class="w-8 h-8 rounded-full bg-surface border-2 border-border-soft text-text-secondary flex items-center justify-center text-xs font-bold"><span class="material-symbols-outlined text-sm">lightbulb</span></div><span class="font-caption text-xs text-text-secondary group-hover:text-primary transition-colors">Fun Facts</span></div><div class="h-0.5 flex-1 bg-border-soft mx-1"></div><div class="flex flex-col items-center gap-1 group cursor-pointer opacity-70 hover:opacity-100 transition-opacity"><div class="w-8 h-8 rounded-full bg-surface border-2 border-border-soft text-text-secondary flex items-center justify-center text-xs font-bold"><span class="material-symbols-outlined text-sm">quiz</span></div><span class="font-caption text-xs text-text-secondary group-hover:text-primary transition-colors">Quiz</span></div><div class="h-0.5 flex-1 bg-border-soft mx-1"></div><div class="flex flex-col items-center gap-1 group cursor-pointer opacity-70 hover:opacity-100 transition-opacity"><div class="w-8 h-8 rounded-full bg-surface border-2 border-border-soft text-text-secondary flex items-center justify-center text-xs font-bold"><span class="material-symbols-outlined text-sm">flight</span></div><span class="font-caption text-xs text-text-secondary group-hover:text-primary transition-colors">Du lịch</span></div></div></div></div></header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12 relative">
+<!-- Journey Header -->
+<div class="mb-12 text-center relative z-10">
+<div class="inline-block px-4 py-1 rounded-full bg-pale-pink text-primary font-label-bold text-label-bold mb-4 uppercase tracking-wider">
+                Chặng 03/09
+            </div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4">
+                Lịch sử &amp; Di sản
+            </h1>
+<p class="font-korean-sub text-korean-sub text-text-secondary max-w-2xl mx-auto">
+                Khám phá những dấu ấn thời gian và câu chuyện văn hóa tạo nên bức tranh đa sắc của quá khứ.
+            </p>
+</div>
+<!-- Interactive Timeline Wrapper -->
+<div class="relative w-full max-w-4xl mx-auto py-12">
+<!-- Central Line -->
+<div class="timeline-curve hidden md:block"></div>
+<!-- Milestone 1 -->
+<div class="relative flex flex-col md:flex-row items-center justify-between mb-24 group timeline-node">
+<!-- Left Content (Empty on Desktop for stagger, full width on Mobile) -->
+<div class="w-full md:w-5/12 order-2 md:order-1 flex justify-end md:pr-12">
+<div class="w-full bg-surface rounded-[24px] p-container-padding journal-shadow relative overflow-hidden transform transition-transform group-hover:-translate-y-1">
+<!-- Decorative Stamp -->
+<div class="absolute -top-4 -right-4 w-16 h-16 opacity-10 transform rotate-12">
+<span class="material-symbols-outlined text-6xl text-primary">history_edu</span>
+</div>
+<div class="font-label-bold text-label-bold text-korean-red mb-2">[Năm 1]</div>
+<h3 class="font-title-md text-title-md text-on-surface mb-3">[Tiêu đề Sự kiện 1]</h3>
+<p class="font-body-main text-body-main text-text-secondary">
+                            [Mô tả ngắn gọn về sự kiện lịch sử này, khoảng 2-3 câu để người dùng dễ đọc và nắm bắt thông tin nhanh chóng.]
+                        </p>
+<button class="mt-4 px-4 py-2 bg-sky-light text-secondary rounded-full font-label-bold text-label-bold hover:bg-secondary hover:text-white transition-all w-fit flex items-center gap-2">
+                            Khám phá ngay <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Center Marker -->
+<div class="w-12 h-12 rounded-full bg-surface border-4 border-success-green flex items-center justify-center z-20 order-1 md:order-2 mb-6 md:mb-0 shadow-sm">
+<span class="material-symbols-outlined text-success-green" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Right Image (Visible on Desktop) -->
+<div class="hidden md:flex w-5/12 order-3 pl-12 items-center">
+<div class="w-full h-48 rounded-[24px] overflow-hidden journal-shadow relative p-2 bg-white transform rotate-3">
+<img class="w-full h-full object-cover rounded-[16px]" data-alt="A stylized digital illustration of an ancient Korean artifact or building, rendered in a soft, pastel, modern travel journal aesthetic with warm spring lighting and subtle paper textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYfmtVHEsdw2N_tGs0N3haojTl8U0ASwwWqGYPf3YefLaCa2RVzIr_F24hTuaGv5KcZo8m2VvhKTwvpb5_j5S0JS6HbFDEgG82vbUa_Llghb4Q1394KhqJT0mQmX1TK2yRy2-8JxKqv23YzTV_h-q6OLJR-qRMq4rZ1WvS6nzkumiJNXOBNu7SHqNS5lpdhzg_kcbZEuSG2nsuUb0Edhj-7C9bUFksHqOdAURaPcFcV2kzVpIARHSP">
+</div>
+</div>
+</div>
+<!-- Milestone 2 -->
+<div class="relative flex flex-col md:flex-row items-center justify-between mb-24 group timeline-node">
+<!-- Left Image (Visible on Desktop) -->
+<div class="hidden md:flex w-5/12 order-1 pr-12 items-center justify-end">
+<div class="w-full h-48 rounded-[24px] overflow-hidden journal-shadow relative p-2 bg-white transform -rotate-2">
+<img class="w-full h-full object-cover rounded-[16px]" data-alt="A beautiful, soft digital painting of a traditional Korean Hanok village during a peaceful spring morning. The scene uses a bright, cheerful pastel palette fitting a modern, skeuomorphic travel journal UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpaCGOjPEzzIDycuVSHc3nbTJstx-nnfbEFI3AVRwY8dHe0e-wfnq12DHZfXRRdX2ElFdq9smSSigXF2OKh8sG37R4_RZJcgg0S2ulTIGeqOxEQ1Kjtwda3Vzrw5fpWTjdlCgER0zB7BDeQ5rQPwKV2Nj3h_xhrHDGUfpLJ2CzxWCOHprPuwjVUvIYa7Vf2NzqBWvHuga0T9oGls7ha-w_8F2LG5rwptaWtRDI_27F4Vob26d_udw2">
+</div>
+</div>
+<!-- Center Marker -->
+<div class="w-12 h-12 rounded-full bg-surface border-4 border-secondary-container flex items-center justify-center z-20 order-1 md:order-2 mb-6 md:mb-0 shadow-sm relative">
+<div class="absolute inset-0 rounded-full border-4 border-secondary-container animate-ping opacity-75"></div>
+<span class="material-symbols-outlined text-secondary-container" style="font-variation-settings: 'FILL' 1;">explore</span>
+</div>
+<!-- Right Content -->
+<div class="w-full md:w-5/12 order-2 md:order-3 flex justify-start md:pl-12">
+<div class="w-full bg-surface rounded-[24px] p-container-padding modal-shadow border-2 border-secondary-container relative overflow-hidden transform transition-transform group-hover:-translate-y-1">
+<div class="font-label-bold text-label-bold text-korean-blue mb-2">[Năm 2]</div>
+<h3 class="font-title-md text-title-md text-on-surface mb-3">[Tiêu đề Sự kiện 2]</h3>
+<p class="font-body-main text-body-main text-text-secondary">
+                            [Mô tả ngắn gọn về sự kiện lịch sử này, mang tính chất đang diễn ra hoặc là điểm nhấn chính của chặng này.]
+                        </p>
+<div class="mt-4 flex gap-2">
+<span class="px-3 py-1 bg-pale-pink text-primary rounded-full font-caption text-caption">Văn hóa</span>
+<span class="px-3 py-1 bg-sky-light text-secondary rounded-full font-caption text-caption">Kiến trúc</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Milestone 3 -->
+<div class="relative flex flex-col md:flex-row items-center justify-between mb-24 group timeline-node">
+<!-- Left Content -->
+<div class="w-full md:w-5/12 order-2 md:order-1 flex justify-end md:pr-12">
+<div class="w-full bg-surface rounded-[24px] p-container-padding journal-shadow relative overflow-hidden opacity-75 hover:opacity-100 transition-opacity">
+<div class="font-label-bold text-label-bold text-locked-gray mb-2">[Năm 3]</div>
+<h3 class="font-title-md text-title-md text-locked-gray mb-3">[Tiêu đề Sự kiện 3]</h3>
+<p class="font-body-main text-body-main text-locked-gray">
+                            [Nội dung đang bị khóa. Hoàn thành các nhiệm vụ trước để mở khóa thông tin lịch sử thú vị này.]
+                        </p>
+</div>
+</div>
+<!-- Center Marker -->
+<div class="w-12 h-12 rounded-full bg-locked-gray flex items-center justify-center z-20 order-1 md:order-2 mb-6 md:mb-0 shadow-sm border-2 border-white">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">lock</span>
+</div>
+<!-- Right Spacer -->
+<div class="hidden md:block w-5/12 order-3"></div>
+</div>
+<!-- Milestone 4 -->
+<div class="relative flex flex-col md:flex-row items-center justify-between group timeline-node">
+<!-- Left Spacer -->
+<div class="hidden md:block w-5/12 order-1"></div>
+<!-- Center Marker -->
+<div class="w-12 h-12 rounded-full bg-locked-gray flex items-center justify-center z-20 order-1 md:order-2 mb-6 md:mb-0 shadow-sm border-2 border-white">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">lock</span>
+</div>
+<!-- Right Content -->
+<div class="w-full md:w-5/12 order-2 md:order-3 flex justify-start md:pl-12">
+<div class="w-full bg-surface rounded-[24px] p-container-padding journal-shadow relative overflow-hidden opacity-75 hover:opacity-100 transition-opacity">
+<div class="font-label-bold text-label-bold text-locked-gray mb-2">[Năm 4]</div>
+<h3 class="font-title-md text-title-md text-locked-gray mb-3">[Tiêu đề Sự kiện 4]</h3>
+<p class="font-body-main text-body-main text-locked-gray">
+                            [Nội dung đang bị khóa. Hoàn thành các nhiệm vụ trước để mở khóa thông tin lịch sử thú vị này.]
+                        </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Decorative Bojagi Patchwork (Bottom Corner) -->
+<div class="fixed bottom-0 right-0 w-64 h-64 -z-10 opacity-20 pointer-events-none hidden lg:block">
+<div class="absolute bottom-12 right-12 w-32 h-32 bg-pale-pink rounded-tl-[40px] rounded-br-[16px] transform rotate-12"></div>
+<div class="absolute bottom-24 right-4 w-24 h-24 bg-sky-light rounded-full"></div>
+<div class="absolute bottom-4 right-32 w-20 h-20 bg-butter-yellow rounded-[16px] transform -rotate-12"></div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-container-padding mt-auto bg-surface-container dark:bg-surface-container-highest transition-all duration-200">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop w-full max-w-[1200px] mx-auto gap-4">
+<div class="font-display-hero text-title-md text-primary">KoreaQuest</div>
+<p class="font-body-main text-caption text-text-secondary opacity-80 hover:opacity-100 transition-opacity">© 2024 KoreaQuest. Hành trình khám phá văn hóa Hàn Quốc.</p>
+<nav class="flex gap-4">
+<a class="text-on-surface-variant font-body-main text-caption hover:underline opacity-80 hover:opacity-100 transition-opacity" href="#">Về chúng tôi</a>
+<a class="text-on-surface-variant font-body-main text-caption hover:underline opacity-80 hover:opacity-100 transition-opacity" href="#">Điều khoản</a>
+<a class="text-on-surface-variant font-body-main text-caption hover:underline opacity-80 hover:opacity-100 transition-opacity" href="#">Liên hệ</a>
+</nav>
+</div>
+</footer>
+
+
+
+
+</body></html>

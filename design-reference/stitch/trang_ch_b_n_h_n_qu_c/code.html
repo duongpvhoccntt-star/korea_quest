@@ -1,0 +1,449 @@
+<!DOCTYPE html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>KoreaQuest - Bản đồ Hành trình</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&amp;family=Noto+Sans+KR:wght@500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary": "#ffffff",
+                      "surface-variant": "#d9e2ff",
+                      "text-secondary": "#667085",
+                      "on-primary-fixed-variant": "#7d2648",
+                      "tertiary-fixed": "#acf1d1",
+                      "surface-dim": "#d0d9f9",
+                      "surface-container": "#e9edff",
+                      "surface-container-low": "#f2f3ff",
+                      "on-tertiary-container": "#004e38",
+                      "korean-blue": "#5876D8",
+                      "outline-variant": "#d9c0c6",
+                      "inverse-on-surface": "#edf0ff",
+                      "on-surface": "#111b32",
+                      "korean-red": "#EF646B",
+                      "primary-fixed-dim": "#ffb1c7",
+                      "on-background": "#111b32",
+                      "primary-container": "#ff8fb3",
+                      "on-error": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "on-tertiary-fixed": "#002115",
+                      "on-primary-fixed": "#3e001c",
+                      "sky-light": "#DDF4FF",
+                      "tertiary": "#266a51",
+                      "success-green": "#63C59A",
+                      "secondary-fixed": "#c4e7ff",
+                      "on-primary-container": "#792445",
+                      "on-tertiary": "#ffffff",
+                      "surface-tint": "#9b3e60",
+                      "surface-container-highest": "#d9e2ff",
+                      "on-secondary-container": "#005777",
+                      "tertiary-container": "#7cbfa2",
+                      "primary": "#9b3e60",
+                      "tertiary-fixed-dim": "#91d4b6",
+                      "page-bg": "#FFF8F1",
+                      "inverse-surface": "#263048",
+                      "on-secondary-fixed": "#001e2c",
+                      "outline": "#877277",
+                      "on-surface-variant": "#544247",
+                      "secondary-fixed-dim": "#7dd0ff",
+                      "primary-fixed": "#ffd9e2",
+                      "border-soft": "#E8E2DB",
+                      "surface-bright": "#faf8ff",
+                      "surface-container-high": "#e1e8ff",
+                      "on-secondary": "#ffffff",
+                      "butter-yellow": "#FFD96A",
+                      "secondary": "#00658b",
+                      "on-tertiary-fixed-variant": "#01513a",
+                      "locked-gray": "#BBC1CC",
+                      "background": "#faf8ff",
+                      "error-container": "#ffdad6",
+                      "pale-pink": "#FFDCE8",
+                      "error": "#ba1a1a",
+                      "secondary-container": "#77cdfd",
+                      "inverse-primary": "#ffb1c7",
+                      "surface": "#FFFFFF",
+                      "on-secondary-fixed-variant": "#004c69",
+                      "surface-container-lowest": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "40px",
+                      "container-padding": "24px",
+                      "gutter": "16px",
+                      "unit": "8px",
+                      "margin-mobile": "16px"
+              },
+              "fontFamily": {
+                      "body-main": [
+                              "Be Vietnam Pro"
+                      ],
+                      "label-bold": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-lg": [
+                              "Be Vietnam Pro"
+                      ],
+                      "title-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "display-hero": [
+                              "Be Vietnam Pro"
+                      ],
+                      "korean-sub": [
+                              "Noto Sans KR"
+                      ],
+                      "headline-lg-mobile": [
+                              "Be Vietnam Pro"
+                      ],
+                      "caption": [
+                              "Be Vietnam Pro"
+                      ]
+              },
+              "fontSize": {
+                      "body-main": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-bold": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "title-md": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "display-hero": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "korean-sub": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "caption": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .marker-pulse {
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(88, 118, 216, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(88, 118, 216, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(88, 118, 216, 0); }
+        }
+        .map-bg {
+            background-image: radial-gradient(circle at center, #FFF8F1 0%, #f4eee7 100%);
+        }
+        
+        .shadow-level-2 {
+            box-shadow: 0 8px 24px rgba(40, 50, 74, 0.08);
+        }
+        
+        .shadow-level-3 {
+            box-shadow: 0 16px 48px rgba(40, 50, 74, 0.12);
+        }
+        
+        /* Hide scrollbar for horizontal scroll areas */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="bg-page-bg font-body-main text-on-surface min-h-screen flex flex-col">
+<!-- TopAppBar Shared Component -->
+<header class="bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-md sticky top-0 w-full shadow-sm bg-surface dark:bg-inverse-surface z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop py-unit mx-auto max-w-[1440px]">
+<!-- Brand Logo -->
+<div class="font-display-hero text-title-md font-bold text-primary dark:text-primary-fixed">
+                KoreaQuest
+            </div>
+<!-- Navigation -->
+<nav class="hidden md:flex items-center gap-gutter">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-body-main text-body-main transition-all duration-200 ease-in-out hover:text-korean-red transition-colors" href="#">Bản đồ</a>
+<a class="text-text-secondary dark:text-surface-variant font-body-main text-body-main transition-all duration-200 ease-in-out hover:text-korean-red transition-colors" href="#">Bộ sưu tập</a>
+<a class="text-text-secondary dark:text-surface-variant font-body-main text-body-main transition-all duration-200 ease-in-out hover:text-korean-red transition-colors" href="#">Hành trình</a>
+
+</nav>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-unit">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-border-soft rounded-full font-body-main text-caption focus:outline-none focus:border-korean-blue w-48 transition-colors" placeholder="Tìm kiếm địa điểm..." type="text">
+</div>
+<button class="p-2 text-text-secondary hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-korean-red rounded-full"></span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container shrink-0 ml-2">
+<img alt="User avatar" class="w-full h-full object-cover" data-alt="A portrait photograph of a cheerful young Vietnamese woman with short black hair, wearing a casual light pink cardigan, smiling warmly at the camera. The background is a soft, blurred studio setting with warm, bright lighting creating a modern light-mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC0a7CJoXu4xGh1-lgG51fBYYELzhaotz3ifEzvDn17Kmk0cghc0S6kVy1YYb-AfHLwPkRJu_SkjM98Y8TeDE79H6f5p13_vKZ7FfWhc8xEKku9Ute9hnVwIpBIRU_y91gwNbvwo6OHdotdaH2xZFWNpaRBBGn8bIdjW43DY44viZMb9Gzr9GWByUZcNlnXGZZG1iPX-ugQ0sLatWCrDwy7BYcbJNQY9Bng2az8XVrpxh2lnXEppDi">
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 max-w-[1440px] mx-auto w-full px-margin-desktop py-container-padding flex flex-col lg:flex-row gap-8">
+<!-- Left Panel: Introduction & Progress (Dashboard style) -->
+<aside class="w-full lg:w-[360px] shrink-0 flex flex-col gap-6">
+<!-- Intro Card -->
+<div class="bg-surface rounded-[24px] p-8 shadow-level-2 relative overflow-hidden group">
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-pale-pink rounded-full opacity-50 blur-xl"></div>
+<div class="relative z-10">
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Bạn muốn bắt đầu từ đâu?</h1>
+<p class="font-body-main text-body-main text-text-secondary mb-6">Khám phá văn hóa Hàn Quốc qua từng địa danh. Hành trình của bạn đang chờ đón!</p>
+<div class="bg-surface-container-low rounded-xl p-4 border border-border-soft mb-6">
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-bold text-label-bold text-on-surface">Tiến độ khám phá</span>
+<span class="font-label-bold text-label-bold text-primary">3/12 Huy hiệu</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-2.5 overflow-hidden">
+<div class="bg-korean-red h-2.5 rounded-full" style="width: 25%"></div>
+</div>
+<p class="font-body-main text-caption text-text-secondary mt-2">Đã hoàn thành: Seoul, Busan, Gyeongju</p>
+</div>
+<button class="w-full bg-primary text-on-primary font-label-bold text-label-bold py-4 px-6 rounded-full hover:bg-surface-tint transition-all active:scale-95 flex items-center justify-center gap-2">
+                        Tiếp tục hành trình
+                        <span class="material-symbols-outlined text-lg" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Suggestion Modules -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h2 class="font-title-md text-title-md text-on-surface">Gợi ý cho bạn</h2>
+<button class="font-label-bold text-caption text-primary hover:underline">Xem tất cả</button>
+</div>
+<div class="flex flex-col gap-4">
+<!-- Suggestion Card 1 -->
+<div class="bg-surface rounded-[24px] p-4 shadow-level-2 flex gap-4 items-center cursor-pointer hover:shadow-level-3 transition-shadow">
+<div class="w-20 h-20 rounded-xl overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A bright, sunlit photograph of Gyeongbokgung Palace in Seoul during spring. The traditional Korean architecture with its intricate colorful roof brackets is framed by blooming pale pink cherry blossoms against a clear blue sky. The image has a cheerful, modern travel journal aesthetic with soft lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi7pWKH8jMu0hgsc2QOMfeVleEPD_n168EZ3mpsNTRmM3dXeCFNHKZwBHiVG6PPdkIFIt05Jq7RJ_NBEhUDIJwryE5BSB9fijAxPcsM2AMUTlo46e8z1T7zdvtk9jVXAuiSQOQClo6vVucWC8eOHn5CfCeG3asYELw_oeITvj4BR5yL2lw3WrrpnGr1y6dB-dp6RXie4JLmWFrgfTlriqSJzpqjbws0aIoViqIviEpRlykCt7v4h1E">
+</div>
+<div>
+<span class="inline-block px-2 py-1 bg-sky-light text-secondary font-label-bold text-[10px] rounded-full mb-1">Cung điện</span>
+<h3 class="font-title-md text-body-main font-bold text-on-surface leading-tight">Gyeongbokgung</h3>
+<p class="font-body-main text-caption text-text-secondary line-clamp-1 mt-1">Cung điện lớn nhất Seoul</p>
+</div>
+<button class="ml-auto p-2 bg-surface-container rounded-full text-primary hover:bg-primary hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="bookmark_add">bookmark_add</span>
+</button>
+</div>
+<!-- Suggestion Card 2 -->
+<div class="bg-surface rounded-[24px] p-4 shadow-level-2 flex gap-4 items-center cursor-pointer hover:shadow-level-3 transition-shadow">
+<div class="w-20 h-20 rounded-xl overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A vibrant daytime view of the colorful houses of Gamcheon Culture Village in Busan, cascading down a hillside. The brightly painted pastel facades contrast with the deep blue sea in the distance. The scene is brightly lit, evoking a cheerful, welcoming spring atmosphere suitable for a modern travel interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAt1raR0HkOSJQc3qD0nXjnYXi6JxrRhUc4LMUdUtbljBufaBe_BrZvsiWGSwGRIpwh8gCx-tpDchlGWW6JsCBSa_5-YQ-0Gl8RTxYhi85iPlNB_Zb1p6gcInVZrNURYZmoPCvbN7D8kQVXlJzj1N0TYRTW_r3xBu-67J_MsDLzh2CwTFrJZnt35lHkdG7kvMEmHugMpwMycgHDAT9_37rx5WTWqNAWUzkII0iOhhBUnE9wBixM8R-k">
+</div>
+<div>
+<span class="inline-block px-2 py-1 bg-pale-pink text-primary font-label-bold text-[10px] rounded-full mb-1">Làng văn hóa</span>
+<h3 class="font-title-md text-body-main font-bold text-on-surface leading-tight">Gamcheon</h3>
+<p class="font-body-main text-caption text-text-secondary line-clamp-1 mt-1">Santorini của Hàn Quốc</p>
+</div>
+<button class="ml-auto p-2 bg-surface-container rounded-full text-primary hover:bg-primary hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="bookmark_add">bookmark_add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Badge Collection Small Widget -->
+<div class="bg-surface-container-low rounded-[24px] p-6 border border-border-soft mt-auto">
+<h2 class="font-label-bold text-label-bold text-on-surface mb-4">Bộ sưu tập huy hiệu</h2>
+<div class="flex gap-2 justify-between">
+<div class="w-12 h-12 bg-surface rounded-full flex items-center justify-center shadow-sm border border-success-green">
+<span class="material-symbols-outlined text-success-green" data-icon="local_dining">local_dining</span>
+</div>
+<div class="w-12 h-12 bg-surface rounded-full flex items-center justify-center shadow-sm border border-success-green">
+<span class="material-symbols-outlined text-success-green" data-icon="stadium">stadium</span>
+</div>
+<div class="w-12 h-12 bg-surface rounded-full flex items-center justify-center shadow-sm border border-success-green">
+<span class="material-symbols-outlined text-success-green" data-icon="train">train</span>
+</div>
+<div class="w-12 h-12 bg-surface rounded-full flex items-center justify-center shadow-sm border border-locked-gray opacity-50">
+<span class="material-symbols-outlined text-locked-gray" data-icon="lock">lock</span>
+</div>
+<div class="w-12 h-12 bg-surface rounded-full flex items-center justify-center shadow-sm border border-locked-gray opacity-50">
+<span class="material-symbols-outlined text-locked-gray" data-icon="lock">lock</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Right Canvas: Interactive Map -->
+<section class="flex-1 bg-surface rounded-[32px] shadow-level-2 border border-border-soft overflow-hidden relative min-h-[600px] flex flex-col">
+<!-- Map Controls Overlays -->
+<div class="absolute top-6 left-6 z-10 bg-surface/90 backdrop-blur-sm rounded-full p-2 shadow-level-2 flex gap-2 border border-border-soft">
+<button class="px-4 py-2 bg-sky-light text-secondary rounded-full font-label-bold text-caption border-2 border-secondary transition-colors">Tất cả</button>
+<button class="px-4 py-2 hover:bg-surface-container-low text-text-secondary rounded-full font-label-bold text-caption transition-colors">Đã xong</button>
+<button class="px-4 py-2 hover:bg-surface-container-low text-text-secondary rounded-full font-label-bold text-caption transition-colors">Chưa mở</button>
+</div>
+<div class="absolute bottom-6 right-6 z-10 flex flex-col gap-2">
+<button class="w-12 h-12 bg-surface text-on-surface rounded-full shadow-level-2 flex items-center justify-center hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+<button class="w-12 h-12 bg-surface text-on-surface rounded-full shadow-level-2 flex items-center justify-center hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined" data-icon="remove">remove</span>
+</button>
+<button class="w-12 h-12 bg-surface text-primary rounded-full shadow-level-2 flex items-center justify-center hover:bg-surface-container transition-colors mt-2">
+<span class="material-symbols-outlined" data-icon="my_location">my_location</span>
+</button>
+</div>
+<!-- The Map Area (Simulated with an image and absolute positioned markers) -->
+<div class="w-full h-full relative map-bg" data-location="South Korea">
+<!-- Map Base Image Placeholder -->
+<div class="absolute inset-0 opacity-80 mix-blend-multiply pointer-events-none" data-alt="A stylized, illustrative map of South Korea designed for a modern travel journal app. The map uses a light, pastel color palette with soft cream backgrounds, subtle green topographies, and pale blue waters. It features clean, minimalist vector lines for borders and major routes, creating a cheerful, analog scrapbook aesthetic." style="background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuDFQJoV1WQTiO6VygfEnvOGqmvaX3FFsaO_IKNr6LCgAG_3_oTBGOfBFLtown2YZUNGQFd25gF2prFo-o0QG_A86g7ygAxBKeG4eHnJ5eLChrlaBd3YOegPBhYJo8ujwo-uPGcsByMiMY0l-Ci54jfKKHVD5JdhUBi5lsIU4iwkVGwy53xvDu910gevYcrJ6n0NoSv0BNwRF_551rPmy9cTPD23XD0T9dGFmhDMeSbm_H_TB8JxO4QO&quot;);"></div>
+<!-- Dotted Path connecting major points (SVG) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none" viewBox="0 0 800 600">
+<path d="M 250 150 Q 300 250, 450 400 T 550 500" fill="none" opacity="0.4" stroke="#5876D8" stroke-dasharray="8 8" stroke-width="3"></path>
+</svg>
+<!-- Marker: Seoul (Completed) -->
+<div class="absolute top-[25%] left-[30%] -translate-x-1/2 -translate-y-1/2 group cursor-pointer z-20">
+<div class="relative">
+<!-- Tooltip -->
+<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 bg-sky-light text-on-secondary-fixed-variant px-4 py-2 rounded-[20px] shadow-level-2 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none flex flex-col items-center">
+<span class="font-label-bold text-caption">Thủ đô Seoul</span>
+<span class="font-body-main text-[10px] text-text-secondary">Đã hoàn thành</span>
+<!-- Tooltip Arrow -->
+<div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-sky-light"></div>
+</div>
+<!-- Pin -->
+<div class="w-14 h-14 bg-surface rounded-full shadow-md border-4 border-success-green flex items-center justify-center relative z-10 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A stylized illustration of Namsan Seoul Tower in bright pastel colors, set inside a circular icon frame. The style is flat, modern, and cheerful, suitable for a map marker in a travel journal application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKYRkKdpX1856Qw5haMt-XUHqXGs2FvK6UG53odlKnmQQkcTVF5WtpecYJX3nE5GjzjF6K56g4RjeaPWYuQRoXzYVh_skXA3KwyMq8tk7WveEoEgMkuzYaWR8celQEkYWf31n8zZihH0Y8l9DDjzKf5IOLKgNLW7rvCgnRC_tZ8AWNbKjrWSGFF2JjtrEeB2Fw2_ByH8p0OZjX6QMQNPxY2CBYic2YJPK7fOfAIeSdIW-IAT_1XqNh">
+<!-- Stamp Overlay -->
+<div class="absolute bottom-0 right-0 bg-surface rounded-tl-lg p-0.5 shadow-sm">
+<span class="material-symbols-outlined text-[12px] text-success-green font-bold" data-icon="check_circle">check_circle</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Marker: Jeju (In Progress) -->
+<div class="absolute top-[80%] left-[25%] -translate-x-1/2 -translate-y-1/2 group cursor-pointer z-20">
+<div class="relative">
+<!-- Tooltip -->
+<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 bg-sky-light text-on-secondary-fixed-variant px-4 py-2 rounded-[20px] shadow-level-2 whitespace-nowrap opacity-100 transition-opacity pointer-events-none flex flex-col items-center">
+<span class="font-label-bold text-caption">Đảo Jeju</span>
+<span class="font-body-main text-[10px] text-korean-blue font-bold">Đang khám phá</span>
+<div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-sky-light"></div>
+</div>
+<!-- Pulse Ring -->
+<div class="absolute inset-0 rounded-full bg-korean-blue/20 marker-pulse"></div>
+<!-- Pin -->
+<div class="w-16 h-16 bg-surface rounded-full shadow-lg border-4 border-korean-blue flex items-center justify-center relative z-10 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A cute, vibrant vector illustration of a Hallabong (Jeju tangerine) and volcanic rock statue (Dol Hareubang), styled as a circular map icon in light pastel tones for a cheerful travel UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1PVd7eaUyCpEjPYtdk2B1j9PR-ioL-1mMiuIxC_ibLLVsTCXyRD0aBQNYUSzvX3oq_N6nEqGinrjQCruBS8OfbEkXnEXnX27gOk9y_9aWSEXI1tuaRn6LAIKFoBAJHMKBFTWfmBFPlSVzSbfsFLV2IVlUvHGYNy9dgjy0QK5ACSuriED3T0Dvh2r3u0qrz75b9_RUN52aQ6R19mbNBSQNKEvig2nPrmqVFs7-NM1NBGVv7IrKCoea">
+</div>
+</div>
+</div>
+<!-- Marker: Busan (Coming Soon / Locked) -->
+<div class="absolute top-[65%] left-[70%] -translate-x-1/2 -translate-y-1/2 group cursor-pointer z-10">
+<div class="relative">
+<!-- Tooltip -->
+<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 bg-surface text-text-secondary px-4 py-2 rounded-[20px] shadow-level-2 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none flex flex-col items-center">
+<span class="font-label-bold text-caption">Thành phố Busan</span>
+<span class="font-body-main text-[10px]">Chưa mở khóa</span>
+<div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-surface"></div>
+</div>
+<!-- Pin -->
+<div class="w-12 h-12 bg-surface rounded-full shadow-sm border-2 border-locked-gray flex items-center justify-center relative z-10 opacity-70 grayscale">
+<span class="material-symbols-outlined text-locked-gray text-2xl" data-icon="lock">lock</span>
+</div>
+</div>
+</div>
+<!-- Decorative Elements (Stickers) -->
+<div class="absolute top-[10%] right-[15%] w-16 opacity-60 mix-blend-multiply rotate-12 pointer-events-none">
+<img class="w-full h-auto" data-alt="A stylized graphic illustration of an abstract cloud in soft pastel pinks and whites, designed to look like a digital scrapbook sticker resting lightly on a paper surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2Y4Vizt5w9I3ki_szEUC8Gf0ynooxGS8TBXcUvzNx_FAFreHL5mWFTXi8HRwXI7Go99DErD4T4zCs3OYg3AHvc08aUioEg-E4XlWvUwJobvijeQhiE9JXL4g7k_1oD27LWxPh863gkYaSj3uKFfu8F5Y382D7U2Nz6bQ30JK9P3dhXx9Lxb378Z6WtfKUILKGmB4zmQxzGXbShFrF0PwmW8zF1tZBIUPzHc2cjFScMlMcH7ol4czI">
+</div>
+</div>
+<!-- Bottom Current Stage Card (Overlay on Map) -->
+<div class="absolute bottom-6 left-1/2 -translate-x-1/2 w-11/12 max-w-[400px] z-30">
+<div class="bg-surface/95 backdrop-blur-md rounded-[24px] p-4 shadow-level-3 border border-border-soft flex items-center gap-4">
+<div class="w-16 h-16 bg-sky-light rounded-xl flex flex-col items-center justify-center text-secondary border border-secondary/20 shrink-0 border-dashed">
+<span class="font-label-bold text-[10px] uppercase tracking-widest">Chặng</span>
+<span class="font-headline-lg text-title-md font-bold leading-none">04</span>
+</div>
+<div class="flex-1">
+<h4 class="font-title-md text-title-md text-on-surface leading-tight">Khám phá thiên nhiên Jeju</h4>
+<p class="font-body-main text-caption text-text-secondary line-clamp-1">Leo núi Hallasan &amp; hái quýt</p>
+</div>
+<button class="w-10 h-10 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-md hover:scale-105 transition-transform shrink-0">
+<span class="material-symbols-outlined" data-icon="play_arrow">play_arrow</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Shared Component -->
+<footer class="bg-surface-container dark:bg-surface-container-highest w-full py-container-padding mt-auto font-body-main text-caption bg-surface-container">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop w-full mx-auto max-w-[1440px]">
+<div class="font-display-hero text-title-md text-primary mb-4 md:mb-0">
+                KoreaQuest
+            </div>
+<div class="text-on-surface-variant mb-4 md:mb-0 text-center">
+                © 2024 KoreaQuest. Hành trình khám phá văn hóa Hàn Quốc.
+            </div>
+<nav class="flex gap-gutter">
+<a class="text-on-surface-variant hover:underline opacity-80 hover:opacity-100 transition-opacity" href="#">Về chúng tôi</a>
+<a class="text-on-surface-variant hover:underline opacity-80 hover:opacity-100 transition-opacity" href="#">Điều khoản</a>
+<a class="text-on-surface-variant hover:underline opacity-80 hover:opacity-100 transition-opacity" href="#">Liên hệ</a>
+</nav>
+</div>
+</footer>
+
+
+</body></html>

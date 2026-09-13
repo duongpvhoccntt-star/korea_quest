@@ -1,0 +1,364 @@
+<!DOCTYPE html><html lang="vi" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>KoreaQuest - Thử thách khám phá</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&amp;family=Noto+Sans+KR:wght@500&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#d9e2ff",
+                        "text-secondary": "#667085",
+                        "on-primary-fixed-variant": "#7d2648",
+                        "tertiary-fixed": "#acf1d1",
+                        "surface-dim": "#d0d9f9",
+                        "surface-container": "#e9edff",
+                        "surface-container-low": "#f2f3ff",
+                        "on-tertiary-container": "#004e38",
+                        "korean-blue": "#5876D8",
+                        "outline-variant": "#d9c0c6",
+                        "inverse-on-surface": "#edf0ff",
+                        "on-surface": "#111b32",
+                        "korean-red": "#EF646B",
+                        "primary-fixed-dim": "#ffb1c7",
+                        "on-background": "#111b32",
+                        "primary-container": "#ff8fb3",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#002115",
+                        "on-primary-fixed": "#3e001c",
+                        "sky-light": "#DDF4FF",
+                        "tertiary": "#266a51",
+                        "success-green": "#63C59A",
+                        "secondary-fixed": "#c4e7ff",
+                        "on-primary-container": "#792445",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#9b3e60",
+                        "surface-container-highest": "#d9e2ff",
+                        "on-secondary-container": "#005777",
+                        "tertiary-container": "#7cbfa2",
+                        "primary": "#9b3e60",
+                        "tertiary-fixed-dim": "#91d4b6",
+                        "page-bg": "#FFF8F1",
+                        "inverse-surface": "#263048",
+                        "on-secondary-fixed": "#001e2c",
+                        "outline": "#877277",
+                        "on-surface-variant": "#544247",
+                        "secondary-fixed-dim": "#7dd0ff",
+                        "primary-fixed": "#ffd9e2",
+                        "border-soft": "#E8E2DB",
+                        "surface-bright": "#faf8ff",
+                        "surface-container-high": "#e1e8ff",
+                        "on-secondary": "#ffffff",
+                        "butter-yellow": "#FFD96A",
+                        "secondary": "#00658b",
+                        "on-tertiary-fixed-variant": "#01513a",
+                        "locked-gray": "#BBC1CC",
+                        "background": "#faf8ff",
+                        "error-container": "#ffdad6",
+                        "pale-pink": "#FFDCE8",
+                        "error": "#ba1a1a",
+                        "secondary-container": "#77cdfd",
+                        "inverse-primary": "#ffb1c7",
+                        "surface": "#FFFFFF",
+                        "on-secondary-fixed-variant": "#004c69",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "40px",
+                        "container-padding": "24px",
+                        "gutter": "16px",
+                        "unit": "8px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "body-main": ["Be Vietnam Pro"],
+                        "label-bold": ["Be Vietnam Pro"],
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "title-md": ["Be Vietnam Pro"],
+                        "display-hero": ["Be Vietnam Pro"],
+                        "korean-sub": ["Noto Sans KR"],
+                        "headline-lg-mobile": ["Be Vietnam Pro"],
+                        "caption": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "body-main": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-bold": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "title-md": ["20px", { "lineHeight": "1.4", "fontWeight": "700" }],
+                        "display-hero": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "korean-sub": ["18px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "caption": ["12px", { "lineHeight": "1.4", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-page-bg font-body-main text-on-surface min-h-screen flex flex-col relative overflow-x-hidden">
+<!-- Subtle Background Texture -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.03] z-0" data-alt="A seamless, very subtle paper texture pattern, like high-quality Korean hanji paper. It should be barely visible, providing a slight tactile feel to the digital surface. The color should be a warm, creamy off-white. The texture should consist of very fine, organic fibers scattered lightly across the canvas, typical of traditional papermaking techniques. It must not distract from the foreground content, acting only as a soft, atmospheric backdrop for a travel journal application." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDHvPnph-Yq9lPxqnbH2TjrVHU3Ed_t6UQg8ufDpCgmThnD1n6Qno7JWmMwy2qyFxjVCMpl9JHfx731ibwWcdMapBX3Y6aFDsy8mrvVgQ2mfiyqtknraDptoRtE4HTVJg3F0yIvviYSh1BEKJUoGGqYgL7JhTCB6hoH0CR44-TH6v1I_EOsS6j3GZqMTC3WXpZCpgZlD8R_sAQ_RmRHsxzGC9QjPP8PaMe1JdMDDDhhNhKOJQvn84T4')"></div>
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full z-50 shadow-sm bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-md transition-all duration-200 ease-in-out">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-unit mx-auto max-w-[1200px]">
+<div class="flex items-center gap-3">
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors text-on-surface" aria-label="Quay lại">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div class="flex flex-col">
+<h1 class="font-title-md text-title-md text-on-surface font-bold leading-tight">{{LOCATION_NAME}}</h1>
+<span class="font-label-bold text-caption text-text-secondary">Chặng 8/9</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-1.5 px-4 py-2 rounded-full border border-border-soft bg-surface hover:bg-surface-container-low text-on-surface font-label-bold text-label-bold shadow-sm transition-colors">
+<span class="material-symbols-outlined text-primary text-lg">map</span>
+<span class="">Bản đồ</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-title-md font-bold text-lg border-2 border-primary-container">
+<span class="">U</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12 relative z-10 flex flex-col gap-8">
+<!-- Journey Stepper -->
+<section class="w-full bg-surface p-4 md:p-6 rounded-2xl border border-border-soft shadow-sm overflow-x-auto mb-2">
+  <div class="min-w-[720px] flex items-center justify-between relative px-4">
+    <div class="absolute left-8 right-8 top-5 -translate-y-1/2 border-t-2 border-dashed border-border-soft z-0"></div>
+    
+    <!-- Chặng 1: Mở đầu (Hoàn thành) -->
+    <div class="z-10 flex flex-col items-center gap-2 group cursor-pointer">
+      <div class="w-10 h-10 rounded-full bg-success-green/15 text-success-green border-2 border-success-green flex items-center justify-center shadow-sm transition-transform group-hover:scale-105">
+        <span class="material-symbols-outlined icon-fill text-lg">check</span>
+      </div>
+      <span class="font-label-bold text-caption text-on-surface-variant font-medium text-center">1. Mở đầu</span>
+    </div>
+
+    <!-- Chặng 2: Tổng quan (Hoàn thành) -->
+    <div class="z-10 flex flex-col items-center gap-2 group cursor-pointer">
+      <div class="w-10 h-10 rounded-full bg-success-green/15 text-success-green border-2 border-success-green flex items-center justify-center shadow-sm transition-transform group-hover:scale-105">
+        <span class="material-symbols-outlined icon-fill text-lg">check</span>
+      </div>
+      <span class="font-label-bold text-caption text-on-surface-variant font-medium text-center">2. Tổng quan</span>
+    </div>
+
+    <!-- Chặng 3: Lịch sử (Hoàn thành) -->
+    <div class="z-10 flex flex-col items-center gap-2 group cursor-pointer">
+      <div class="w-10 h-10 rounded-full bg-success-green/15 text-success-green border-2 border-success-green flex items-center justify-center shadow-sm transition-transform group-hover:scale-105">
+        <span class="material-symbols-outlined icon-fill text-lg">check</span>
+      </div>
+      <span class="font-label-bold text-caption text-on-surface-variant font-medium text-center">3. Lịch sử</span>
+    </div>
+
+    <!-- Chặng 4: Điểm đến (Hoàn thành) -->
+    <div class="z-10 flex flex-col items-center gap-2 group cursor-pointer">
+      <div class="w-10 h-10 rounded-full bg-success-green/15 text-success-green border-2 border-success-green flex items-center justify-center shadow-sm transition-transform group-hover:scale-105">
+        <span class="material-symbols-outlined icon-fill text-lg">check</span>
+      </div>
+      <span class="font-label-bold text-caption text-on-surface-variant font-medium text-center">4. Điểm đến</span>
+    </div>
+
+    <!-- Chặng 5: Trải nghiệm (Hoàn thành) -->
+    <div class="z-10 flex flex-col items-center gap-2 group cursor-pointer">
+      <div class="w-10 h-10 rounded-full bg-success-green/15 text-success-green border-2 border-success-green flex items-center justify-center shadow-sm transition-transform group-hover:scale-105">
+        <span class="material-symbols-outlined icon-fill text-lg">check</span>
+      </div>
+      <span class="font-label-bold text-caption text-on-surface-variant font-medium text-center">5. Trải nghiệm</span>
+    </div>
+
+    <!-- Chặng 6: Ẩm thực (Hoàn thành) -->
+    <div class="z-10 flex flex-col items-center gap-2 group cursor-pointer">
+      <div class="w-10 h-10 rounded-full bg-success-green/15 text-success-green border-2 border-success-green flex items-center justify-center shadow-sm transition-transform group-hover:scale-105">
+        <span class="material-symbols-outlined icon-fill text-lg">check</span>
+      </div>
+      <span class="font-label-bold text-caption text-on-surface-variant font-medium text-center">6. Ẩm thực</span>
+    </div>
+
+    <!-- Chặng 7: Fun Facts (Hoàn thành) -->
+    <div class="z-10 flex flex-col items-center gap-2 group cursor-pointer">
+      <div class="w-10 h-10 rounded-full bg-success-green/15 text-success-green border-2 border-success-green flex items-center justify-center shadow-sm transition-transform group-hover:scale-105">
+        <span class="material-symbols-outlined icon-fill text-lg">check</span>
+      </div>
+      <span class="font-label-bold text-caption text-on-surface-variant font-medium text-center">7. Fun Facts</span>
+    </div>
+
+    <!-- Chặng 8: Quiz (Hiện tại / Đang làm) -->
+    <div class="z-10 flex flex-col items-center gap-2 group cursor-pointer">
+      <div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-md ring-4 ring-primary/20 transition-transform group-hover:scale-105 animate-pulse">
+        <span class="material-symbols-outlined text-lg">quiz</span>
+      </div>
+      <span class="font-label-bold text-caption text-primary font-bold text-center">8. Quiz</span>
+    </div>
+
+    <!-- Chặng 9: Du lịch (Chưa mở / Sẵn sàng) -->
+    <div class="z-10 flex flex-col items-center gap-2 group cursor-pointer">
+      <div class="w-10 h-10 rounded-full bg-surface-container text-text-secondary border border-border-soft flex items-center justify-center shadow-sm transition-transform group-hover:scale-105">
+        <span class="material-symbols-outlined text-lg">info</span>
+      </div>
+      <span class="font-label-bold text-caption text-text-secondary font-medium text-center">9. Du lịch</span>
+    </div>
+  </div>
+</section>
+<!-- Main Layout: Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Stage 8: Quiz Dashboard (Left/Main Column) -->
+<div class="md:col-span-7 flex flex-col gap-6">
+<div class="bg-surface rounded-[24px] shadow-[0_8px_24px_rgba(40,50,74,0.08)] p-container-padding relative overflow-hidden border border-border-soft">
+<!-- Decorative Stamp -->
+<div class="absolute -top-4 -right-4 w-24 h-24 opacity-10 rotate-12 pointer-events-none">
+<span class="material-symbols-outlined text-primary text-[100px]">local_activity</span>
+</div>
+<div class="flex flex-col gap-6 relative z-10">
+<div class="flex items-start justify-between">
+<div>
+<span class="font-label-bold text-label-bold text-secondary uppercase tracking-wider">Chặng 08</span>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mt-1">Thử thách khám phá</h1>
+</div>
+<div class="bg-butter-yellow/20 text-on-surface-variant px-4 py-2 rounded-full flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">stars</span>
+<span class="font-label-bold text-label-bold">+50 XP</span>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="flex flex-col gap-2 bg-surface-container-low p-4 rounded-xl">
+<div class="flex justify-between items-center">
+<span class="font-body-main text-caption text-text-secondary">Tiến độ nhiệm vụ</span>
+<span class="font-label-bold text-label-bold text-primary">0/12</span>
+</div>
+<div class="w-full h-3 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary w-0 rounded-full transition-all duration-500"></div>
+</div>
+</div>
+<!-- Quiz Placeholder -->
+<div class="bg-sky-light/40 border border-secondary/10 rounded-[20px] p-6 flex flex-col gap-6">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-korean-blue icon-fill text-3xl">psychology_alt</span>
+<h3 class="font-title-md text-title-md text-on-surface">Câu hỏi Quiz</h3>
+</div>
+<p class="font-body-main text-body-main text-on-surface-variant">
+                                Hãy chọn trang phục truyền thống của Hàn Quốc trong các phương án dưới đây?
+                            </p>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+<button class="w-full text-left px-6 py-4 rounded-xl border-2 border-outline-variant bg-surface hover:border-korean-blue hover:bg-surface-dim transition-all font-body-main text-body-main text-on-surface">
+                                    A. Kimono
+                                </button>
+<button class="w-full text-left px-6 py-4 rounded-xl border-2 border-outline-variant bg-surface hover:border-korean-blue hover:bg-surface-dim transition-all font-body-main text-body-main text-on-surface">
+                                    B. Hanbok
+                                </button>
+<button class="w-full text-left px-6 py-4 rounded-xl border-2 border-outline-variant bg-surface hover:border-korean-blue hover:bg-surface-dim transition-all font-body-main text-body-main text-on-surface">
+                                    C. Ao Dai
+                                </button>
+<button class="w-full text-left px-6 py-4 rounded-xl border-2 border-outline-variant bg-surface hover:border-korean-blue hover:bg-surface-dim transition-all font-body-main text-body-main text-on-surface">
+                                    D. Cheongsam
+                                </button>
+</div>
+<!-- Hidden Result States (for structural demonstration) -->
+<div class="hidden flex items-center gap-2 text-success-green bg-success-green/10 p-3 rounded-lg mt-2">
+<span class="material-symbols-outlined icon-fill">check_circle</span>
+<span class="font-body-main text-caption font-bold">Chính xác! Bạn nhận được +10 XP.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Stage 9: Travel Info (Right Column) -->
+<div class="md:col-span-5 flex flex-col gap-6">
+<div class="bg-surface rounded-[24px] shadow-[0_8px_24px_rgba(40,50,74,0.08)] p-container-padding border border-border-soft flex flex-col h-full relative">
+<!-- Ticket Edge Effect (Left side pseudo element simulation via border) -->
+<div class="absolute left-0 top-0 bottom-0 w-2 border-l-[6px] border-dotted border-surface-container-low rounded-l-[24px]"></div>
+<div class="pl-4">
+<span class="font-label-bold text-label-bold text-secondary uppercase tracking-wider">Chặng 09</span>
+<h2 class="font-title-md text-title-md text-on-surface mt-1 mb-6">Thông tin Du lịch</h2>
+<div class="flex flex-col gap-5">
+<!-- Info Row 1 -->
+<div class="flex gap-4 items-start p-4 bg-pale-pink/30 rounded-2xl">
+<div class="w-10 h-10 rounded-full bg-surface text-primary flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined">schedule</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-bold text-caption text-text-secondary uppercase">Giờ mở cửa</span>
+<span class="font-body-main text-body-main text-on-surface mt-1 font-medium">{{OPENING_HOURS}}</span>
+</div>
+</div>
+<!-- Info Row 2 -->
+<div class="flex gap-4 items-start p-4 bg-sky-light/40 rounded-2xl">
+<div class="w-10 h-10 rounded-full bg-surface text-secondary flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined">confirmation_number</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-bold text-caption text-text-secondary uppercase">Giá vé tham khảo</span>
+<span class="font-body-main text-body-main text-on-surface mt-1 font-medium">{{TICKET_PRICE}}</span>
+</div>
+</div>
+<!-- Info Row 3 -->
+<div class="flex gap-4 items-start p-4 bg-surface-container rounded-2xl">
+<div class="w-10 h-10 rounded-full bg-surface text-tertiary flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined">directions_subway</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-bold text-caption text-text-secondary uppercase">Cách di chuyển</span>
+<span class="font-body-main text-body-main text-on-surface mt-1 font-medium">{{TRANSPORT_OPTIONS}}</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Final Action Area -->
+<div class="md:col-span-12 flex justify-center mt-4">
+<button class="bg-primary hover:bg-on-primary-container text-on-primary font-title-md text-title-md py-4 px-12 rounded-full shadow-[0_8px_24px_rgba(155,62,96,0.25)] transition-all transform hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(155,62,96,0.35)] flex items-center gap-3">
+                    Hoàn thành địa điểm
+                    <span class="material-symbols-outlined">explore</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-container-padding mt-auto bg-surface-container dark:bg-surface-container-highest">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop w-full max-w-[1200px] mx-auto gap-4 md:gap-0">
+<div class="font-display-hero text-title-md text-primary">
+                KoreaQuest
+            </div>
+<div class="font-body-main text-caption text-on-surface-variant flex gap-6">
+<a class="opacity-80 hover:opacity-100 transition-opacity hover:underline" href="#">Về chúng tôi</a>
+<a class="opacity-80 hover:opacity-100 transition-opacity hover:underline" href="#">Điều khoản</a>
+<a class="opacity-80 hover:opacity-100 transition-opacity hover:underline" href="#">Liên hệ</a>
+</div>
+<div class="font-body-main text-caption text-on-surface-variant text-center md:text-right">
+                © 2024 KoreaQuest. Hành trình khám phá văn hóa Hàn Quốc.
+            </div>
+</div>
+</footer>
+
+
+
+
+</body></html>
