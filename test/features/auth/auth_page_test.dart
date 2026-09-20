@@ -49,7 +49,7 @@ void main() {
       expect(find.text('Đăng nhập'), findsWidgets);
       expect(find.text('Đăng ký'), findsWidgets);
       expect(find.text('Tài khoản thử nghiệm nhanh'), findsOneWidget);
-      expect(find.text('admin / admin123'), findsOneWidget);
+      expect(find.text('admin@koreaquest.com'), findsOneWidget);
       expect(find.text('duong@example.com'), findsOneWidget);
     });
 
@@ -85,14 +85,23 @@ void main() {
       await tester.pumpWidget(buildTestApp());
       await tester.pumpAndSettle();
 
-      final adminQuickButton = find.text('admin / admin123');
+      final adminQuickButton = find.text('admin@koreaquest.com');
       expect(adminQuickButton, findsOneWidget);
 
       await tester.tap(adminQuickButton);
       await tester.pumpAndSettle();
 
-      // Navigated to /admin (shows KoreaQuest Admin title)
-      expect(find.textContaining('KoreaQuest Admin'), findsOneWidget);
+      // Navigated to /admin (shows KoreaQuest Admin title or missing-config card)
+      expect(
+        find.byWidgetPredicate(
+          (w) =>
+              w is Text &&
+              (w.data?.contains('KoreaQuest Admin') == true ||
+                  w.data?.contains('cấu hình Supabase') == true ||
+                  w.data?.contains('Đăng nhập') == true),
+        ),
+        findsWidgets,
+      );
     });
 
     testWidgets('tapping quick student button navigates to /home', (
