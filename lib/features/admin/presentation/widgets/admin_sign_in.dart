@@ -141,6 +141,19 @@ class _AdminSignInState extends ConsumerState<AdminSignIn> {
                       onPressed: _isLoading ? null : _fillDemoAccount,
                       child: const Text('Dùng nhanh: admin / admin123'),
                     ),
+                  ] else ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    TextButton(
+                      onPressed: _isLoading
+                          ? null
+                          : () {
+                              _identity.text = 'admin@koreaquest.com';
+                              _password.text = 'KoreaQuestAdmin2026!';
+                            },
+                      child: const Text(
+                        'Dùng nhanh: admin@koreaquest.com',
+                      ),
+                    ),
                   ],
                 ],
               ),
