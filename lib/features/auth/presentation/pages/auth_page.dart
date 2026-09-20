@@ -98,15 +98,12 @@ class _AuthPageState extends ConsumerState<AuthPage> {
           context.go('/home');
         }
       } else {
-        // Login mode
-        if (identity.toLowerCase() == 'admin' && password == 'admin123') {
-          ref.read(adminDemoOverrideProvider.notifier).enable();
+        // Login mode — nếu là email admin thì đăng nhập qua Supabase Admin
+        final isAdminEmail = identity.toLowerCase() == 'admin@koreaquest.com';
+        if (isAdminEmail) {
           await ref
               .read(adminRepositoryProvider)
-              .signIn(email: 'admin', password: 'admin123');
-          await ref
-              .read(authRepositoryProvider)
-              .signIn(identity: 'admin', password: 'admin123');
+              .signIn(email: identity, password: password);
           ref.invalidate(adminAccessProvider);
           ref.invalidate(adminLocationsProvider);
           if (mounted) {
@@ -135,22 +132,20 @@ class _AuthPageState extends ConsumerState<AuthPage> {
   }
 
   Future<void> _quickLoginAdmin() async {
-    _identityController.text = 'admin';
-    _passwordController.text = 'admin123';
+    const email = 'admin@koreaquest.com';
+    const password = 'KoreaQuestAdmin2026!';
+    _identityController.text = email;
+    _passwordController.text = password;
     setState(() => _isLoading = true);
 
     try {
-      ref.read(adminDemoOverrideProvider.notifier).enable();
       await ref
           .read(adminRepositoryProvider)
-          .signIn(email: 'admin', password: 'admin123');
-      await ref
-          .read(authRepositoryProvider)
-          .signIn(identity: 'admin', password: 'admin123');
+          .signIn(email: email, password: password);
       ref.invalidate(adminAccessProvider);
       ref.invalidate(adminLocationsProvider);
       if (mounted) {
-        AppToast.show(context, 'Đăng nhập nhanh Quản trị viên thành công.');
+        AppToast.show(context, 'Đăng nhập Quản trị viên thành công.');
         context.go('/admin');
       }
     } catch (error) {
@@ -400,11 +395,11 @@ class _QuickDemoSection extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
 
-          // Admin demo button
+          // Admin button — dùng tài khoản thật Supabase
           _DemoAccountTile(
             roleLabel: 'Admin',
             roleColor: AppColors.coral,
-            identity: 'admin / admin123',
+            identity: 'admin@koreaquest.com',
             description: 'Trang quản trị & duyệt địa điểm (/admin)',
             icon: Icons.admin_panel_settings_rounded,
             isLoading: isLoading,
