@@ -36,6 +36,8 @@ migrate_working_dir/
 *.jks
 *.keystore
 key.properties
+.env
+.env.*
 
 # Symbolication related
 app.*.symbols

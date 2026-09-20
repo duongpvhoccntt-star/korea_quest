@@ -50,7 +50,8 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
       name: 'Đảo Jeju',
       koreanName: '제주도',
       city: 'Jeju',
-      description: 'Thiên nhiên, truyền thuyết và những người phụ nữ biển.',
+      description:
+          'Thiên nhiên hùng vĩ, truyền thuyết Haenyeo và ngọn núi lửa Hallasan huyền bí.',
       status: LocationStatus.locked,
       rewardXp: 600,
     ),
@@ -114,29 +115,103 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
       );
 
   @override
-  Future<List<Mission>> getMissions(String locationId) async => const [
-    Mission(
-      id: 'check-in',
-      title: 'Check-in & lịch sử',
-      stage: JourneyStage.checkIn,
-      status: MissionStatus.completed,
-      rewardXp: 100,
-    ),
-    Mission(
-      id: 'culture',
-      title: 'Khám phá văn hóa',
-      stage: JourneyStage.culture,
-      status: MissionStatus.inProgress,
-      rewardXp: 150,
-    ),
-    Mission(
-      id: 'vocabulary',
-      title: 'Từ vựng tại chỗ',
-      stage: JourneyStage.vocabulary,
-      status: MissionStatus.locked,
-      rewardXp: 200,
-    ),
-  ];
+  Future<List<Mission>> getMissions(String locationId) async {
+    if (locationId == 'jeju') {
+      return const [
+        // ── Check-in ──────────────────────────────────────────────────────────
+        Mission(
+          id: 'jeju-checkin-1',
+          title: 'Đặt chân lên đảo Jeju',
+          stage: JourneyStage.checkIn,
+          status: MissionStatus.notStarted,
+          rewardXp: 80,
+        ),
+        Mission(
+          id: 'jeju-checkin-2',
+          title: 'Tìm hiểu núi lửa Hallasan (한라산)',
+          stage: JourneyStage.checkIn,
+          status: MissionStatus.notStarted,
+          rewardXp: 100,
+        ),
+        Mission(
+          id: 'jeju-checkin-3',
+          title: 'Khám phá hệ thống dung nham Manjanggul',
+          stage: JourneyStage.checkIn,
+          status: MissionStatus.locked,
+          rewardXp: 90,
+        ),
+        // ── Văn hóa ──────────────────────────────────────────────────────────
+        Mission(
+          id: 'jeju-culture-1',
+          title: 'Haenyeo — Người phụ nữ biển (해녀)',
+          stage: JourneyStage.culture,
+          status: MissionStatus.locked,
+          rewardXp: 130,
+        ),
+        Mission(
+          id: 'jeju-culture-2',
+          title: 'Dol Hareubang — Ông đá thần (돌하르방)',
+          stage: JourneyStage.culture,
+          status: MissionStatus.locked,
+          rewardXp: 110,
+        ),
+        Mission(
+          id: 'jeju-culture-3',
+          title: 'Lễ hội Jeju & nghề làm muối truyền thống',
+          stage: JourneyStage.culture,
+          status: MissionStatus.locked,
+          rewardXp: 120,
+        ),
+        // ── Từ vựng ──────────────────────────────────────────────────────────
+        Mission(
+          id: 'jeju-vocab-1',
+          title: '바다 (Biển) & 섬 (Đảo) — Từ vựng thiên nhiên',
+          stage: JourneyStage.vocabulary,
+          status: MissionStatus.locked,
+          rewardXp: 150,
+        ),
+        Mission(
+          id: 'jeju-vocab-2',
+          title: '감귤 (Quýt) & 흑돼지 (Heo đen) — Đặc sản Jeju',
+          stage: JourneyStage.vocabulary,
+          status: MissionStatus.locked,
+          rewardXp: 160,
+        ),
+        Mission(
+          id: 'jeju-vocab-3',
+          title: 'Từ vựng phương ngữ Jeju (제주어)',
+          stage: JourneyStage.vocabulary,
+          status: MissionStatus.locked,
+          rewardXp: 180,
+        ),
+      ];
+    }
+
+    // Missions mặc định cho các địa điểm khác
+    return const [
+      Mission(
+        id: 'check-in',
+        title: 'Check-in & lịch sử',
+        stage: JourneyStage.checkIn,
+        status: MissionStatus.completed,
+        rewardXp: 100,
+      ),
+      Mission(
+        id: 'culture',
+        title: 'Khám phá văn hóa',
+        stage: JourneyStage.culture,
+        status: MissionStatus.inProgress,
+        rewardXp: 150,
+      ),
+      Mission(
+        id: 'vocabulary',
+        title: 'Từ vựng tại chỗ',
+        stage: JourneyStage.vocabulary,
+        status: MissionStatus.locked,
+        rewardXp: 200,
+      ),
+    ];
+  }
 
   @override
   Future<List<Achievement>> getAchievements() async => achievements;

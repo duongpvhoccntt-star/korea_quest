@@ -1,11 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:korea_quest/app/app_config.dart';
 import 'package:korea_quest/shared/models/domain_models.dart';
 import 'package:korea_quest/shared/repositories/korea_quest_repository.dart';
 import 'package:korea_quest/shared/repositories/mock_korea_quest_repository.dart';
+import 'package:korea_quest/shared/repositories/supabase_korea_quest_repository.dart';
 
-final koreaQuestRepositoryProvider = Provider<KoreaQuestRepository>(
-  (ref) => MockKoreaQuestRepository(),
-);
+final koreaQuestRepositoryProvider = Provider<KoreaQuestRepository>((ref) {
+  if (AppConfig.hasSupabaseConfiguration) {
+    return SupabaseKoreaQuestRepository();
+  }
+  return MockKoreaQuestRepository();
+});
 
 final currentUserProvider = FutureProvider<AppUser>(
   (ref) => ref.watch(koreaQuestRepositoryProvider).getCurrentUser(),
