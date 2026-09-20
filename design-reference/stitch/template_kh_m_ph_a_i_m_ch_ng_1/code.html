@@ -1,0 +1,318 @@
+<!DOCTYPE html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>KoreaQuest - Location Experience</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&amp;family=Noto+Sans+KR:wght@500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#d9e2ff",
+                        "text-secondary": "#667085",
+                        "on-primary-fixed-variant": "#7d2648",
+                        "tertiary-fixed": "#acf1d1",
+                        "surface-dim": "#d0d9f9",
+                        "surface-container": "#e9edff",
+                        "surface-container-low": "#f2f3ff",
+                        "on-tertiary-container": "#004e38",
+                        "korean-blue": "#5876D8",
+                        "outline-variant": "#d9c0c6",
+                        "inverse-on-surface": "#edf0ff",
+                        "on-surface": "#111b32",
+                        "korean-red": "#EF646B",
+                        "primary-fixed-dim": "#ffb1c7",
+                        "on-background": "#111b32",
+                        "primary-container": "#ff8fb3",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#002115",
+                        "on-primary-fixed": "#3e001c",
+                        "sky-light": "#DDF4FF",
+                        "tertiary": "#266a51",
+                        "success-green": "#63C59A",
+                        "secondary-fixed": "#c4e7ff",
+                        "on-primary-container": "#792445",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#9b3e60",
+                        "surface-container-highest": "#d9e2ff",
+                        "on-secondary-container": "#005777",
+                        "tertiary-container": "#7cbfa2",
+                        "primary": "#9b3e60",
+                        "tertiary-fixed-dim": "#91d4b6",
+                        "page-bg": "#FFF8F1",
+                        "inverse-surface": "#263048",
+                        "on-secondary-fixed": "#001e2c",
+                        "outline": "#877277",
+                        "on-surface-variant": "#544247",
+                        "secondary-fixed-dim": "#7dd0ff",
+                        "primary-fixed": "#ffd9e2",
+                        "border-soft": "#E8E2DB",
+                        "surface-bright": "#faf8ff",
+                        "surface-container-high": "#e1e8ff",
+                        "on-secondary": "#ffffff",
+                        "butter-yellow": "#FFD96A",
+                        "secondary": "#00658b",
+                        "on-tertiary-fixed-variant": "#01513a",
+                        "locked-gray": "#BBC1CC",
+                        "background": "#faf8ff",
+                        "error-container": "#ffdad6",
+                        "pale-pink": "#FFDCE8",
+                        "error": "#ba1a1a",
+                        "secondary-container": "#77cdfd",
+                        "inverse-primary": "#ffb1c7",
+                        "surface": "#FFFFFF",
+                        "on-secondary-fixed-variant": "#004c69",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "2xl": "1.5rem",
+                        "3xl": "2rem"
+                    },
+                    "spacing": {
+                        "margin-desktop": "40px",
+                        "container-padding": "24px",
+                        "gutter": "16px",
+                        "unit": "8px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "body-main": ["Be Vietnam Pro"],
+                        "label-bold": ["Be Vietnam Pro"],
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "title-md": ["Be Vietnam Pro"],
+                        "display-hero": ["Be Vietnam Pro"],
+                        "korean-sub": ["Noto Sans KR"],
+                        "headline-lg-mobile": ["Be Vietnam Pro"],
+                        "caption": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "body-main": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-bold": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "title-md": ["20px", { "lineHeight": "1.4", "fontWeight": "700" }],
+                        "display-hero": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "korean-sub": ["18px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "caption": ["12px", { "lineHeight": "1.4", "fontWeight": "500" }]
+                    },
+                    boxShadow: {
+                        'level-1': '0 2px 4px rgba(40, 50, 74, 0.04)',
+                        'level-2': '0 8px 24px rgba(40, 50, 74, 0.08)',
+                        'level-3': '0 16px 48px rgba(40, 50, 74, 0.12)',
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.page-bg'); }
+        .bg-stamp-pattern {
+            background-image: radial-gradient(circle, theme('colors.outline-variant') 1px, transparent 1px);
+            background-size: 16px 16px;
+        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .dotted-path {
+            background-image: linear-gradient(to right, theme('colors.primary') 50%, transparent 50%);
+            background-size: 16px 2px;
+            background-repeat: repeat-x;
+        }
+        .postcard-edge {
+            background-image: radial-gradient(circle at 0 50%, transparent 8px, theme('colors.surface') 9px);
+            background-size: 100% 24px;
+            background-position: 0 0;
+            background-repeat: repeat-y;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-on-surface font-body-main antialiased relative">
+<!-- Header -->
+<header class="sticky top-0 z-50 bg-surface/80 backdrop-blur-md shadow-sm border-b border-border-soft">
+<div class="max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop h-16 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-surface-variant transition-colors group flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">arrow_back</span>
+</button>
+<div>
+<h1 class="font-title-md text-title-md text-on-surface">{{LOCATION_NAME}}</h1>
+<p class="font-caption text-caption text-text-secondary">Chặng 1/9</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="hidden md:flex px-4 py-2 rounded-full bg-sky-light text-secondary font-label-bold text-label-bold items-center gap-2 hover:bg-secondary-fixed transition-colors">
+<span class="material-symbols-outlined text-[18px]">map</span>
+                    Bản đồ
+                </button>
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-label-bold text-caption shadow-level-1">
+                    U
+                </div>
+</div>
+</div>
+</header>
+<main class="max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop py-8 relative">
+<!-- Background Decor -->
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary-fixed rounded-full blur-3xl opacity-20 -z-10 pointer-events-none"></div>
+<div class="absolute bottom-20 left-10 w-96 h-96 bg-secondary-container rounded-full blur-3xl opacity-20 -z-10 pointer-events-none"></div>
+<!-- 9-Stage Stepper -->
+<section class="mb-12 relative">
+<div class="overflow-x-auto scrollbar-hide pb-4">
+<div class="min-w-max flex items-center relative px-4 pt-4">
+<!-- The path line -->
+<div class="absolute top-1/2 left-8 right-8 h-[2px] dotted-path -translate-y-1/2 z-0"></div>
+<!-- Stages -->
+<div class="flex gap-12 z-10">
+<!-- Stage 1 (Active) -->
+<div class="flex flex-col items-center gap-2 relative">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-level-2 ring-4 ring-page-bg cursor-pointer transition-transform hover:scale-110">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+</div>
+<span class="font-label-bold text-caption text-primary whitespace-nowrap">Mở đầu</span>
+</div>
+<!-- Stage 2 -->
+<div class="flex flex-col items-center gap-2 relative">
+<div class="w-8 h-8 rounded-full bg-surface border-2 border-outline-variant text-text-secondary flex items-center justify-center shadow-level-1 ring-4 ring-page-bg cursor-pointer transition-colors hover:border-primary hover:text-primary">
+<span class="material-symbols-outlined text-[16px]">info</span>
+</div>
+<span class="font-caption text-caption text-text-secondary whitespace-nowrap">Tổng quan</span>
+</div>
+<!-- Stage 3 -->
+<div class="flex flex-col items-center gap-2 relative">
+<div class="w-8 h-8 rounded-full bg-surface border-2 border-outline-variant text-text-secondary flex items-center justify-center shadow-level-1 ring-4 ring-page-bg cursor-pointer transition-colors hover:border-primary hover:text-primary">
+<span class="material-symbols-outlined text-[16px]">history_edu</span>
+</div>
+<span class="font-caption text-caption text-text-secondary whitespace-nowrap">Lịch sử</span>
+</div>
+<!-- Stage 4 -->
+<div class="flex flex-col items-center gap-2 relative">
+<div class="w-8 h-8 rounded-full bg-surface border-2 border-outline-variant text-text-secondary flex items-center justify-center shadow-level-1 ring-4 ring-page-bg cursor-pointer transition-colors hover:border-primary hover:text-primary">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+</div>
+<span class="font-caption text-caption text-text-secondary whitespace-nowrap">Điểm đến</span>
+</div>
+<!-- Stage 5 -->
+<div class="flex flex-col items-center gap-2 relative">
+<div class="w-8 h-8 rounded-full bg-surface border-2 border-outline-variant text-text-secondary flex items-center justify-center shadow-level-1 ring-4 ring-page-bg cursor-pointer transition-colors hover:border-primary hover:text-primary">
+<span class="material-symbols-outlined text-[16px]">celebration</span>
+</div>
+<span class="font-caption text-caption text-text-secondary whitespace-nowrap">Trải nghiệm</span>
+</div>
+<!-- Stage 6 -->
+<div class="flex flex-col items-center gap-2 relative">
+<div class="w-8 h-8 rounded-full bg-surface border-2 border-outline-variant text-text-secondary flex items-center justify-center shadow-level-1 ring-4 ring-page-bg cursor-pointer transition-colors hover:border-primary hover:text-primary">
+<span class="material-symbols-outlined text-[16px]">restaurant</span>
+</div>
+<span class="font-caption text-caption text-text-secondary whitespace-nowrap">Ẩm thực</span>
+</div>
+<!-- Stage 7 -->
+<div class="flex flex-col items-center gap-2 relative">
+<div class="w-8 h-8 rounded-full bg-surface border-2 border-outline-variant text-text-secondary flex items-center justify-center shadow-level-1 ring-4 ring-page-bg cursor-pointer transition-colors hover:border-primary hover:text-primary">
+<span class="material-symbols-outlined text-[16px]">lightbulb</span>
+</div>
+<span class="font-caption text-caption text-text-secondary whitespace-nowrap">Fun Facts</span>
+</div>
+<!-- Stage 8 -->
+<div class="flex flex-col items-center gap-2 relative">
+<div class="w-8 h-8 rounded-full bg-surface border-2 border-outline-variant text-text-secondary flex items-center justify-center shadow-level-1 ring-4 ring-page-bg cursor-pointer transition-colors hover:border-primary hover:text-primary">
+<span class="material-symbols-outlined text-[16px]">quiz</span>
+</div>
+<span class="font-caption text-caption text-text-secondary whitespace-nowrap">Quiz</span>
+</div>
+<!-- Stage 9 -->
+<div class="flex flex-col items-center gap-2 relative">
+<div class="w-8 h-8 rounded-full bg-surface border-2 border-outline-variant text-text-secondary flex items-center justify-center shadow-level-1 ring-4 ring-page-bg cursor-pointer transition-colors hover:border-primary hover:text-primary">
+<span class="material-symbols-outlined text-[16px]">flight_takeoff</span>
+</div>
+<span class="font-caption text-caption text-text-secondary whitespace-nowrap">Du lịch</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Left Column: Hero Video/Image (Cols 1-7) -->
+<div class="lg:col-span-8 order-2 lg:order-1">
+<div class="relative bg-surface rounded-3xl p-4 shadow-level-2 overflow-hidden group">
+<div class="relative w-full aspect-video rounded-2xl overflow-hidden mb-6">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A cinematic, high-quality photograph of a famous tourist destination in South Korea during a vibrant spring day. Cherry blossom petals gently fall in the soft, warm light. The scene is bright and cheerful, perfectly matching a modern travel journal aesthetic with pastel hues and high-key lighting. The composition feels inviting and immersive." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8qAQASHBRHZmfJBrcZssMmSJmdRUd7qM3Xx1WkhLditZvoypHJFsbLUc5HbVYVr3-jJapl5VfgSNT84u8Ow7dyOpvMcEr4CxTLpNuZbt7FQPRhSlGRRLncPQ9yFg_xHIMjl-SwWn53aZalf0tuX8LJtcp_MDY0GsXGPNfU1-1eXdgsqiSSA69HDR3JHnYzE3wuA0-rd776QURpNgxiq-5N7xmChZAj0sUqjHJNSbUoEd-2uRt-y3h">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0"></div>
+<div class="absolute bottom-6 left-6 right-6 flex justify-between items-end">
+<div>
+<h2 class="font-display-hero text-headline-lg md:text-display-hero text-on-primary mb-2 drop-shadow-md">{{LOCATION_NAME}}</h2>
+<p class="font-korean-sub text-title-md text-pale-pink drop-shadow-md">[Tagline ngắn về địa điểm]</p>
+</div>
+<button class="w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-lg hover:bg-surface-tint transition-colors hover:scale-105">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+</div>
+<div class="px-container-padding pb-4">
+<p class="font-body-main text-body-main text-text-secondary mb-8 leading-relaxed">
+                            Chào mừng bạn đến với {{LOCATION_NAME}}, nơi giao thoa giữa nét đẹp truyền thống và nhịp sống hiện đại. Hãy cùng chúng tôi bắt đầu hành trình khám phá những điều thú vị nhất tại đây qua 9 chặng trải nghiệm độc đáo được thiết kế riêng cho bạn.
+                        </p>
+<div class="flex justify-end">
+<button class="px-8 py-3 rounded-full bg-primary text-on-primary font-label-bold text-label-bold flex items-center gap-2 hover:bg-surface-tint transition-all shadow-level-2 hover:-translate-y-1">
+                                Bắt đầu khám phá
+                                <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Decorative Elements -->
+<div class="absolute top-8 right-8 opacity-20 pointer-events-none mix-blend-multiply">
+<span class="material-symbols-outlined text-[64px] text-primary" style="font-variation-settings: 'FILL' 1;">local_florist</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Info Card (Cols 8-12) -->
+<div class="lg:col-span-4 order-1 lg:order-2 sticky top-24">
+<div class="bg-surface rounded-2xl shadow-level-2 relative overflow-hidden flex flex-row">
+<!-- Perforated edge for postcard look -->
+<div class="w-4 h-full postcard-edge absolute left-0 top-0"></div>
+<div class="p-container-padding pl-8 w-full">
+<!-- Top decorative stamp -->
+<div class="absolute top-4 right-4 w-12 h-12 border-2 border-primary-container rounded-full flex items-center justify-center opacity-50 rotate-12">
+<span class="material-symbols-outlined text-primary-container text-[24px]">styler</span>
+</div>
+<div class="mb-6 border-b border-border-soft pb-6">
+<span class="inline-block px-3 py-1 bg-sky-light text-secondary font-label-bold text-[10px] uppercase rounded-full mb-3 tracking-wider">{{LOCATION_REGION}}</span>
+<h3 class="font-title-md text-title-md text-on-surface mb-1">{{LOCATION_NAME}}</h3>
+<p class="font-korean-sub text-caption text-text-secondary">{{LOCATION_TYPE}}</p>
+</div>
+<div class="space-y-4 font-body-main text-[14px] text-text-secondary leading-relaxed">
+<p>
+                                [Mô tả ngắn gọn về địa điểm, nêu bật điểm đặc trưng nhất, ví dụ: là trung tâm văn hóa, thủ đô lịch sử, hoặc cảnh quan thiên nhiên hùng vĩ.]
+                            </p>
+<div class="bg-surface-container-low p-4 rounded-xl flex gap-3 items-start">
+<span class="material-symbols-outlined text-tertiary mt-1">lightbulb</span>
+<p class="text-[13px] text-on-surface-variant">
+<span class="font-label-bold text-on-surface">Mẹo nhỏ:</span> Hãy hoàn thành các chặng để thu thập đủ bộ sưu tập tem bưu chính độc quyền của vùng này nhé!
+                                </p>
+</div>
+</div>
+<!-- Mini map preview placeholder -->
+<div class="mt-6 w-full h-32 bg-surface-container rounded-xl overflow-hidden relative border border-border-soft">
+<div class="absolute inset-0 bg-stamp-pattern opacity-10"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-text-secondary opacity-30 text-[48px]">map</span>
+</div>
+<!-- Simulated pin -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+<span class="material-symbols-outlined text-korean-red" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

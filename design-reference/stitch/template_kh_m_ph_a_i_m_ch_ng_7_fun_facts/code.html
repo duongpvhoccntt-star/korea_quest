@@ -1,0 +1,409 @@
+<!DOCTYPE html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>KoreaQuest - Fun Facts (Chặng 7)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&amp;family=Noto+Sans+KR:wght@500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-primary-container": "#792445",
+                    "on-secondary-fixed-variant": "#004c69",
+                    "on-surface-variant": "#544247",
+                    "surface-bright": "#faf8ff",
+                    "primary-container": "#ff8fb3",
+                    "on-secondary-fixed": "#001e2c",
+                    "border-soft": "#E8E2DB",
+                    "on-tertiary-fixed": "#002115",
+                    "on-tertiary-fixed-variant": "#01513a",
+                    "surface-variant": "#d9e2ff",
+                    "tertiary-fixed-dim": "#91d4b6",
+                    "background": "#faf8ff",
+                    "outline-variant": "#d9c0c6",
+                    "surface": "#FFFFFF",
+                    "primary-fixed": "#ffd9e2",
+                    "secondary-container": "#77cdfd",
+                    "page-bg": "#FFF8F1",
+                    "primary-fixed-dim": "#ffb1c7",
+                    "secondary-fixed": "#c4e7ff",
+                    "locked-gray": "#BBC1CC",
+                    "surface-tint": "#9b3e60",
+                    "primary": "#9b3e60",
+                    "outline": "#877277",
+                    "on-tertiary-container": "#004e38",
+                    "surface-container-low": "#f2f3ff",
+                    "butter-yellow": "#FFD96A",
+                    "sky-light": "#DDF4FF",
+                    "surface-container": "#e9edff",
+                    "on-secondary-container": "#005777",
+                    "secondary-fixed-dim": "#7dd0ff",
+                    "on-primary-fixed": "#3e001c",
+                    "korean-blue": "#5876D8",
+                    "surface-container-highest": "#d9e2ff",
+                    "surface-dim": "#d0d9f9",
+                    "inverse-on-surface": "#edf0ff",
+                    "tertiary-fixed": "#acf1d1",
+                    "text-secondary": "#667085",
+                    "inverse-surface": "#263048",
+                    "tertiary-container": "#7cbfa2",
+                    "inverse-primary": "#ffb1c7",
+                    "on-error": "#ffffff",
+                    "korean-red": "#EF646B",
+                    "on-surface": "#111b32",
+                    "surface-container-high": "#e1e8ff",
+                    "on-background": "#111b32",
+                    "on-error-container": "#93000a",
+                    "on-secondary": "#ffffff",
+                    "pale-pink": "#FFDCE8",
+                    "secondary": "#00658b",
+                    "on-primary": "#ffffff",
+                    "on-primary-fixed-variant": "#7d2648",
+                    "tertiary": "#266a51",
+                    "on-tertiary": "#ffffff",
+                    "success-green": "#63C59A",
+                    "error-container": "#ffdad6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "gutter": "16px",
+                    "unit": "8px",
+                    "container-padding": "24px"
+            },
+            "fontFamily": {
+                    "display-hero": [
+                            "Be Vietnam Pro"
+                    ],
+                    "body-main": [
+                            "Be Vietnam Pro"
+                    ],
+                    "title-md": [
+                            "Be Vietnam Pro"
+                    ],
+                    "label-bold": [
+                            "Be Vietnam Pro"
+                    ],
+                    "korean-sub": [
+                            "Noto Sans KR"
+                    ],
+                    "headline-lg": [
+                            "Be Vietnam Pro"
+                    ],
+                    "headline-lg-mobile": [
+                            "Be Vietnam Pro"
+                    ],
+                    "caption": [
+                            "Be Vietnam Pro"
+                    ]
+            },
+            "fontSize": {
+                    "display-hero": [
+                            "48px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "800"
+                            }
+                    ],
+                    "body-main": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "title-md": [
+                            "20px",
+                            {
+                                    "lineHeight": "1.4",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "label-bold": [
+                            "14px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "korean-sub": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.4",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.3",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-lg-mobile": [
+                            "28px",
+                            {
+                                    "lineHeight": "1.3",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "caption": [
+                            "12px",
+                            {
+                                    "lineHeight": "1.4",
+                                    "fontWeight": "500"
+                            }
+                    ]
+            }
+        },
+        },
+      }
+    </script>
+<style>
+        .card-shadow {
+            box-shadow: 0 8px 24px rgba(40, 50, 74, 0.08);
+        }
+        .stamp-rotate-1 { transform: rotate(-5deg); }
+        .stamp-rotate-2 { transform: rotate(8deg); }
+        .stamp-rotate-3 { transform: rotate(-3deg); }
+        
+        .paper-texture {
+            background-image: url('data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noise"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100" height="100" filter="url(%23noise)" opacity="0.05"/%3E%3C/svg%3E');
+        }
+    </style>
+</head>
+<body class="bg-page-bg font-body-main text-on-surface antialiased min-h-screen flex flex-col paper-texture">
+<!-- Header (Shared Component) -->
+<header class="bg-surface sticky top-0 z-50 border-b border-border-soft shadow-sm">
+  <div class="max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container transition-colors text-on-surface" title="Quay lại">
+        <span class="material-symbols-outlined text-2xl">arrow_back</span>
+      </button>
+      <div>
+        <h1 class="font-bold text-title-md text-on-surface leading-tight">{{LOCATION_NAME}}</h1>
+        <p class="text-caption text-text-secondary">Chặng 7/9</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <a href="#" class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-border-soft bg-surface hover:bg-surface-container text-body-main font-medium text-on-surface text-sm transition-colors shadow-sm">
+        <span class="material-symbols-outlined text-lg text-primary">map</span>
+        <span class="">Bản đồ</span>
+      </a>
+      <div class="w-9 h-9 rounded-full bg-primary-container text-on-primary-container font-bold flex items-center justify-center text-sm shadow-sm">
+        U
+      </div>
+    </div>
+  </div>
+  <nav class="border-t border-border-soft bg-surface py-3 overflow-x-auto">
+    <div class="max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop flex items-center justify-between min-w-[760px]">
+      <!-- Step 1: Mở đầu (Completed) -->
+      <div class="flex flex-col items-center group cursor-pointer">
+        <div class="w-9 h-9 rounded-full bg-success-green text-white flex items-center justify-center font-bold text-sm shadow-sm">
+          <span class="material-symbols-outlined text-base">check</span>
+        </div>
+        <span class="text-xs mt-1.5 font-medium text-text-secondary whitespace-nowrap">1. Mở đầu</span>
+      </div>
+      <div class="h-[2px] flex-1 bg-success-green mx-2 mb-5"></div>
+
+      <!-- Step 2: Tổng quan (Completed) -->
+      <div class="flex flex-col items-center group cursor-pointer">
+        <div class="w-9 h-9 rounded-full bg-success-green text-white flex items-center justify-center font-bold text-sm shadow-sm">
+          <span class="material-symbols-outlined text-base">check</span>
+        </div>
+        <span class="text-xs mt-1.5 font-medium text-text-secondary whitespace-nowrap">2. Tổng quan</span>
+      </div>
+      <div class="h-[2px] flex-1 bg-success-green mx-2 mb-5"></div>
+
+      <!-- Step 3: Lịch sử (Completed) -->
+      <div class="flex flex-col items-center group cursor-pointer">
+        <div class="w-9 h-9 rounded-full bg-success-green text-white flex items-center justify-center font-bold text-sm shadow-sm">
+          <span class="material-symbols-outlined text-base">check</span>
+        </div>
+        <span class="text-xs mt-1.5 font-medium text-text-secondary whitespace-nowrap">3. Lịch sử</span>
+      </div>
+      <div class="h-[2px] flex-1 bg-success-green mx-2 mb-5"></div>
+
+      <!-- Step 4: Điểm đến (Completed) -->
+      <div class="flex flex-col items-center group cursor-pointer">
+        <div class="w-9 h-9 rounded-full bg-success-green text-white flex items-center justify-center font-bold text-sm shadow-sm">
+          <span class="material-symbols-outlined text-base">check</span>
+        </div>
+        <span class="text-xs mt-1.5 font-medium text-text-secondary whitespace-nowrap">4. Điểm đến</span>
+      </div>
+      <div class="h-[2px] flex-1 bg-success-green mx-2 mb-5"></div>
+
+      <!-- Step 5: Trải nghiệm (Completed) -->
+      <div class="flex flex-col items-center group cursor-pointer">
+        <div class="w-9 h-9 rounded-full bg-success-green text-white flex items-center justify-center font-bold text-sm shadow-sm">
+          <span class="material-symbols-outlined text-base">check</span>
+        </div>
+        <span class="text-xs mt-1.5 font-medium text-text-secondary whitespace-nowrap">5. Trải nghiệm</span>
+      </div>
+      <div class="h-[2px] flex-1 bg-success-green mx-2 mb-5"></div>
+
+      <!-- Step 6: Ẩm thực (Completed) -->
+      <div class="flex flex-col items-center group cursor-pointer">
+        <div class="w-9 h-9 rounded-full bg-success-green text-white flex items-center justify-center font-bold text-sm shadow-sm">
+          <span class="material-symbols-outlined text-base">check</span>
+        </div>
+        <span class="text-xs mt-1.5 font-medium text-text-secondary whitespace-nowrap">6. Ẩm thực</span>
+      </div>
+      <div class="h-[2px] flex-1 bg-success-green mx-2 mb-5"></div>
+
+      <!-- Step 7: Fun Facts (Active) -->
+      <div class="flex flex-col items-center">
+        <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm shadow-sm">
+          7
+        </div>
+        <span class="text-xs mt-1.5 font-bold text-primary whitespace-nowrap">7. Fun Facts</span>
+      </div>
+      <div class="h-[2px] flex-1 bg-border-soft mx-2 mb-5"></div>
+
+      <!-- Step 8: Quiz (Upcoming) -->
+      <div class="flex flex-col items-center opacity-50 cursor-not-allowed">
+        <div class="w-9 h-9 rounded-full bg-surface-container text-text-secondary flex items-center justify-center font-bold text-sm">
+          8
+        </div>
+        <span class="text-xs mt-1.5 font-medium text-text-secondary whitespace-nowrap">8. Quiz</span>
+      </div>
+      <div class="h-[2px] flex-1 bg-border-soft mx-2 mb-5"></div>
+
+      <!-- Step 9: Du lịch (Upcoming) -->
+      <div class="flex flex-col items-center opacity-50 cursor-not-allowed">
+        <div class="w-9 h-9 rounded-full bg-surface-container text-text-secondary flex items-center justify-center font-bold text-sm">
+          9
+        </div>
+        <span class="text-xs mt-1.5 font-medium text-text-secondary whitespace-nowrap">9. Du lịch</span>
+      </div>
+    </div>
+  </nav>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop py-12">
+<!-- Journey Header -->
+<div class="text-center mb-12">
+<span class="inline-block px-4 py-1 bg-primary-container text-on-primary-container rounded-full font-label-bold text-label-bold mb-4">Chặng 7</span>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-2">Bạn có biết?</h1>
+<p class="text-text-secondary">Khám phá những sự thật thú vị về văn hóa Hàn Quốc!</p>
+<!-- Progress Indicator -->
+<div class="mt-6 flex flex-col items-center">
+<div class="flex items-center space-x-2 text-primary font-label-bold text-label-bold">
+<span class="material-symbols-outlined" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="">Đã mở 3/6 Fun Facts</span>
+</div>
+<div class="w-64 h-2 bg-surface-container rounded-full mt-2 overflow-hidden">
+<div class="h-full bg-success-green rounded-full w-1/2"></div>
+</div>
+</div>
+</div>
+<!-- Scrapbook Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-16">
+<!-- Fact Card 1 (Unlocked) -->
+<div class="bg-surface rounded-[24px] p-6 card-shadow relative overflow-hidden group transform hover:-translate-y-1 transition-transform duration-300">
+<!-- Decorative Stamp -->
+<div class="absolute top-4 right-4 text-primary opacity-20 stamp-rotate-1 group-hover:opacity-40 transition-opacity">
+<span class="material-symbols-outlined text-4xl" data-icon="local_post_office">local_post_office</span>
+</div>
+<div class="h-40 rounded-xl mb-4 bg-surface-container-low overflow-hidden relative">
+<img alt="Hanok" class="w-full h-full object-cover" data-alt="A brightly lit, aesthetic photo of a traditional Korean Hanok village (Bukchon Hanok Village) during spring. Cherry blossoms are in bloom, soft sunlight filters through the branches. The architecture is detailed and rich in warm wood tones and grey slate tiles. Cheerful, inviting mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwmcmUGphQr1d2a-TRDs5RonIfS57PdGAYe1lUpThLCUh7Z_knfjODrc3KQwSGYIBXldXZrQWGw_PUxopziGA5M_5oqlws_eId3Vg7yuXDf_k_9PFyLfpzFplXctUpZmPgtyn26oR5wEnhI8kWWZ1d88rqAIBjaBhWxGk6TwO8YWQiNzuMkFPMPWw8j4MMjjEda2pEZfw86LgkJNH5qUOHPaHhqIdXxNJ85BFQf4shaQ76hsOyfzfu">
+</div>
+<h3 class="font-title-md text-title-md text-on-surface mb-2">Kiến trúc Hanok</h3>
+<p class="font-body-main text-body-main text-text-secondary">Ngôi nhà truyền thống Hàn Quốc được thiết kế để duy trì sự cân bằng với thiên nhiên, mát mẻ vào mùa hè và ấm áp vào mùa đông nhờ hệ thống sưởi nền Ondol.</p>
+<div class="mt-4 flex items-center justify-between">
+<span class="text-xs text-primary font-label-bold bg-pale-pink px-2 py-1 rounded">Văn hóa</span>
+<button class="text-primary hover:text-surface-tint">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+</button>
+</div>
+</div>
+<!-- Fact Card 2 (Unlocked) -->
+<div class="bg-surface rounded-[24px] p-6 card-shadow relative overflow-hidden group transform hover:-translate-y-1 transition-transform duration-300">
+<div class="absolute top-4 right-4 text-secondary opacity-20 stamp-rotate-2 group-hover:opacity-40 transition-opacity">
+<span class="material-symbols-outlined text-4xl" data-icon="restaurant">restaurant</span>
+</div>
+<div class="h-40 rounded-xl mb-4 bg-surface-container-low overflow-hidden relative">
+<img alt="Bibimbap" class="w-full h-full object-cover" data-alt="A stylized, top-down shot of a vibrant Korean Bibimbap bowl. Colorful vegetables (carrots, spinach, bean sprouts), a fried egg, and gochujang sauce are arranged beautifully on top of white rice. Soft, natural lighting, warm and appetizing aesthetic, pastel background elements." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6Xm2NpV0vzGQtG0WJfExkR-WTAxEDCvOI_yCHxZ_jQfL3j7IwLOaJvn0Ei1MHHbB6e6PICFyF4WhmHpU_fsXpmcpgsdJefQUUuk1bmgav0LFfpUxiZ8BHrVjmQ44tW1eqgz5bUcIDYxAcMRgx_C_HwIcEUVFkAl_TlNnGFCyEf2LanCvy9HM8-5dGhGzH1IeUUY_-XQyp3OUr8ij4B1ywRcVwIPSjBHRRxK_-pF6k-9mzN50Pe30R">
+</div>
+<h3 class="font-title-md text-title-md text-on-surface mb-2">Ý nghĩa của Banchan</h3>
+<p class="font-body-main text-body-main text-text-secondary">Các món ăn phụ (banchan) không chỉ để ăn kèm mà còn thể hiện sự hiếu khách. Trong một bữa ăn truyền thống, số lượng banchan có thể lên tới 12 món!</p>
+<div class="mt-4 flex items-center justify-between">
+<span class="text-xs text-secondary font-label-bold bg-sky-light px-2 py-1 rounded">Ẩm thực</span>
+<button class="text-primary hover:text-surface-tint">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+</button>
+</div>
+</div>
+<!-- Fact Card 3 (Unlocked) -->
+<div class="bg-surface rounded-[24px] p-6 card-shadow relative overflow-hidden group transform hover:-translate-y-1 transition-transform duration-300">
+<div class="absolute top-4 right-4 text-success-green opacity-20 stamp-rotate-3 group-hover:opacity-40 transition-opacity">
+<span class="material-symbols-outlined text-4xl" data-icon="festival">festival</span>
+</div>
+<div class="h-40 rounded-xl mb-4 bg-surface-container-low overflow-hidden relative">
+<img alt="Hanbok" class="w-full h-full object-cover" data-alt="People wearing colorful traditional Korean Hanbok walking in a palace courtyard (Gyeongbokgung). Bright sunny day, the fabrics are vibrant with pinks, blues, and golds. The scene feels lively, cultural, and respectfully joyful. Soft pastel editing style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZcPaKeoC_ACfYUkHqOHgITUGF3U773m9gt1rAmXDmwBbN9X6hsd3NQyLd0_2n3ckPZg_urVznafU_Y7LVTKHqPnte_XzOTIm-n1_OUtt9MMekRwplOL8tIfAZZuYkEbN9INAmzoXdcBfsd4BrXeDZ-qnO4q9Jidg9m0zCqhrQIvMpj8JAuaAfKqfjZN-RUwZJ4p1kr8qERDWNXBFTUjgbVNGAvx6mdDtU-teI0Zicq_LBBvMZIJVe">
+</div>
+<h3 class="font-title-md text-title-md text-on-surface mb-2">Sắc màu Hanbok</h3>
+<p class="font-body-main text-body-main text-text-secondary">Màu sắc của Hanbok ngày xưa thường thể hiện tầng lớp xã hội và tình trạng hôn nhân. Ngày nay, mọi người mặc nó vào các dịp lễ tết để gìn giữ truyền thống.</p>
+<div class="mt-4 flex items-center justify-between">
+<span class="text-xs text-tertiary font-label-bold bg-tertiary-fixed px-2 py-1 rounded">Trang phục</span>
+<button class="text-primary hover:text-surface-tint">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+</button>
+</div>
+</div>
+<!-- Fact Card 4 (Locked) -->
+<div class="bg-surface/60 rounded-[24px] p-6 card-shadow relative overflow-hidden border border-border-soft flex flex-col justify-center items-center text-center h-full min-h-[300px]">
+<div class="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-locked-gray text-3xl" data-icon="lock">lock</span>
+</div>
+<h3 class="font-title-md text-title-md text-text-secondary mb-2">Thẻ chưa mở</h3>
+<p class="font-body-main text-body-main text-text-secondary/70">Hoàn thành nhiệm vụ tiếp theo trên bản đồ để mở khóa Fun Fact này!</p>
+<button class="mt-6 px-6 py-2 bg-primary text-white rounded-full font-label-bold text-label-bold hover:bg-surface-tint transition-colors">
+                    Khám phá ngay
+                </button>
+</div>
+<!-- Fact Card 5 (Locked) -->
+<div class="bg-surface/60 rounded-[24px] p-6 card-shadow relative overflow-hidden border border-border-soft flex flex-col justify-center items-center text-center h-full min-h-[300px]">
+<div class="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-locked-gray text-3xl" data-icon="lock">lock</span>
+</div>
+<h3 class="font-title-md text-title-md text-text-secondary mb-2">Thẻ chưa mở</h3>
+<p class="font-body-main text-body-main text-text-secondary/70">Hoàn thành nhiệm vụ tiếp theo trên bản đồ để mở khóa Fun Fact này!</p>
+</div>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="bg-surface-container dark:bg-surface-container-highest w-full py-container-padding mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop w-full mx-auto max-w-[1200px]">
+<div class="font-display-hero text-title-md text-primary mb-4 md:mb-0">
+                KoreaQuest
+            </div>
+<div class="flex space-x-6 mb-4 md:mb-0">
+<a class="text-on-surface-variant font-body-main text-caption hover:underline opacity-80 hover:opacity-100 transition-opacity" href="#">Về chúng tôi</a>
+<a class="text-on-surface-variant font-body-main text-caption hover:underline opacity-80 hover:opacity-100 transition-opacity" href="#">Điều khoản</a>
+<a class="text-on-surface-variant font-body-main text-caption hover:underline opacity-80 hover:opacity-100 transition-opacity" href="#">Liên hệ</a>
+</div>
+<div class="font-body-main text-caption text-text-secondary">
+                © 2024 KoreaQuest. Hành trình khám phá văn hóa Hàn Quốc.
+            </div>
+</div>
+</footer>
+
+
+
+
+</body></html>

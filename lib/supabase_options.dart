@@ -1,7 +1,7 @@
-/// Supabase Configuration for KoreaQuest
-class SupabaseOptions {
-  static const String url =
-      'https://rsswzbgqapvrutcqasqv.supabase.co'; // Replace with your Project URL if different
-  static const String anonKey =
-      'sb_publishable_1APzr_kEkP0euc7VyoD1MA_BExAqqVm'; // Replace with your Supabase anon/public key
+import 'package:korea_quest/app/app_config.dart';
+
+/// Compatibility wrapper. Configure values with Flutter `--dart-define` flags.
+abstract final class SupabaseOptions {
+  static const url = AppConfig.supabaseUrl;
+  static const anonKey = AppConfig.supabasePublishableKey;
 }

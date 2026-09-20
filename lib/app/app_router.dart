@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:korea_quest/design_system/components/app_structure.dart';
 import 'package:korea_quest/features/achievements/presentation/pages/achievements_page.dart';
+import 'package:korea_quest/features/admin/presentation/pages/admin_database_page.dart';
 import 'package:korea_quest/features/auth/presentation/pages/auth_page.dart';
 import 'package:korea_quest/features/explore/presentation/pages/explore_page.dart';
 import 'package:korea_quest/features/explore/presentation/pages/location_detail_page.dart';
@@ -35,6 +36,7 @@ abstract final class AppRouteNames {
   static const forbidden = 'forbidden';
   static const offline = 'offline';
   static const error = 'error';
+  static const admin = 'admin';
 }
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -64,6 +66,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: AppRouteNames.forgotPassword,
         builder: (context, state) =>
             const AuthPage(mode: AuthPageMode.forgotPassword),
+      ),
+      GoRoute(
+        path: '/admin',
+        name: AppRouteNames.admin,
+        builder: (context, state) => const AdminDatabasePage(),
       ),
       ShellRoute(
         builder: (context, state, child) => AppShell(child: child),

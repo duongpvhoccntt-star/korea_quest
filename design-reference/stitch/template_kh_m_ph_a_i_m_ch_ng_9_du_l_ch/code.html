@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Template Khám phá Địa điểm - Chặng 9: Thông tin Du lịch</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: '#FFF8F1',
+              pink: '#FF8FB3',
+              pinkLight: '#FFDCE8',
+              wine: '#8E3A59',
+              blue: '#79CFFF',
+              blueLight: '#DDF4FF',
+              mint: '#9FE3C4',
+              mintDark: '#63C59A',
+              yellow: '#FFD96A',
+              navy: '#28324A',
+              subtext: '#667085',
+              border: '#E8E2DB'
+            }
+          },
+          fontFamily: {
+            sans: ['"Be Vietnam Pro"', 'sans-serif'],
+            kr: ['"Noto Sans KR"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Be Vietnam Pro', sans-serif;
+      background-color: #FFF8F1;
+      color: #28324A;
+    }
+    .custom-dot-pattern {
+      background-image: radial-gradient(#E8E2DB 1.5px, transparent 1.5px);
+      background-size: 20px 20px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#FFF8F1] custom-dot-pattern">
+
+  <!-- TOP APP BAR / HEADER CHẶNG ĐỒNG NHẤT -->
+  <header class="bg-white/90 backdrop-blur-md border-b border-brand-border sticky top-0 z-40 px-6 py-3.5">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <button class="w-10 h-10 rounded-full border border-brand-border flex items-center justify-center text-brand-navy hover:bg-brand-bg transition-colors shadow-sm">
+          <i class="fa-solid fa-arrow-left text-base"></i>
+        </button>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-xl text-brand-navy tracking-tight">&#123;&#123;LOCATION_NAME&#125;&#125;</h1>
+            <span class="text-xs bg-brand-pinkLight text-brand-wine font-semibold px-2.5 py-0.5 rounded-full font-kr">&#123;&#123;LOCATION_NAME_KO&#125;&#125;</span>
+          </div>
+          <p class="text-xs font-medium text-brand-subtext flex items-center gap-2">
+            <span>Chặng 9/9</span>
+            <span class="inline-block w-1 h-1 rounded-full bg-brand-subtext"></span>
+            <span class="text-brand-wine font-semibold">Chặng cuối: Thông tin Du lịch Thực tế</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-blue/40 bg-brand-blueLight/50 text-brand-navy font-semibold text-sm hover:bg-brand-blueLight transition-colors shadow-sm">
+          <i class="fa-solid fa-map text-brand-blue"></i>
+          <span>Bản đồ</span>
+        </button>
+        <button class="w-10 h-10 rounded-full bg-brand-pink text-white font-bold flex items-center justify-center text-sm shadow-sm hover:opacity-90 transition-opacity">
+          U
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- STEPPER 9 CHẶNG ĐỒNG BỘ -->
+  <nav class="bg-white/70 border-b border-brand-border/80 px-4 py-4 shadow-sm">
+    <div class="max-w-5xl mx-auto">
+      <div class="flex items-center justify-between relative">
+        <!-- Connecting Line -->
+        <div class="absolute top-4 left-6 right-6 h-[2px] bg-brand-mintDark/40 -z-0"></div>
+
+        <!-- Chặng 1 -->
+        <div class="flex flex-col items-center gap-1.5 z-10 group cursor-pointer">
+          <div class="w-8 h-8 rounded-full bg-brand-mintDark text-white flex items-center justify-center text-xs font-bold shadow-sm ring-4 ring-white">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <span class="text-[11px] font-medium text-brand-subtext">1. Mở đầu</span>
+        </div>
+
+        <!-- Chặng 2 -->
+        <div class="flex flex-col items-center gap-1.5 z-10 group cursor-pointer">
+          <div class="w-8 h-8 rounded-full bg-brand-mintDark text-white flex items-center justify-center text-xs font-bold shadow-sm ring-4 ring-white">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <span class="text-[11px] font-medium text-brand-subtext">2. Tổng quan</span>
+        </div>
+
+        <!-- Chặng 3 -->
+        <div class="flex flex-col items-center gap-1.5 z-10 group cursor-pointer">
+          <div class="w-8 h-8 rounded-full bg-brand-mintDark text-white flex items-center justify-center text-xs font-bold shadow-sm ring-4 ring-white">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <span class="text-[11px] font-medium text-brand-subtext">3. Lịch sử</span>
+        </div>
+
+        <!-- Chặng 4 -->
+        <div class="flex flex-col items-center gap-1.5 z-10 group cursor-pointer">
+          <div class="w-8 h-8 rounded-full bg-brand-mintDark text-white flex items-center justify-center text-xs font-bold shadow-sm ring-4 ring-white">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <span class="text-[11px] font-medium text-brand-subtext">4. Điểm đến</span>
+        </div>
+
+        <!-- Chặng 5 -->
+        <div class="flex flex-col items-center gap-1.5 z-10 group cursor-pointer">
+          <div class="w-8 h-8 rounded-full bg-brand-mintDark text-white flex items-center justify-center text-xs font-bold shadow-sm ring-4 ring-white">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <span class="text-[11px] font-medium text-brand-subtext">5. Trải nghiệm</span>
+        </div>
+
+        <!-- Chặng 6 -->
+        <div class="flex flex-col items-center gap-1.5 z-10 group cursor-pointer">
+          <div class="w-8 h-8 rounded-full bg-brand-mintDark text-white flex items-center justify-center text-xs font-bold shadow-sm ring-4 ring-white">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <span class="text-[11px] font-medium text-brand-subtext">6. Ẩm thực</span>
+        </div>
+
+        <!-- Chặng 7 -->
+        <div class="flex flex-col items-center gap-1.5 z-10 group cursor-pointer">
+          <div class="w-8 h-8 rounded-full bg-brand-mintDark text-white flex items-center justify-center text-xs font-bold shadow-sm ring-4 ring-white">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <span class="text-[11px] font-medium text-brand-subtext">7. Fun Facts</span>
+        </div>
+
+        <!-- Chặng 8 -->
+        <div class="flex flex-col items-center gap-1.5 z-10 group cursor-pointer">
+          <div class="w-8 h-8 rounded-full bg-brand-mintDark text-white flex items-center justify-center text-xs font-bold shadow-sm ring-4 ring-white">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <span class="text-[11px] font-medium text-brand-subtext">8. Quiz</span>
+        </div>
+
+        <!-- Chặng 9 (ACTIVE) -->
+        <div class="flex flex-col items-center gap-1.5 z-10">
+          <div class="w-9 h-9 rounded-full bg-brand-wine text-white flex items-center justify-center text-sm font-bold shadow-md ring-4 ring-brand-pinkLight">
+            <i class="fa-solid fa-plane-departure text-xs"></i>
+          </div>
+          <span class="text-[11px] font-bold text-brand-wine">9. Du lịch</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-6 py-8">
+
+    <!-- HERO INTRO TITLE -->
+    <div class="text-center max-w-2xl mx-auto mb-8">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-pinkLight text-brand-wine text-xs font-bold uppercase tracking-wider mb-2">
+        <i class="fa-solid fa-compass"></i>
+        <span>Chặng 09/09</span>
+      </div>
+      <h2 class="text-3xl font-extrabold text-brand-navy tracking-tight mb-2">Thông tin Du lịch Thực tế</h2>
+      <p class="text-brand-subtext text-sm leading-relaxed">
+        Cẩm nang bỏ túi đầy đủ và tiện lợi nhất để chuẩn bị cho chuyến hành trình thực tế ghé thăm &#123;&#123;LOCATION_NAME&#125;&#125;.
+      </p>
+    </div>
+
+    <!-- QUICK SUMMARY 4-GRID CARDS -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <!-- Card 1: Giờ mở cửa -->
+      <div class="bg-white rounded-2xl p-5 border border-brand-border/70 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="w-10 h-10 rounded-xl bg-pink-50 text-brand-wine flex items-center justify-center mb-3">
+          <i class="fa-regular fa-clock text-lg"></i>
+        </div>
+        <span class="text-xs font-bold text-brand-wine uppercase tracking-wider">Giờ mở cửa</span>
+        <h3 class="font-bold text-brand-navy text-base mt-1 group-hover:text-brand-wine transition-colors">&#123;&#123;OPENING_HOURS&#125;&#125;</h3>
+        <p class="text-xs text-brand-subtext mt-1.5">[Giờ hoạt động tiêu chuẩn theo ngày thường và cuối tuần]</p>
+      </div>
+
+      <!-- Card 2: Giá vé -->
+      <div class="bg-white rounded-2xl p-5 border border-brand-border/70 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="w-10 h-10 rounded-xl bg-sky-50 text-brand-blue flex items-center justify-center mb-3">
+          <i class="fa-solid fa-ticket text-lg"></i>
+        </div>
+        <span class="text-xs font-bold text-sky-700 uppercase tracking-wider">Giá vé tham quan</span>
+        <h3 class="font-bold text-brand-navy text-base mt-1 group-hover:text-sky-700 transition-colors">&#123;&#123;TICKET_PRICE&#125;&#125;</h3>
+        <p class="text-xs text-brand-subtext mt-1.5">[Miễn phí / Giá vé người lớn, trẻ em & ưu đãi trang phục]</p>
+      </div>
+
+      <!-- Card 3: Thời gian gợi ý -->
+      <div class="bg-white rounded-2xl p-5 border border-brand-border/70 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-3">
+          <i class="fa-solid fa-hourglass-half text-lg"></i>
+        </div>
+        <span class="text-xs font-bold text-amber-700 uppercase tracking-wider">Thời gian trải nghiệm</span>
+        <h3 class="font-bold text-brand-navy text-base mt-1 group-hover:text-amber-700 transition-colors">&#123;&#123;SUGGESTED_DURATION&#125;&#125;</h3>
+        <p class="text-xs text-brand-subtext mt-1.5">[Khoảng 2 - 3 giờ để trải nghiệm trọn vẹn không gian]</p>
+      </div>
+
+      <!-- Card 4: Thời điểm đẹp nhất -->
+      <div class="bg-white rounded-2xl p-5 border border-brand-border/70 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-brand-mintDark flex items-center justify-center mb-3">
+          <i class="fa-solid fa-cloud-sun text-lg"></i>
+        </div>
+        <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider">Thời điểm lý tưởng</span>
+        <h3 class="font-bold text-brand-navy text-base mt-1 group-hover:text-emerald-700 transition-colors">&#123;&#123;BEST_TIME_TO_VISIT&#125;&#125;</h3>
+        <p class="text-xs text-brand-subtext mt-1.5">[Mùa xuân ngắm hoa nở hoặc buổi hoàng hôn lãng mạn]</p>
+      </div>
+    </div>
+
+    <!-- TWO COLUMNS SECTION -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+      
+      <!-- LEFT COLUMN: TRANSPORT & ACCESS (7 COLS) -->
+      <div class="lg:col-span-7 space-y-6">
+        
+        <!-- Cách di chuyển / Transport Routes -->
+        <div class="bg-white rounded-2xl p-6 border border-brand-border/80 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2.5">
+              <span class="w-8 h-8 rounded-lg bg-blue-50 text-brand-blue flex items-center justify-center text-sm">
+                <i class="fa-solid fa-route"></i>
+              </span>
+              <h3 class="font-bold text-brand-navy text-lg">Hướng dẫn Di chuyển</h3>
+            </div>
+            <span class="text-xs font-semibold px-2.5 py-1 bg-brand-bg rounded-lg text-brand-subtext border border-brand-border">
+              <i class="fa-solid fa-location-dot text-red-500 mr-1"></i>&#123;&#123;LOCATION_REGION&#125;&#125;
+            </span>
+          </div>
+
+          <!-- Transport options tabs / preview -->
+          <div class="space-y-3">
+            <!-- Tàu điện ngầm (Subway) -->
+            <div class="p-4 rounded-xl border border-brand-border/70 hover:border-brand-blue/50 bg-[#FCFDFE] transition-all">
+              <div class="flex items-start gap-3.5">
+                <div class="w-9 h-9 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center shrink-0 mt-0.5">
+                  <i class="fa-solid fa-train-subway"></i>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between">
+                    <h4 class="font-bold text-sm text-brand-navy">Tàu điện ngầm (Metro)</h4>
+                    <span class="text-[11px] font-semibold text-sky-700 bg-sky-50 px-2 py-0.5 rounded">Gợi ý tốt nhất</span>
+                  </div>
+                  <p class="text-xs text-brand-navy/90 mt-1">&#123;&#123;TRANSPORT_OPTIONS&#125;&#125;</p>
+                  <p class="text-[11px] text-brand-subtext mt-1">[Tên tuyến tàu, số line, tên ga xuất phát và cửa ra (Exit) thuận tiện nhất]</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Xe buýt (Bus) -->
+            <div class="p-4 rounded-xl border border-brand-border/70 hover:border-emerald-500/50 bg-[#FCFDFE] transition-all">
+              <div class="flex items-start gap-3.5">
+                <div class="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
+                  <i class="fa-solid fa-bus"></i>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between">
+                    <h4 class="font-bold text-sm text-brand-navy">Xe buýt công cộng</h4>
+                    <span class="text-[11px] font-medium text-brand-subtext">T-Money</span>
+                  </div>
+                  <p class="text-xs text-brand-navy/90 mt-1">[Tuyến xe buýt nội thành / xe buýt du lịch kết nối trực tiếp đến điểm dừng]</p>
+                  <p class="text-[11px] text-brand-subtext mt-1">[Thời gian chờ 5-10 phút/chuyến, quẹt thẻ tiện lợi]</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Taxi / Đi bộ -->
+            <div class="p-4 rounded-xl border border-brand-border/70 hover:border-amber-500/50 bg-[#FCFDFE] transition-all">
+              <div class="flex items-start gap-3.5">
+                <div class="w-9 h-9 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
+                  <i class="fa-solid fa-taxi"></i>
+                </div>
+                <div class="flex-1">
+                  <h4 class="font-bold text-sm text-brand-navy">Taxi & Đi bộ dạo mát</h4>
+                  <p class="text-xs text-brand-navy/90 mt-1">[Mẹo đón Kakao Taxi hoặc cung đường đi dạo bộ ngắm cảnh xung quanh]</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Khả năng tiếp cận / Accessibility -->
+        <div class="bg-white rounded-2xl p-6 border border-brand-border/80 shadow-sm">
+          <div class="flex items-center gap-2.5 mb-3">
+            <span class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-universal-access"></i>
+            </span>
+            <h3 class="font-bold text-brand-navy text-lg">Khả năng Tiếp cận & Tiện ích</h3>
+          </div>
+          <div class="bg-[#F8F9FD] p-4 rounded-xl border border-brand-border/60">
+            <p class="text-xs text-brand-navy leading-relaxed font-medium">&#123;&#123;ACCESSIBILITY_INFO&#125;&#125;</p>
+            <p class="text-[11px] text-brand-subtext mt-1.5">[Đường dốc dành cho xe lăn, thang máy hỗ trợ, tủ gửi đồ tự động, trung tâm hướng dẫn đa ngôn ngữ và phòng mượn trang phục]</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: VISITOR NOTES & SOURCE (5 COLS) -->
+      <div class="lg:col-span-5 space-y-6">
+
+        <!-- Lưu ý khi tham quan / Visitor Notes Checklist -->
+        <div class="bg-white rounded-2xl p-6 border border-brand-border/80 shadow-sm">
+          <div class="flex items-center gap-2.5 mb-4">
+            <span class="w-8 h-8 rounded-lg bg-pink-50 text-brand-wine flex items-center justify-center text-sm">
+              <i class="fa-solid fa-clipboard-check"></i>
+            </span>
+            <h3 class="font-bold text-brand-navy text-lg">Lưu ý khi Tham quan</h3>
+          </div>
+
+          <div class="bg-brand-bg/60 p-4 rounded-xl border border-brand-border/70 mb-4">
+            <div class="flex items-start gap-2.5">
+              <i class="fa-solid fa-circle-exclamation text-brand-wine mt-0.5 text-sm"></i>
+              <div class="text-xs text-brand-navy">
+                <span class="font-bold block mb-0.5">Quy định chung:</span>
+                &#123;&#123;VISITOR_NOTES&#125;&#125;
+              </div>
+            </div>
+          </div>
+
+          <ul class="space-y-2.5 text-xs text-brand-navy">
+            <li class="flex items-start gap-2.5">
+              <i class="fa-solid fa-check text-brand-mintDark mt-0.5"></i>
+              <span>[Nên mang giày thể thao thoải mái để thuận tiện đi bộ]</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="fa-solid fa-check text-brand-mintDark mt-0.5"></i>
+              <span>[Chuẩn bị hộ chiếu / CCCD khi cần xác minh vé ưu đãi]</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="fa-solid fa-check text-brand-mintDark mt-0.5"></i>
+              <span>[Tuân thủ các biển báo quy định chụp ảnh và giữ trật tự]</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i class="fa-solid fa-check text-brand-mintDark mt-0.5"></i>
+              <span>[Thùng rác công cộng được phân loại rõ ràng theo chuẩn Hàn Quốc]</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Official Source & Verification Notice -->
+        <div class="bg-white rounded-2xl p-6 border border-brand-border/80 shadow-sm space-y-4">
+          <div class="flex items-center gap-2.5">
+            <span class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-shield-halved"></i>
+            </span>
+            <h3 class="font-bold text-brand-navy text-base">Nguồn chính thức</h3>
+          </div>
+
+          <p class="text-xs text-brand-subtext leading-relaxed">
+            Thông tin có thể thay đổi tùy thuộc vào thời tiết và mùa lễ hội. Hãy kiểm tra nguồn chính thức trước khi khởi hành.
+          </p>
+
+          <div class="p-3 bg-gray-50 rounded-xl border border-gray-200 text-xs flex items-center justify-between">
+            <div class="truncate mr-2">
+              <span class="text-gray-400 block text-[10px]">Đường dẫn tham khảo:</span>
+              <span class="font-mono text-brand-wine font-medium truncate block">&#123;&#123;OFFICIAL_SOURCE_URL&#125;&#125;</span>
+            </div>
+            <a href="#" class="shrink-0 w-7 h-7 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-brand-subtext hover:text-brand-wine">
+              <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+            </a>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] text-brand-subtext pt-2 border-t border-brand-border/60">
+            <span>Cập nhật lần cuối:</span>
+            <span class="font-semibold text-brand-navy">&#123;&#123;LAST_UPDATED_DATE&#125;&#125;</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- BOTTOM ACTIONS & COMPLETION BAR -->
+    <div class="bg-white rounded-2xl p-6 border border-brand-border shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <button class="px-5 py-2.5 rounded-full border border-brand-border text-brand-navy text-sm font-semibold hover:bg-brand-bg transition-colors inline-flex items-center gap-2">
+          <i class="fa-regular fa-bookmark"></i>
+          <span>Lưu kế hoạch chuyến đi</span>
+        </button>
+        <button class="px-5 py-2.5 rounded-full border border-brand-border text-brand-navy text-sm font-semibold hover:bg-brand-bg transition-colors inline-flex items-center gap-2">
+          <i class="fa-regular fa-map"></i>
+          <span>Mở bản đồ vị trí</span>
+        </button>
+      </div>
+
+      <div class="flex items-center gap-3 w-full md:w-auto">
+        <button class="flex-1 md:flex-initial px-8 py-3 rounded-full bg-brand-wine text-white text-sm font-bold hover:bg-brand-wine/90 shadow-md hover:shadow-lg transition-all inline-flex items-center justify-center gap-2">
+          <i class="fa-solid fa-flag-checkered"></i>
+          <span>Hoàn thành địa điểm</span>
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER CHUNG -->
+  <footer class="bg-white border-t border-brand-border py-6 px-6 mt-12">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-brand-subtext">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-brand-wine tracking-tight text-sm">KoreaQuest</span>
+        <span>•</span>
+        <span>© 2024 KoreaQuest. Hành trình khám phá văn hóa Hàn Quốc.</span>
+      </div>
+      <div class="flex items-center gap-6">
+        <a href="#" class="hover:text-brand-navy transition-colors">Về chúng tôi</a>
+        <a href="#" class="hover:text-brand-navy transition-colors">Điều khoản</a>
+        <a href="#" class="hover:text-brand-navy transition-colors">Liên hệ</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
