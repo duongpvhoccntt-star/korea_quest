@@ -1,25 +1,25 @@
 # 👥 TEAM OWNERSHIP — KOREAQUEST
 
-> **Nguồn chính xác:** [`docs/PHAN_CONG_CONG_VIEC.md`](PHAN_CONG_CONG_VIEC.md)  
-> **Cập nhật:** 2026-08-11  
+> **Nguồn chính xác:** [`docs/PHAN_CONG_CONG_VIEC.md`](PHAN_CONG_CONG_VIEC.md)
+> **Cập nhật:** 2026-08-11
 > **Giai đoạn:** MVP — game-based learning khám phá văn hóa Hàn Quốc
 
 ---
 
 ## Nguyên tắc cốt lõi
 
-Nhóm chia công việc theo **tính năng**, không chia riêng frontend/backend.  
+Nhóm chia công việc theo **tính năng**, không chia riêng frontend/backend.
 **Ai phụ trách tính năng nào thì chịu trách nhiệm toàn bộ:** frontend, logic, database, API/backend, lưu tiến độ và kiểm thử.
 
 ---
 
 ## Bảng phân công tổng quan
 
-| Thành viên | Cụm tính năng |
-| :--- | :--- |
-| **Phạm Văn Dương** | Tài khoản · Trang chủ · Hồ sơ · Hộ chiếu |
-| **Nguyễn Viết Thức** | Bản đồ · Địa điểm · Check-in |
-| **Lê Uyên Nhi** | Văn hóa · Từ vựng · Tổng kết · Phần thưởng |
+| Thành viên                  | Cụm tính năng                                       |
+| :---------------------------- | :----------------------------------------------------- |
+| **Phạm Văn Dương**  | Tài khoản · Trang chủ · Hồ sơ · Hộ chiếu     |
+| **Nguyễn Viết Thức** | Bản đồ · Địa điểm · Check-in                  |
+| **Lê Uyên Nhi**       | Văn hóa · Từ vựng · Tổng kết · Phần thưởng |
 
 ---
 
@@ -27,17 +27,17 @@ Nhóm chia công việc theo **tính năng**, không chia riêng frontend/backen
 
 ### Tính năng phụ trách
 
-| Tính năng | Thư mục dự kiến |
-| :--- | :--- |
-| Đăng ký | `lib/features/auth/` |
-| Đăng nhập | `lib/features/auth/` |
-| Đăng xuất | `lib/features/auth/` |
-| Trang chủ (Home) | `lib/features/home/` |
-| Hệ thống Level | `lib/shared/models/`, `lib/features/home/` |
-| Hồ sơ người dùng (Profile) | `lib/features/profile/` |
-| Hộ chiếu khám phá (Passport) | `lib/features/passport/` |
-| Hiển thị huy hiệu | `lib/features/passport/` |
-| Hiển thị dấu mộc | `lib/features/passport/` |
+| Tính năng                      | Thư mục dự kiến                            |
+| :------------------------------- | :--------------------------------------------- |
+| Đăng ký                       | `lib/features/auth/`                         |
+| Đăng nhập                     | `lib/features/auth/`                         |
+| Đăng xuất                     | `lib/features/auth/`                         |
+| Trang chủ (Home)                | `lib/features/home/`                         |
+| Hệ thống Level                 | `lib/shared/models/`, `lib/features/home/` |
+| Hồ sơ người dùng (Profile)  | `lib/features/profile/`                      |
+| Hộ chiếu khám phá (Passport) | `lib/features/passport/`                     |
+| Hiển thị huy hiệu             | `lib/features/passport/`                     |
+| Hiển thị dấu mộc             | `lib/features/passport/`                     |
 
 ### Database phụ trách
 
@@ -64,10 +64,10 @@ GET  /me/passport
 
 ### Điểm tích hợp
 
-| Nhận từ | Nội dung |
-| :--- | :--- |
-| **Nguyễn Viết Thức** | `user_id`, `location_id` khi người dùng chọn địa điểm |
-| **Lê Uyên Nhi** | `xp`, `badge`, `stamp` sau khi hoàn thành địa điểm — Dương hiển thị trong Trang chủ và Hộ chiếu |
+| Nhận từ                     | Nội dung                                                                                                            |
+| :---------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| **Nguyễn Viết Thức** | `user_id`, `location_id` khi người dùng chọn địa điểm                                                    |
+| **Lê Uyên Nhi**       | `xp`, `badge`, `stamp` sau khi hoàn thành địa điểm — Dương hiển thị trong Trang chủ và Hộ chiếu |
 
 ---
 
@@ -75,16 +75,16 @@ GET  /me/passport
 
 ### Tính năng phụ trách
 
-| Tính năng | Thư mục dự kiến |
-| :--- | :--- |
-| Bản đồ khám phá | `lib/features/explore/` |
-| Danh sách địa điểm | `lib/features/explore/` |
+| Tính năng                                 | Thư mục dự kiến       |
+| :------------------------------------------ | :------------------------ |
+| Bản đồ khám phá                        | `lib/features/explore/` |
+| Danh sách địa điểm                     | `lib/features/explore/` |
 | Chi tiết địa điểm (trang giới thiệu) | `lib/features/journey/` |
-| Check-in (mô tả, lịch sử, timeline) | `lib/features/journey/` |
-| Gallery ảnh | `lib/features/journey/` |
-| Video giới thiệu | `lib/features/journey/` |
-| Quiz Check-in | `lib/features/journey/` |
-| Lưu tiến độ Check-in | `lib/features/journey/` |
+| Check-in (mô tả, lịch sử, timeline)     | `lib/features/journey/` |
+| Gallery ảnh                                | `lib/features/journey/` |
+| Video giới thiệu                          | `lib/features/journey/` |
+| Quiz Check-in                               | `lib/features/journey/` |
+| Lưu tiến độ Check-in                    | `lib/features/journey/` |
 
 ### Trạng thái địa điểm trên bản đồ
 
@@ -128,13 +128,13 @@ completed_questions == total_questions  →  Check-in hoàn thành
 
 ### Điểm tích hợp
 
-| Nhận từ | Nội dung |
-| :--- | :--- |
-| **Phạm Văn Dương** | `user_id`, `location_id` khi người dùng chọn địa điểm |
-| **Lê Uyên Nhi** | `next_location_unlocked = true` → Thức cập nhật trạng thái bản đồ |
+| Nhận từ                    | Nội dung                                                                    |
+| :--------------------------- | :--------------------------------------------------------------------------- |
+| **Phạm Văn Dương** | `user_id`, `location_id` khi người dùng chọn địa điểm            |
+| **Lê Uyên Nhi**      | `next_location_unlocked = true` → Thức cập nhật trạng thái bản đồ |
 
-| Truyền cho | Nội dung |
-| :--- | :--- |
+| Truyền cho             | Nội dung                                     |
+| :---------------------- | :-------------------------------------------- |
 | **Lê Uyên Nhi** | `location_id`, `checkin_completed = true` |
 
 ---
@@ -143,18 +143,18 @@ completed_questions == total_questions  →  Check-in hoàn thành
 
 ### Tính năng phụ trách
 
-| Tính năng | Thư mục dự kiến |
-| :--- | :--- |
-| Văn hóa (nội dung + quiz) | `lib/features/journey/` |
-| Lưu tiến độ Văn hóa | `lib/features/journey/` |
-| Từ vựng (thẻ + audio + quiz) | `lib/features/journey/` |
-| Lưu tiến độ Từ vựng | `lib/features/journey/` |
-| Tổng kết địa điểm | `lib/features/journey/` |
-| Tính XP gameplay | `lib/shared/` hoặc `lib/features/journey/` |
-| Tính số sao | `lib/features/journey/` |
-| Trao huy hiệu | `lib/features/achievements/` |
-| Trao dấu mộc | `lib/features/achievements/` |
-| Mở khóa địa điểm tiếp theo | `lib/features/journey/` |
+| Tính năng                       | Thư mục dự kiến                             |
+| :-------------------------------- | :---------------------------------------------- |
+| Văn hóa (nội dung + quiz)      | `lib/features/journey/`                       |
+| Lưu tiến độ Văn hóa         | `lib/features/journey/`                       |
+| Từ vựng (thẻ + audio + quiz)   | `lib/features/journey/`                       |
+| Lưu tiến độ Từ vựng         | `lib/features/journey/`                       |
+| Tổng kết địa điểm           | `lib/features/journey/`                       |
+| Tính XP gameplay                 | `lib/shared/` hoặc `lib/features/journey/` |
+| Tính số sao                     | `lib/features/journey/`                       |
+| Trao huy hiệu                    | `lib/features/achievements/`                  |
+| Trao dấu mộc                    | `lib/features/achievements/`                  |
+| Mở khóa địa điểm tiếp theo | `lib/features/journey/`                       |
 
 ### Công thức XP
 
@@ -204,14 +204,14 @@ Văn hóa → Từ vựng → Tổng kết → Tính XP → Tính sao
 
 ### Điểm tích hợp
 
-| Nhận từ | Nội dung |
-| :--- | :--- |
+| Nhận từ                     | Nội dung                                                              |
+| :---------------------------- | :--------------------------------------------------------------------- |
 | **Nguyễn Viết Thức** | `location_id`, `checkin_completed = true` để mở phần Văn hóa |
 
-| Truyền cho | Nội dung |
-| :--- | :--- |
-| **Nguyễn Viết Thức** | `next_location_unlocked = true` để cập nhật bản đồ |
-| **Phạm Văn Dương** | `xp`, `badge`, `stamp` để hiển thị ở Trang chủ & Hộ chiếu |
+| Truyền cho                   | Nội dung                                                               |
+| :---------------------------- | :---------------------------------------------------------------------- |
+| **Nguyễn Viết Thức** | `next_location_unlocked = true` để cập nhật bản đồ             |
+| **Phạm Văn Dương**  | `xp`, `badge`, `stamp` để hiển thị ở Trang chủ & Hộ chiếu |
 
 ---
 
@@ -249,17 +249,17 @@ selected_answer (string)
 
 ## File dùng chung — nguy cơ xung đột cao
 
-| File | Lý do | Quy tắc |
-| :--- | :--- | :--- |
-| `pubspec.yaml` | Dependency toàn dự án | Báo nhóm trước; tạo PR riêng nếu thêm package |
-| `lib/app/app_router.dart` | Route toàn cục | Thảo luận trước khi thêm route mới |
-| `lib/app/app_theme.dart` | Theme toàn bộ UI | Đề xuất qua PR, mô tả rõ lý do |
-| `lib/design_system/**` | Token màu, spacing, typography | Không hard-code trong screen; dùng token có sẵn |
-| `lib/shared/models/**` | Model dùng chung | Thông báo trước; thay đổi ảnh hưởng nhiều feature |
-| `lib/shared/repositories/**` | Repository interface | Sửa interface phải cập nhật mọi implementation |
-| `lib/l10n/**` | Ngôn ngữ dùng chung | Thêm key mới phải cập nhật tất cả file locale |
-| `README.md` | Tài liệu chính | Cập nhật theo thực tế; không xóa mục đã có |
-| `AGENTS.md` | Hướng dẫn cho AI agent | Chỉ sửa khi kiến trúc hoặc quy tắc thay đổi |
+| File                           | Lý do                          | Quy tắc                                                    |
+| :----------------------------- | :------------------------------ | :---------------------------------------------------------- |
+| `pubspec.yaml`               | Dependency toàn dự án        | Báo nhóm trước; tạo PR riêng nếu thêm package       |
+| `lib/app/app_router.dart`    | Route toàn cục                | Thảo luận trước khi thêm route mới                    |
+| `lib/app/app_theme.dart`     | Theme toàn bộ UI              | Đề xuất qua PR, mô tả rõ lý do                       |
+| `lib/design_system/**`       | Token màu, spacing, typography | Không hard-code trong screen; dùng token có sẵn         |
+| `lib/shared/models/**`       | Model dùng chung               | Thông báo trước; thay đổi ảnh hưởng nhiều feature |
+| `lib/shared/repositories/**` | Repository interface            | Sửa interface phải cập nhật mọi implementation         |
+| `lib/l10n/**`                | Ngôn ngữ dùng chung          | Thêm key mới phải cập nhật tất cả file locale        |
+| `README.md`                  | Tài liệu chính               | Cập nhật theo thực tế; không xóa mục đã có        |
+| `AGENTS.md`                  | Hướng dẫn cho AI agent       | Chỉ sửa khi kiến trúc hoặc quy tắc thay đổi         |
 
 ---
 
