@@ -173,6 +173,31 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
     }
   }
 
+  List<AdminDiagnostic> get _diagnostics =>
+      _validationErrors.map(parseAdminDiagnostic).toList();
+
+  List<AdminDiagnostic> get _blockingErrors =>
+      _diagnostics.where((d) => d.isBlocking).toList();
+
+  List<AdminDiagnostic> get _warnings =>
+      _diagnostics.where((d) => !d.isBlocking).toList();
+
+  Map<int, int> get _errorCountsByStep {
+    final counts = <int, int>{};
+    for (final d in _blockingErrors) {
+      counts[d.stepIndex] = (counts[d.stepIndex] ?? 0) + 1;
+    }
+    return counts;
+  }
+
+  Map<int, int> get _warningCountsByStep {
+    final counts = <int, int>{};
+    for (final d in _warnings) {
+      counts[d.stepIndex] = (counts[d.stepIndex] ?? 0) + 1;
+    }
+    return counts;
+  }
+
   Future<List<String>?> _validate() async {
     if (!_draft.isPersisted) {
       AppToast.show(context, 'Hãy lưu Bản nháp trước khi kiểm tra.');
@@ -186,12 +211,21 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
           .validateDraft(_draft);
       if (!mounted) return errors;
       setState(() => _validationErrors = errors);
-      AppToast.show(
-        context,
-        errors.isEmpty
-            ? 'Bản nháp đã sẵn sàng để Xuất bản.'
-            : 'Còn ${errors.length} lỗi cần xử lý.',
-      );
+      final blocking = _blockingErrors;
+      final warnings = _warnings;
+      if (blocking.isEmpty) {
+        AppToast.show(
+          context,
+          warnings.isEmpty
+              ? 'Bản nháp đã sẵn sàng để Xuất bản.'
+              : 'Sẵn sàng Xuất bản (${warnings.length} cảnh báo tham khảo).',
+        );
+      } else {
+        AppToast.show(
+          context,
+          'Còn ${blocking.length} lỗi cần xử lý${warnings.isNotEmpty ? ' (${warnings.length} cảnh báo)' : ''}.',
+        );
+      }
       return errors;
     } catch (error) {
       if (mounted) AppToast.show(context, error.toString());
@@ -203,12 +237,22 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
 
   Future<void> _publish() async {
     final errors = await _validate();
-    if (!mounted || errors == null || errors.isNotEmpty) return;
+    if (!mounted || errors == null) return;
+    final blocking = _blockingErrors;
+    if (blocking.isNotEmpty) {
+      AppToast.show(
+        context,
+        'Còn ${blocking.length} lỗi chặn Xuất bản. Vui lòng khắc phục.',
+      );
+      return;
+    }
+    final warnings = _warnings;
     final confirmed = await ConfirmationDialog.show(
       context,
       title: 'Xuất bản Địa điểm?',
-      message:
-          'Phiên bản này sẽ thay thế nội dung công khai hiện tại. Bản cũ được lưu trữ để bảo toàn lịch sử.',
+      message: warnings.isNotEmpty
+          ? 'Bản nháp có ${warnings.length} cảnh báo (ví dụ: chưa có nguồn tham khảo theo ADR 0011). Bạn vẫn có thể Xuất bản. Phiên bản này sẽ hiển thị cho Nhà thám hiểm.'
+          : 'Phiên bản này sẽ thay thế nội dung công khai hiện tại. Bản cũ được lưu trữ để bảo toàn lịch sử.',
       confirmLabel: 'Xuất bản',
     );
     if (!confirmed || !mounted) return;
@@ -251,6 +295,8 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
                 steps: _steps,
                 currentStep: _currentStep,
                 onSelected: _selectStep,
+                errorCounts: _errorCountsByStep,
+                warningCounts: _warningCountsByStep,
               ),
               const SizedBox(height: AppSpacing.lg),
               if (_dirty)
@@ -297,6 +343,7 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
         draft: _draft,
         validationErrors: _validationErrors,
         onChanged: _markDirty,
+        onGoToStep: _selectStep,
       ),
     };
   }
@@ -348,11 +395,15 @@ class _StepNavigation extends StatelessWidget {
     required this.steps,
     required this.currentStep,
     required this.onSelected,
+    this.errorCounts = const {},
+    this.warningCounts = const {},
   });
 
   final List<String> steps;
   final int currentStep;
   final ValueChanged<int> onSelected;
+  final Map<int, int> errorCounts;
+  final Map<int, int> warningCounts;
 
   @override
   Widget build(BuildContext context) => Wrap(
@@ -361,12 +412,46 @@ class _StepNavigation extends StatelessWidget {
     children: [
       for (var index = 0; index < steps.length; index++)
         ChoiceChip(
+          avatar: _buildAvatar(index),
           label: Text('${index + 1}. ${steps[index]}'),
           selected: index == currentStep,
           onSelected: (_) => onSelected(index),
         ),
     ],
   );
+
+  Widget? _buildAvatar(int index) {
+    final errors = errorCounts[index] ?? 0;
+    if (errors > 0) {
+      return Container(
+        padding: const EdgeInsets.all(2),
+        decoration: const BoxDecoration(
+          color: AppColors.coralDark,
+          shape: BoxShape.circle,
+        ),
+        constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+        child: Center(
+          child: Text(
+            '$errors',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      );
+    }
+    final warnings = warningCounts[index] ?? 0;
+    if (warnings > 0) {
+      return const Icon(
+        Icons.warning_amber_rounded,
+        size: 14,
+        color: AppColors.gold,
+      );
+    }
+    return null;
+  }
 }
 
 class _UnsavedNotice extends StatelessWidget {

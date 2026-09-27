@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
+import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/admin/domain/admin_models.dart';
 import 'package:korea_quest/features/admin/presentation/widgets/admin_editor_fields.dart';
@@ -492,15 +493,21 @@ class LocationReviewEditor extends StatelessWidget {
     required this.draft,
     required this.validationErrors,
     required this.onChanged,
+    this.onGoToStep,
     super.key,
   });
 
   final AdminLocationDraft draft;
   final List<String> validationErrors;
   final VoidCallback onChanged;
+  final ValueChanged<int>? onGoToStep;
 
   @override
   Widget build(BuildContext context) {
+    final diagnostics = validationErrors.map(parseAdminDiagnostic).toList();
+    final blockingErrors = diagnostics.where((d) => d.isBlocking).toList();
+    final warnings = diagnostics.where((d) => !d.isBlocking).toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -511,11 +518,32 @@ class LocationReviewEditor extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
         _PreviewSummary(draft: draft),
         const SizedBox(height: AppSpacing.lg),
+        Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: AppColors.cream,
+            borderRadius: BorderRadius.circular(AppRadius.medium),
+            border: Border.all(color: AppColors.line),
+          ),
+          child: const Row(
+            children: [
+              Icon(Icons.info_outline, color: AppColors.navy, size: 20),
+              SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  'Theo ADR 0011: Nguồn tham khảo nội dung là tùy chọn giúp đối chiếu xuất xứ; việc thiếu nguồn không chặn Xuất bản.',
+                  style: TextStyle(fontSize: 13, color: AppColors.muted),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
         AdminRepeatableSection(
           title: 'Nguồn tham khảo',
           items: draft.sources,
           itemLabel: 'nguồn',
-          minimum: 1,
+          minimum: 0,
           createItem: () => {
             'title': '',
             'publisher': '',
@@ -587,26 +615,189 @@ class LocationReviewEditor extends StatelessWidget {
             ],
           ),
         ),
-        if (validationErrors.isNotEmpty) ...[
+        if (blockingErrors.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.lg),
           Card(
+            color: AppColors.danger.withValues(alpha: 0.05),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.medium),
+              side: const BorderSide(color: AppColors.danger, width: 1.5),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(AppSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Chưa thể Xuất bản',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.titleMedium?.copyWith(color: AppColors.danger),
+                  Row(
+                    children: [
+                      const Icon(Icons.error_outline, color: AppColors.danger),
+                      const SizedBox(width: AppSpacing.xs),
+                      Text(
+                        'Chưa thể Xuất bản — Còn ${blockingErrors.length} lỗi cần xử lý',
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: AppColors.danger,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: AppSpacing.xs),
-                  for (final error in validationErrors)
+                  const SizedBox(height: AppSpacing.sm),
+                  for (final diag in blockingErrors)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                      child: Text('• $error'),
+                      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                      child: Container(
+                        padding: const EdgeInsets.all(AppSpacing.sm),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(AppRadius.small),
+                          border: Border.all(
+                            color: AppColors.danger.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Chip(
+                              visualDensity: VisualDensity.compact,
+                              padding: EdgeInsets.zero,
+                              labelStyle: const TextStyle(fontSize: 11),
+                              label: Text(
+                                'Bước ${diag.stepIndex + 1}: ${diag.stepName}',
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Text(
+                                  diag.message,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            if (onGoToStep != null)
+                              TextButton.icon(
+                                icon: const Icon(
+                                  Icons.arrow_forward_rounded,
+                                  size: 16,
+                                ),
+                                label: const Text('Đi tới sửa'),
+                                onPressed: () => onGoToStep!(diag.stepIndex),
+                              ),
+                          ],
+                        ),
+                      ),
                     ),
+                ],
+              ),
+            ),
+          ),
+        ],
+        if (warnings.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.md),
+          Card(
+            color: AppColors.gold.withValues(alpha: 0.08),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.medium),
+              side: const BorderSide(color: AppColors.gold, width: 1.5),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.warning_amber_rounded,
+                        color: AppColors.gold,
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      Text(
+                        'Cảnh báo (Không chặn xuất bản — ${warnings.length} lưu ý)',
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: AppColors.coralDark,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  for (final diag in warnings)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                      child: Container(
+                        padding: const EdgeInsets.all(AppSpacing.sm),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(AppRadius.small),
+                          border: Border.all(
+                            color: AppColors.gold.withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Chip(
+                              visualDensity: VisualDensity.compact,
+                              padding: EdgeInsets.zero,
+                              labelStyle: const TextStyle(fontSize: 11),
+                              label: Text(
+                                'Bước ${diag.stepIndex + 1}: ${diag.stepName}',
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Text(diag.message),
+                              ),
+                            ),
+                            if (onGoToStep != null)
+                              TextButton.icon(
+                                icon: const Icon(
+                                  Icons.arrow_forward_rounded,
+                                  size: 16,
+                                ),
+                                label: const Text('Xem'),
+                                onPressed: () => onGoToStep!(diag.stepIndex),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+        if (validationErrors.isEmpty) ...[
+          const SizedBox(height: AppSpacing.lg),
+          Card(
+            color: AppColors.green.withValues(alpha: 0.05),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.medium),
+              side: const BorderSide(color: AppColors.green, width: 1.5),
+            ),
+            child: const Padding(
+              padding: EdgeInsets.all(AppSpacing.md),
+              child: Row(
+                children: [
+                  Icon(Icons.check_circle_outline, color: AppColors.green),
+                  SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      'Bản nháp đã đáp ứng toàn bộ điều kiện và sẵn sàng Xuất bản.',
+                      style: TextStyle(
+                        color: AppColors.green,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -627,6 +818,14 @@ class _PreviewSummary extends StatelessWidget {
     int visibleCount(List<Map<String, dynamic>> items) =>
         items.where((item) => item['is_visible'] != false).length;
     final finalQuiz = visibleCount(draft.quiz);
+    final verifiedSources = draft.sources
+        .where(
+          (s) =>
+              s['is_visible'] != false &&
+              s['verification_status'] == 'verified',
+        )
+        .length;
+
     final counts = <(String, int, int)>[
       ('Mốc lịch sử', visibleCount(draft.history), 4),
       ('Điểm nổi bật', visibleCount(draft.highlights), 4),
@@ -669,6 +868,19 @@ class _PreviewSummary extends StatelessWidget {
                           : '${count.$1}: ${count.$2}/${count.$3}+',
                     ),
                   ),
+                Chip(
+                  avatar: Icon(
+                    verifiedSources > 0
+                        ? Icons.check_circle_outline
+                        : Icons.info_outline,
+                    color: verifiedSources > 0
+                        ? AppColors.green
+                        : AppColors.muted,
+                  ),
+                  label: Text(
+                    'Nguồn kiểm chứng: $verifiedSources (Tùy chọn theo ADR 0011)',
+                  ),
+                ),
               ],
             ),
           ],
@@ -684,6 +896,8 @@ AdminEditorTextField _field(
   String label,
   VoidCallback onChanged, {
   int maxLines = 1,
+  int? minWords,
+  int? maxWords,
   TextInputType? keyboardType,
 }) {
   return AdminEditorTextField(
@@ -691,6 +905,8 @@ AdminEditorTextField _field(
     label: label,
     value: adminText(data, key),
     maxLines: maxLines,
+    minWords: minWords,
+    maxWords: maxWords,
     keyboardType: keyboardType,
     onChanged: (value) {
       data[key] = value;

@@ -16,6 +16,10 @@ _Avoid_: Nhà thám hiểm, editor
 Một điểm đến văn hóa Hàn Quốc có thể được khám phá qua một hành trình.
 _Avoid_: Màn chơi, map
 
+**Slug công khai**:
+Tên định danh duy nhất của một Địa điểm trong URL công khai, được đề xuất từ tên Địa điểm, có thể chỉnh trước lần Xuất bản đầu tiên và được giữ ổn định sau đó.
+_Avoid_: UUID Địa điểm, tên hiển thị
+
 **Địa điểm tiên quyết**:
 Địa điểm mà Nhà thám hiểm phải hoàn thành trước khi một Địa điểm khác được mở khóa; mỗi Địa điểm có tối đa một Địa điểm tiên quyết trong MVP.
 _Avoid_: Địa điểm trước, trạng thái khóa
@@ -48,13 +52,29 @@ _Avoid_: Mở khóa
 Việc rút một Địa điểm khỏi danh mục khám phá mà không xóa nội dung đã biên tập.
 _Avoid_: Xóa, khóa
 
-**Nguồn tham khảo**:
-Thông tin nhận diện nơi xuất phát của nội dung hoặc media để Quản trị viên kiểm chứng và truy vết; bản thân việc ghi nguồn không xác lập quyền sử dụng.
-_Avoid_: Nội dung bài học, giấy phép
+**Nguồn tham khảo nội dung**:
+Thông tin tùy chọn nhận diện nơi xuất phát của nội dung biên tập để Quản trị viên kiểm chứng và truy vết; việc thiếu nguồn này không ngăn Xuất bản.
+_Avoid_: Nguồn media, giấy phép
+
+**Nguồn media**:
+Trang nguồn và credit đi kèm từng media để truy vết xuất xứ; mọi media phải có thông tin này, nhưng bản thân việc ghi nguồn không xác lập quyền sử dụng.
+_Avoid_: URL Ảnh nội dung, Nguồn tham khảo nội dung
+
+**Ảnh nội dung**:
+Ảnh công khai được Quản trị viên sử dụng trong nội dung Địa điểm và quản lý độc lập với trang nguồn, credit và thông tin kiểm chứng.
+_Avoid_: URL nguồn, ảnh Sổ lưu niệm
 
 **Hành trình**:
 Trải nghiệm khám phá gắn với một Địa điểm và gồm chín Chặng tuần tự: Mở đầu, Tổng quan, Lịch sử, Điểm đến, Trải nghiệm, Ẩm thực, Fun Facts, Quiz tổng kết và Du lịch.
 _Avoid_: Khóa học, chiến dịch
+
+**Thời lượng khám phá dự kiến**:
+Một số phút nguyên dương đại diện cho thời gian Nhà thám hiểm cần để hoàn thành Hành trình số của một Địa điểm.
+_Avoid_: Khoảng thời gian tham quan, thời gian lưu trú
+
+**Thời gian tham quan gợi ý**:
+Khoảng thời gian thực địa được khuyến nghị để tham quan một Địa điểm, trình bày trong Chặng Du lịch và có thể là một khoảng như “2–3 giờ”.
+_Avoid_: Thời lượng khám phá dự kiến
 
 **Chặng**:
 Một phần có thứ tự trong Hành trình, tập trung vào một nhóm nội dung hoặc hoạt động khám phá.

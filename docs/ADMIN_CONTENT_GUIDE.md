@@ -54,8 +54,8 @@ Editor gồm 10 bước: Mở đầu → Tổng quan → Lịch sử → Điểm
 - Sửa nội dung đã Xuất bản sẽ tạo Phiên bản Bản nháp mới; độc giả vẫn thấy bản cũ tới khi publish thành công.
 - Chỉ có một **Quiz tổng kết**. Bản nháp có thể chứa 0–20 câu; để Xuất bản cần 10–20 câu đang hiển thị.
 - Quiz hỗ trợ: một đáp án, Đúng/Sai, nối cặp và sắp xếp/timeline. Câu hỏi có thể đính kèm ảnh hoặc YouTube.
-- Ảnh dùng URL HTTP(S); video dùng URL YouTube. Media cần credit, URL nguồn và mô tả thay thế trước khi publish.
-- Nguồn tham khảo có trạng thái kiểm chứng; cần ít nhất một nguồn đang hiển thị và đã kiểm chứng để publish.
+- Ảnh nội dung được upload vào bucket công khai content-media; chấp nhận JPEG, PNG, WebP tối đa 5 MiB và không nhận SVG/GIF. Video dùng URL YouTube. Media cần credit, URL nguồn và mô tả thay thế trước khi publish.
+- Nguồn tham khảo nội dung có trạng thái kiểm chứng nhưng là tùy chọn; Bản nháp không có nguồn vẫn được publish và giao diện cần hiển thị cảnh báo không chặn.
 - Thumbnail bản đồ không bắt buộc; ứng dụng dùng ảnh bìa làm fallback.
 
 ## Cấu trúc Supabase

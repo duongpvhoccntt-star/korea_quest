@@ -207,6 +207,144 @@ int countWords(String value) {
   return normalized.split(RegExp(r'\s+')).length;
 }
 
+enum AdminDiagnosticSeverity { error, warning }
+
+class AdminDiagnostic {
+  const AdminDiagnostic({
+    required this.message,
+    required this.stepIndex,
+    this.severity = AdminDiagnosticSeverity.error,
+    this.stepName = '',
+  });
+
+  final String message;
+  final int stepIndex;
+  final AdminDiagnosticSeverity severity;
+  final String stepName;
+
+  bool get isBlocking => severity == AdminDiagnosticSeverity.error;
+}
+
+AdminDiagnostic parseAdminDiagnostic(String rawMessage) {
+  final msg = rawMessage.trim();
+  final lower = msg.toLowerCase();
+
+  const stepNames = [
+    'Mở đầu',
+    'Tổng quan',
+    'Lịch sử',
+    'Điểm đến',
+    'Trải nghiệm',
+    'Ẩm thực',
+    'Fun Facts',
+    'Quiz tổng kết',
+    'Du lịch',
+    'Kiểm tra & Xuất bản',
+  ];
+
+  // ADR 0011: Nguồn tham khảo nội dung là tùy chọn. Thiếu nguồn kiểm chứng là cảnh báo, KHÔNG chặn xuất bản.
+  if (lower.contains('nguồn') &&
+      (lower.contains('kiểm chứng') ||
+          lower.contains('cần ít nhất một nguồn') ||
+          lower.contains('ít nhất 1 nguồn'))) {
+    return AdminDiagnostic(
+      message:
+          '$msg (Theo ADR 0011: Không bắt buộc có nguồn tham khảo để Xuất bản, nhưng khuyến khích bổ sung).',
+      stepIndex: 9,
+      stepName: stepNames[9],
+      severity: AdminDiagnosticSeverity.warning,
+    );
+  }
+
+  // Step 0: Mở đầu
+  if (lower.contains('mở đầu') || lower.contains('hook')) {
+    return AdminDiagnostic(message: msg, stepIndex: 0, stepName: stepNames[0]);
+  }
+
+  // Step 2: Lịch sử
+  if (lower.contains('lịch sử') || lower.contains('mốc lịch sử')) {
+    return AdminDiagnostic(message: msg, stepIndex: 2, stepName: stepNames[2]);
+  }
+
+  // Step 3: Điểm đến (Highlights)
+  if (lower.contains('điểm nổi bật') || lower.contains('điểm đến')) {
+    return AdminDiagnostic(message: msg, stepIndex: 3, stepName: stepNames[3]);
+  }
+
+  // Step 4: Trải nghiệm
+  if (lower.contains('trải nghiệm') ||
+      lower.contains('hướng dẫn trải nghiệm')) {
+    return AdminDiagnostic(message: msg, stepIndex: 4, stepName: stepNames[4]);
+  }
+
+  // Step 5: Ẩm thực
+  if (lower.contains('món ăn') || lower.contains('ẩm thực')) {
+    return AdminDiagnostic(message: msg, stepIndex: 5, stepName: stepNames[5]);
+  }
+
+  // Step 6: Fun Facts
+  if (lower.contains('fun fact') || lower.contains('fun facts')) {
+    return AdminDiagnostic(message: msg, stepIndex: 6, stepName: stepNames[6]);
+  }
+
+  // Step 7: Quiz tổng kết
+  if (lower.contains('quiz') ||
+      lower.contains('câu hỏi') ||
+      lower.contains('đáp án') ||
+      lower.contains('lựa chọn') ||
+      lower.contains('đúng/sai') ||
+      lower.contains('nối cặp') ||
+      lower.contains('sắp xếp') ||
+      lower.contains('ordering') ||
+      lower.contains('matching') ||
+      lower.contains('single_choice') ||
+      lower.contains('single-choice')) {
+    return AdminDiagnostic(message: msg, stepIndex: 7, stepName: stepNames[7]);
+  }
+
+  // Step 8: Du lịch
+  if (lower.contains('du lịch') ||
+      lower.contains('thông tin du lịch') ||
+      lower.contains('giờ mở cửa') ||
+      lower.contains('giá vé') ||
+      lower.contains('thời gian tham quan') ||
+      lower.contains('phương tiện') ||
+      lower.contains('lưu ý du khách') ||
+      lower.contains('visitor_notes') ||
+      lower.contains('transport')) {
+    return AdminDiagnostic(message: msg, stepIndex: 8, stepName: stepNames[8]);
+  }
+
+  // Step 1: Tổng quan
+  if (lower.contains('tổng quan') ||
+      lower.contains('tọa độ') ||
+      lower.contains('latitude') ||
+      lower.contains('longitude') ||
+      lower.contains('thời lượng dự kiến') ||
+      lower.contains('ảnh bìa') ||
+      lower.contains('cover_image') ||
+      lower.contains('thumbnail') ||
+      lower.contains('dấu mộc') ||
+      lower.contains('thông tin nhanh') ||
+      lower.contains('quick_fact') ||
+      lower.contains('quick fact') ||
+      lower.contains('slug') ||
+      lower.contains('tên địa điểm') ||
+      lower.contains('danh mục bản đồ')) {
+    return AdminDiagnostic(message: msg, stepIndex: 1, stepName: stepNames[1]);
+  }
+
+  // Step 9: Nguồn, xem trước & Xuất bản (sources, prerequisite, revision, draft)
+  if (lower.contains('nguồn') ||
+      lower.contains('tiên quyết') ||
+      lower.contains('phiên bản') ||
+      lower.contains('bản nháp')) {
+    return AdminDiagnostic(message: msg, stepIndex: 9, stepName: stepNames[9]);
+  }
+
+  return AdminDiagnostic(message: msg, stepIndex: 9, stepName: stepNames[9]);
+}
+
 enum AdminAchievementMetric {
   completedLocations('completed_locations', 'Địa điểm hoàn thành'),
   correctAnswers('correct_answers', 'Câu trả lời đúng'),

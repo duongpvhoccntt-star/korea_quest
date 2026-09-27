@@ -31,15 +31,41 @@ class AdminEditorTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     final words = countWords(value);
     final hasWordGuide = minWords != null || maxWords != null;
-    final outsideGuide =
-        (minWords != null && words < minWords!) ||
-        (maxWords != null && words > maxWords!);
     final rangeLabel = switch ((minWords, maxWords)) {
       (final int min, final int max) => '$min–$max từ',
       (final int min, null) => 'từ $min từ',
       (null, final int max) => 'tối đa $max từ',
       _ => '',
     };
+
+    final String? helper;
+    final TextStyle? helperStyle;
+    if (hasWordGuide) {
+      if (minWords != null && words < minWords!) {
+        helper =
+            '$words từ · thiếu ${minWords! - words} từ (yêu cầu $rangeLabel)';
+        helperStyle = const TextStyle(
+          color: AppColors.coralDark,
+          fontWeight: FontWeight.w600,
+        );
+      } else if (maxWords != null && words > maxWords!) {
+        helper =
+            '$words từ · vượt ${words - maxWords!} từ (yêu cầu $rangeLabel)';
+        helperStyle = const TextStyle(
+          color: AppColors.coralDark,
+          fontWeight: FontWeight.w600,
+        );
+      } else {
+        helper = '$words từ · hợp lệ ($rangeLabel)';
+        helperStyle = const TextStyle(
+          color: AppColors.green,
+          fontWeight: FontWeight.w500,
+        );
+      }
+    } else {
+      helper = null;
+      helperStyle = null;
+    }
 
     return TextFormField(
       initialValue: value,
@@ -50,10 +76,8 @@ class AdminEditorTextField extends StatelessWidget {
         labelText: label,
         hintText: hint,
         alignLabelWithHint: maxLines > 1,
-        helperText: hasWordGuide ? '$words từ · gợi ý $rangeLabel' : null,
-        helperStyle: outsideGuide
-            ? const TextStyle(color: AppColors.coralDark)
-            : null,
+        helperText: helper,
+        helperStyle: helperStyle,
       ),
     );
   }
