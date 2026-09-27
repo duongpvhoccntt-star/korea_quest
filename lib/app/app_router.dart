@@ -4,16 +4,14 @@ import 'package:korea_quest/design_system/components/app_structure.dart';
 import 'package:korea_quest/features/achievements/presentation/pages/achievements_page.dart';
 import 'package:korea_quest/features/admin/presentation/pages/admin_database_page.dart';
 import 'package:korea_quest/features/auth/presentation/pages/auth_page.dart';
-import 'package:korea_quest/features/explore/presentation/pages/explore_page.dart';
-import 'package:korea_quest/features/explore/presentation/pages/location_detail_page.dart';
+import 'package:korea_quest/features/explore/presentation/pages/published_explore_page.dart';
+import 'package:korea_quest/features/explore/presentation/pages/published_location_page.dart';
 import 'package:korea_quest/features/home/presentation/pages/home_page.dart';
-import 'package:korea_quest/features/journey/presentation/pages/journey_page.dart';
 import 'package:korea_quest/features/landing/presentation/pages/landing_page.dart';
 import 'package:korea_quest/features/passport/presentation/pages/passport_page.dart';
 import 'package:korea_quest/features/profile/presentation/pages/profile_page.dart';
 import 'package:korea_quest/features/settings/presentation/pages/settings_page.dart';
 import 'package:korea_quest/features/system_states/presentation/pages/system_state_page.dart';
-import 'package:korea_quest/shared/models/domain_models.dart';
 
 abstract final class AppRouteNames {
   static const landing = 'landing';
@@ -23,6 +21,7 @@ abstract final class AppRouteNames {
   static const home = 'home';
   static const explore = 'explore';
   static const location = 'location';
+  static const locationStage = 'location-stage';
   static const journey = 'journey';
   static const journeyCheckIn = 'journey-check-in';
   static const journeyCulture = 'journey-culture';
@@ -83,51 +82,60 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/explore',
             name: AppRouteNames.explore,
-            builder: (context, state) => const ExplorePage(),
+            builder: (context, state) => const PublishedExplorePage(),
           ),
           GoRoute(
             path: '/locations/:locationId',
             name: AppRouteNames.location,
-            builder: (context, state) => LocationDetailPage(
-              locationId: state.pathParameters['locationId']!,
+            builder: (context, state) => PublishedLocationPage(
+              slug: state.pathParameters['locationId']!,
             ),
+            routes: [
+              GoRoute(
+                path: 'stages/:stageNumber',
+                name: AppRouteNames.locationStage,
+                builder: (context, state) => PublishedLocationPage(
+                  slug: state.pathParameters['locationId']!,
+                  stageNumber:
+                      int.tryParse(state.pathParameters['stageNumber'] ?? '') ??
+                      1,
+                ),
+              ),
+            ],
           ),
           GoRoute(
             path: '/journey/:locationId',
             name: AppRouteNames.journey,
-            builder: (context, state) =>
-                JourneyPage(locationId: state.pathParameters['locationId']!),
+            builder: (context, state) => PublishedLocationPage(
+              slug: state.pathParameters['locationId']!,
+            ),
             routes: [
               GoRoute(
                 path: 'check-in',
                 name: AppRouteNames.journeyCheckIn,
-                builder: (context, state) => JourneyPage(
-                  locationId: state.pathParameters['locationId']!,
-                  stage: JourneyStage.checkIn,
+                builder: (context, state) => PublishedLocationPage(
+                  slug: state.pathParameters['locationId']!,
                 ),
               ),
               GoRoute(
                 path: 'culture',
                 name: AppRouteNames.journeyCulture,
-                builder: (context, state) => JourneyPage(
-                  locationId: state.pathParameters['locationId']!,
-                  stage: JourneyStage.culture,
+                builder: (context, state) => PublishedLocationPage(
+                  slug: state.pathParameters['locationId']!,
                 ),
               ),
               GoRoute(
                 path: 'vocabulary',
                 name: AppRouteNames.journeyVocabulary,
-                builder: (context, state) => JourneyPage(
-                  locationId: state.pathParameters['locationId']!,
-                  stage: JourneyStage.vocabulary,
+                builder: (context, state) => PublishedLocationPage(
+                  slug: state.pathParameters['locationId']!,
                 ),
               ),
               GoRoute(
                 path: 'summary',
                 name: AppRouteNames.journeySummary,
-                builder: (context, state) => JourneyPage(
-                  locationId: state.pathParameters['locationId']!,
-                  stage: JourneyStage.summary,
+                builder: (context, state) => PublishedLocationPage(
+                  slug: state.pathParameters['locationId']!,
                 ),
               ),
             ],

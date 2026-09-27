@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:korea_quest/core/responsive/responsive_breakpoints.dart';
@@ -61,8 +61,9 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
 
   static const _guestDestinations = [
     ('Trang chủ', '/'),
-    ('Hành trình', '/home'),
+    ('Khám phá', '/explore'),
     ('Hộ chiếu', '/passport'),
+    ('Thành tích', '/achievements'),
     ('Hồ sơ', '/profile'),
   ];
 
@@ -80,7 +81,7 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final width = MediaQuery.sizeOf(context).width;
-    final isDesktop = width >= ResponsiveBreakpoints.desktop;
+    final isDesktop = width >= ResponsiveBreakpoints.headerDesktop;
     final showXp = width >= ResponsiveBreakpoints.wide;
     final path = GoRouterState.of(context).uri.path;
     final isGuest =

@@ -25,4 +25,20 @@ abstract final class AppColors {
   static const locationMint = Color(0xFF83B9A4);
   static const disabled = Color(0xFF9DA6AA);
   static const danger = Color(0xFFB3261E);
+
+  // KoreaQuest Stitch palette.
+  static const pageBg = Color(0xFFFFF8F1);
+  static const blossom = Color(0xFFFF8FB3);
+  static const palePink = Color(0xFFFFDCE8);
+  static const sky = Color(0xFF79CFFF);
+  static const skyLight = Color(0xFFDDF4FF);
+  static const mint = Color(0xFF9FE3C4);
+  static const butter = Color(0xFFFFD96A);
+  static const koreanRed = Color(0xFFEF646B);
+  static const koreanBlue = Color(0xFF5876D8);
+  static const stitchText = Color(0xFF28324A);
+  static const stitchMuted = Color(0xFF667085);
+  static const borderSoft = Color(0xFFE8E2DB);
+  static const completedGreen = Color(0xFF63C59A);
+  static const lockedGray = Color(0xFFBBC1CC);
 }

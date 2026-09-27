@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:korea_quest/shared/models/domain_models.dart';
 import 'package:korea_quest/shared/repositories/korea_quest_repository.dart';
 import 'package:korea_quest/shared/repositories/mock_korea_quest_repository.dart';
@@ -20,74 +19,41 @@ class SupabaseKoreaQuestRepository implements KoreaQuestRepository {
   @override
   Future<UserProgress> getUserProgress() => _fallback.getUserProgress();
 
+  /// Only exposes locations returned by the public published read model.
+  /// The admin editor is the source of this data; no local location is merged.
   @override
   Future<List<Location>> getLocations() async {
-    try {
-      final rows = await _client
-          .from('location_revisions')
-          .select(
-            'id, location_id, name, korean_name, city, short_description, status, display_order, tags',
-          )
-          .eq('status', 'published')
-          .order('display_order', ascending: true);
+    final response = await _client.rpc('list_published_locations');
+    if (response is! List) return const [];
 
-      final supabaseLocations = <Location>[];
-      for (final raw in rows as List<dynamic>) {
-        if (raw is! Map<String, dynamic>) continue;
-        final name = raw['name'] as String? ?? '';
-        final city = raw['city'] as String? ?? '';
-        final koreanName = raw['korean_name'] as String? ?? '';
-        final description = raw['short_description'] as String? ?? '';
-        final tags =
-            (raw['tags'] as List<dynamic>?)
-                ?.map((e) => e.toString())
-                .toList() ??
-            [];
-
-        // Determine slug identifier
-        String id = raw['location_id'] as String? ?? raw['id'] as String? ?? '';
-        if (tags.contains('jeju') ||
-            name.toLowerCase().contains('jeju') ||
-            city.toLowerCase() == 'jeju') {
-          id = 'jeju';
-        }
-
-        supabaseLocations.add(
-          Location(
-            id: id,
-            name: name,
-            koreanName: koreanName,
-            city: city,
-            description: description,
-            status: LocationStatus.available,
-            rewardXp: 600,
-          ),
-        );
-      }
-
-      // Merge with base locations from fallback so all places are available
-      final fallbackLocations = await _fallback.getLocations();
-      final merged = <Location>[...supabaseLocations];
-      final existingIds = supabaseLocations.map((l) => l.id).toSet();
-
-      for (final loc in fallbackLocations) {
-        if (!existingIds.contains(loc.id)) {
-          merged.add(loc);
-        }
-      }
-
-      return merged;
-    } catch (e) {
-      debugPrint('Lỗi lấy locations từ Supabase, chuyển sang fallback: $e');
-      return _fallback.getLocations();
-    }
+    return response
+        .whereType<Map>()
+        .map((raw) {
+          final item = Map<String, dynamic>.from(
+            raw.map((key, value) => MapEntry('$key', value)),
+          );
+          final releaseStatus = item['release_status']?.toString();
+          return Location(
+            id: item['slug']?.toString() ?? '',
+            name: item['name']?.toString() ?? '',
+            koreanName: item['korean_name']?.toString() ?? '',
+            city: item['city']?.toString() ?? '',
+            description: item['short_description']?.toString() ?? '',
+            status: releaseStatus == 'released'
+                ? LocationStatus.available
+                : LocationStatus.locked,
+            rewardXp: 0,
+          );
+        })
+        .where((location) => location.id.isNotEmpty)
+        .toList(growable: false);
   }
 
   @override
   Future<Location?> getLocation(String id) async {
     final locations = await getLocations();
-    for (final loc in locations) {
-      if (loc.id == id) return loc;
+    for (final location in locations) {
+      if (location.id == id) return location;
     }
     return null;
   }

@@ -1,0 +1,63 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:korea_quest/features/explore/domain/location_content_repository.dart';
+import 'package:korea_quest/features/explore/domain/published_location.dart';
+
+class SupabaseLocationContentRepository implements LocationContentRepository {
+  const SupabaseLocationContentRepository(this._client);
+
+  final SupabaseClient _client;
+
+  @override
+  Future<List<PublishedLocationSummary>> listPublishedLocations() async {
+    final response = await _client.rpc('list_published_locations');
+    return jsonMapList(
+      response,
+    ).map(PublishedLocationSummary.fromJson).toList(growable: false);
+  }
+
+  @override
+  Future<PublishedLocationDetail?> getPublishedLocation(String slug) async {
+    final response = await _client.rpc(
+      'get_published_location',
+      params: {'target_slug': slug},
+    );
+    if (response == null) return null;
+    final json = jsonMap(response);
+    return json.isEmpty ? null : PublishedLocationDetail.fromJson(json);
+  }
+
+  @override
+  Future<QuizAnswerResult> submitQuizAnswer({
+    required String questionId,
+    required JsonMap answer,
+  }) async {
+    final response = await _client.rpc(
+      'submit_quiz_answer',
+      params: {'question_id': questionId, 'answer': answer},
+    );
+    return QuizAnswerResult.fromJson(jsonMap(response));
+  }
+}
+
+class UnconfiguredLocationContentRepository
+    implements LocationContentRepository {
+  const UnconfiguredLocationContentRepository();
+
+  Never _unavailable() => throw StateError(
+    'Supabase chưa được cấu hình. Hãy chạy ứng dụng với SUPABASE_URL và SUPABASE_PUBLISHABLE_KEY.',
+  );
+
+  @override
+  Future<PublishedLocationDetail?> getPublishedLocation(String slug) async =>
+      _unavailable();
+
+  @override
+  Future<List<PublishedLocationSummary>> listPublishedLocations() async =>
+      _unavailable();
+
+  @override
+  Future<QuizAnswerResult> submitQuizAnswer({
+    required String questionId,
+    required JsonMap answer,
+  }) async => _unavailable();
+}

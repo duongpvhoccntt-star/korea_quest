@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:korea_quest/design_system/components/app_feedback.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
@@ -25,7 +25,7 @@ class AchievementsPage extends ConsumerWidget {
           itemCount: items.length,
           gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: 360,
-            mainAxisExtent: 150,
+            childAspectRatio: 1.5,
             crossAxisSpacing: AppSpacing.md,
             mainAxisSpacing: AppSpacing.md,
           ),

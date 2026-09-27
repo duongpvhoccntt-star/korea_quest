@@ -35,19 +35,23 @@ class StatusChip extends StatelessWidget {
       LocationStatus.completed => (
         'Hoàn thành',
         Icons.check_circle,
-        AppColors.green,
+        AppColors.completedGreen,
       ),
       LocationStatus.inProgress => (
         'Đang thực hiện',
         Icons.directions_walk,
-        AppColors.coral,
+        AppColors.koreanRed,
       ),
       LocationStatus.available => (
         'Có thể khám phá',
         Icons.explore,
-        AppColors.teal,
+        AppColors.koreanBlue,
       ),
-      LocationStatus.locked => ('Chưa mở khóa', Icons.lock, AppColors.disabled),
+      LocationStatus.locked => (
+        'Chưa mở khóa',
+        Icons.lock,
+        AppColors.lockedGray,
+      ),
     };
     return Chip(
       avatar: Icon(icon, size: 16, color: color),
@@ -79,12 +83,23 @@ class XPProgressBar extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 8),
             child: Row(
               children: [
-                Text(
-                  '${progress.currentXp} XP',
-                  style: const TextStyle(fontWeight: FontWeight.w800),
+                Expanded(
+                  child: Text(
+                    '${progress.currentXp} XP',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  ),
                 ),
-                const Spacer(),
-                Text('${progress.nextLevelXp} XP · Cấp ${progress.level + 1}'),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    '${progress.nextLevelXp} XP · Cấp ${progress.level + 1}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.end,
+                  ),
+                ),
               ],
             ),
           ),
@@ -94,7 +109,7 @@ class XPProgressBar extends StatelessWidget {
             value: progress.xpPercentage,
             minHeight: 10,
             backgroundColor: AppColors.line,
-            color: AppColors.gold,
+            color: AppColors.butter,
           ),
         ),
       ],
@@ -109,9 +124,9 @@ class LevelBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Chip(
-    avatar: const Icon(Icons.star_rounded, size: 17, color: AppColors.gold),
+    avatar: const Icon(Icons.star_rounded, size: 17, color: AppColors.butter),
     label: Text('LEVEL $level · NHÀ THÁM HIỂM'),
-    backgroundColor: AppColors.navy,
+    backgroundColor: AppColors.stitchText,
     labelStyle: const TextStyle(
       color: Colors.white,
       fontWeight: FontWeight.w700,

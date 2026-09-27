@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -49,7 +49,7 @@ void main() {
       expect(find.text('Đăng nhập'), findsWidgets);
       expect(find.text('Đăng ký'), findsWidgets);
       expect(find.text('Tài khoản thử nghiệm nhanh'), findsOneWidget);
-      expect(find.text('admin@koreaquest.com'), findsOneWidget);
+      expect(find.text('admin / admin123'), findsOneWidget);
       expect(find.text('duong@example.com'), findsOneWidget);
     });
 
@@ -85,9 +85,10 @@ void main() {
       await tester.pumpWidget(buildTestApp());
       await tester.pumpAndSettle();
 
-      final adminQuickButton = find.text('admin@koreaquest.com');
+      final adminQuickButton = find.text('admin / admin123');
       expect(adminQuickButton, findsOneWidget);
 
+      await tester.ensureVisible(adminQuickButton);
       await tester.tap(adminQuickButton);
       await tester.pumpAndSettle();
 
@@ -118,6 +119,7 @@ void main() {
       final studentQuickButton = find.text('duong@example.com');
       expect(studentQuickButton, findsOneWidget);
 
+      await tester.ensureVisible(studentQuickButton);
       await tester.tap(studentQuickButton);
       await tester.pumpAndSettle();
 

@@ -150,9 +150,7 @@ class _AdminSignInState extends ConsumerState<AdminSignIn> {
                               _identity.text = 'admin@koreaquest.com';
                               _password.text = 'KoreaQuestAdmin2026!';
                             },
-                      child: const Text(
-                        'Dùng nhanh: admin@koreaquest.com',
-                      ),
+                      child: const Text('Dùng nhanh: admin@koreaquest.com'),
                     ),
                   ],
                 ],
