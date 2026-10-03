@@ -8,6 +8,7 @@ import 'package:korea_quest/design_system/components/progress_components.dart';
 import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
+import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
 
 import 'package:korea_quest/shared/widgets/ai_command_box.dart';
@@ -84,11 +85,7 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
     final isDesktop = width >= ResponsiveBreakpoints.headerDesktop;
     final showXp = width >= ResponsiveBreakpoints.wide;
     final path = GoRouterState.of(context).uri.path;
-    final isGuest =
-        path == '/' ||
-        path == '/register' ||
-        path == '/login' ||
-        path == '/forgot-password';
+    final isGuest = ref.watch(authUserStreamProvider).value == null;
     final destinations = isGuest ? _guestDestinations : _memberDestinations;
     final user = isGuest ? null : ref.watch(currentUserProvider).value;
     final progress = isGuest ? null : ref.watch(userProgressProvider).value;

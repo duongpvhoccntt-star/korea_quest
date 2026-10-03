@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:korea_quest/features/admin/domain/admin_models.dart';
 import 'package:korea_quest/features/admin/domain/admin_repository.dart';
@@ -173,6 +174,16 @@ class DemoAdminRepository
     _touch(draft);
   }
 
+  @override
+  Future<AdminUploadedImage> uploadContentImage({
+    required String locationId,
+    required String revisionId,
+    required String filename,
+    required Uint8List bytes,
+    required String contentType,
+  }) => throw const AdminConfigurationException(
+    'Tải ảnh chỉ khả dụng khi Admin được kết nối Supabase.',
+  );
   @override
   Future<void> archive(String locationId) async {
     final draft = _drafts[locationId];

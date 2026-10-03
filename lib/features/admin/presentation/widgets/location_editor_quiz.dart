@@ -4,6 +4,7 @@ import 'package:korea_quest/design_system/components/app_buttons.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/admin/domain/admin_models.dart';
 import 'package:korea_quest/features/admin/presentation/widgets/admin_editor_fields.dart';
+import 'package:korea_quest/features/admin/presentation/widgets/admin_image_upload_button.dart';
 
 class LocationQuizEditor extends StatelessWidget {
   const LocationQuizEditor({
@@ -37,8 +38,11 @@ class LocationQuizEditor extends StatelessWidget {
           maximum: 20,
           createItem: _newQuestion,
           onChanged: onChanged,
-          itemBuilder: (context, question, index) =>
-              _QuestionEditor(question: question, onChanged: onChanged),
+          itemBuilder: (context, question, index) => _QuestionEditor(
+            draft: draft,
+            question: question,
+            onChanged: onChanged,
+          ),
         ),
       ],
     );
@@ -63,8 +67,13 @@ class _CountChip extends StatelessWidget {
 }
 
 class _QuestionEditor extends StatelessWidget {
-  const _QuestionEditor({required this.question, required this.onChanged});
+  const _QuestionEditor({
+    required this.draft,
+    required this.question,
+    required this.onChanged,
+  });
 
+  final AdminLocationDraft draft;
   final Map<String, dynamic> question;
   final VoidCallback onChanged;
 
@@ -113,7 +122,7 @@ class _QuestionEditor extends StatelessWidget {
           maxWords: 50,
         ),
         const SizedBox(height: AppSpacing.md),
-        _MediaEditor(question: question, onChanged: onChanged),
+        _MediaEditor(draft: draft, question: question, onChanged: onChanged),
         const SizedBox(height: AppSpacing.lg),
         switch (kind) {
           'true_false' => _TrueFalseEditor(
@@ -145,8 +154,13 @@ class _QuestionEditor extends StatelessWidget {
 }
 
 class _MediaEditor extends StatelessWidget {
-  const _MediaEditor({required this.question, required this.onChanged});
+  const _MediaEditor({
+    required this.draft,
+    required this.question,
+    required this.onChanged,
+  });
 
+  final AdminLocationDraft draft;
   final Map<String, dynamic> question;
   final VoidCallback onChanged;
 
@@ -186,6 +200,16 @@ class _MediaEditor extends StatelessWidget {
               _field(question, 'media_alt', 'Mô tả thay thế media', onChanged),
             ],
           ),
+          if (kind == 'image') ...[
+            const SizedBox(height: AppSpacing.sm),
+            AdminImageUploadButton(
+              draft: draft,
+              onUploaded: (url) {
+                applyUploadedImage(question, url, urlKey: 'media_url');
+                onChanged();
+              },
+            ),
+          ],
           const SizedBox(height: AppSpacing.sm),
           AdminMediaPreview(kind: kind, url: adminText(question, 'media_url')),
         ],

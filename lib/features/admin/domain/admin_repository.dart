@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:korea_quest/features/admin/domain/admin_models.dart';
 
 abstract interface class AdminRepository {
@@ -33,6 +35,13 @@ abstract interface class AdminRepository {
 
   Future<void> publish(AdminLocationDraft draft);
 
+  Future<AdminUploadedImage> uploadContentImage({
+    required String locationId,
+    required String revisionId,
+    required String filename,
+    required Uint8List bytes,
+    required String contentType,
+  });
   Future<void> archive(String locationId);
 
   Future<AdminGameConfig> getGameConfig();
@@ -55,4 +64,14 @@ class AdminConfigurationException implements Exception {
 
   @override
   String toString() => message;
+}
+
+class AdminUploadedImage {
+  const AdminUploadedImage({
+    required this.storagePath,
+    required this.publicUrl,
+  });
+
+  final String storagePath;
+  final String publicUrl;
 }

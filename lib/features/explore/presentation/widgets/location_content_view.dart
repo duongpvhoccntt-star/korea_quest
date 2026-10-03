@@ -1,9 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/shadows/app_shadows.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
+import 'package:korea_quest/shared/widgets/youtube_player.dart';
 import 'package:korea_quest/features/explore/domain/published_location.dart';
 
 class LocationContentView extends StatelessWidget {
@@ -1257,25 +1258,8 @@ class _Media extends StatelessWidget {
         : 16 / 9;
     if (media.string('kind') == 'youtube' && url.isNotEmpty) {
       return Semantics(
-        label: media.string('alt').isEmpty
-            ? 'Video $fallbackLabel'
-            : media.string('alt'),
-        child: _Card(
-          color: AppColors.stitchText,
-          child: Row(
-            children: [
-              const Icon(
-                Icons.play_circle_fill_rounded,
-                color: Colors.white,
-                size: 44,
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Text(url, style: const TextStyle(color: Colors.white)),
-              ),
-            ],
-          ),
-        ),
+        label: media.string('alt').isEmpty ? 'Video ' : media.string('alt'),
+        child: YoutubePlayer(url: url, label: fallbackLabel),
       );
     }
     return ClipRRect(

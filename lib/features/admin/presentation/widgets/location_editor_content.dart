@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/admin/domain/admin_models.dart';
 import 'package:korea_quest/features/admin/presentation/widgets/admin_editor_fields.dart';
+import 'package:korea_quest/features/admin/presentation/widgets/admin_image_upload_button.dart';
 
 class LocationHistoryEditor extends StatelessWidget {
   const LocationHistoryEditor({
@@ -89,7 +90,7 @@ class LocationHistoryEditor extends StatelessWidget {
           maxLines: 3,
         ),
         const SizedBox(height: AppSpacing.md),
-        _mediaFields(item, onChanged),
+        _mediaFields(draft, item, onChanged),
         const SizedBox(height: AppSpacing.sm),
         AdminMediaPreview(
           kind: adminText(item, 'media_kind'),
@@ -187,7 +188,7 @@ class LocationHighlightsEditor extends StatelessWidget {
           },
         ),
         const SizedBox(height: AppSpacing.md),
-        _mediaFields(item, onChanged),
+        _mediaFields(draft, item, onChanged),
         const SizedBox(height: AppSpacing.sm),
         AdminMediaPreview(
           kind: adminText(item, 'media_kind'),
@@ -338,7 +339,7 @@ class LocationExperiencesEditor extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.md),
-            _mediaFields(item, onChanged),
+            _mediaFields(draft, item, onChanged),
             const SizedBox(height: AppSpacing.sm),
             AdminMediaPreview(
               kind: adminText(item, 'media_kind'),
@@ -459,6 +460,14 @@ class LocationFoodsEditor extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.sm),
+        AdminImageUploadButton(
+          draft: draft,
+          onUploaded: (url) {
+            applyUploadedImage(item, url, urlKey: 'image_url');
+            onChanged();
+          },
+        ),
+        const SizedBox(height: AppSpacing.sm),
         AdminMediaPreview(kind: 'image', url: adminText(item, 'image_url')),
         _visibilityToggle(item, onChanged),
       ],
@@ -537,7 +546,7 @@ class LocationFunFactsEditor extends StatelessWidget {
           maxWords: 35,
         ),
         const SizedBox(height: AppSpacing.md),
-        _mediaFields(item, onChanged),
+        _mediaFields(draft, item, onChanged),
         const SizedBox(height: AppSpacing.sm),
         AdminMediaPreview(
           kind: adminText(item, 'media_kind'),
@@ -549,23 +558,43 @@ class LocationFunFactsEditor extends StatelessWidget {
   );
 }
 
-Widget _mediaFields(Map<String, dynamic> item, VoidCallback onChanged) {
-  return AdminFieldGrid(
+Widget _mediaFields(
+  AdminLocationDraft draft,
+  Map<String, dynamic> item,
+  VoidCallback onChanged,
+) {
+  final isImage = adminText(item, 'media_kind') == 'image';
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      AdminEditorDropdown(
-        key: ValueKey('${identityHashCode(item)}-media-kind'),
-        label: 'Loại media',
-        value: adminText(item, 'media_kind'),
-        items: const {'image': 'Ảnh', 'youtube': 'YouTube'},
-        onChanged: (value) {
-          item['media_kind'] = value;
-          onChanged();
-        },
+      AdminFieldGrid(
+        children: [
+          AdminEditorDropdown(
+            key: ValueKey('${identityHashCode(item)}-media-kind'),
+            label: 'Loại media',
+            value: adminText(item, 'media_kind'),
+            items: const {'image': 'Ảnh', 'youtube': 'YouTube'},
+            onChanged: (value) {
+              item['media_kind'] = value;
+              onChanged();
+            },
+          ),
+          _field(item, 'media_url', 'URL media', onChanged),
+          _field(item, 'media_credit', 'Credit media', onChanged),
+          _field(item, 'media_source_url', 'URL nguồn media', onChanged),
+          _field(item, 'media_alt', 'Mô tả thay thế media', onChanged),
+        ],
       ),
-      _field(item, 'media_url', 'URL media', onChanged),
-      _field(item, 'media_credit', 'Credit media', onChanged),
-      _field(item, 'media_source_url', 'URL nguồn media', onChanged),
-      _field(item, 'media_alt', 'Mô tả thay thế media', onChanged),
+      if (isImage) ...[
+        const SizedBox(height: AppSpacing.sm),
+        AdminImageUploadButton(
+          draft: draft,
+          onUploaded: (url) {
+            applyUploadedImage(item, url, urlKey: 'media_url');
+            onChanged();
+          },
+        ),
+      ],
     ],
   );
 }

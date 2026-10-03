@@ -3,6 +3,7 @@ import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_buttons.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
+import 'package:korea_quest/shared/widgets/youtube_player.dart';
 import 'package:korea_quest/features/admin/domain/admin_models.dart';
 
 class AdminEditorTextField extends StatelessWidget {
@@ -170,6 +171,21 @@ class AdminFieldGrid extends StatelessWidget {
   );
 }
 
+void applyUploadedImage(
+  Map<String, dynamic> data,
+  String publicUrl, {
+  required String urlKey,
+}) {
+  data[urlKey] = publicUrl;
+  final keyPrefix = urlKey.substring(0, urlKey.length - '_url'.length);
+  final creditKey = '${keyPrefix}_credit';
+  final sourceKey = '${keyPrefix}_source_url';
+  final altKey = '${keyPrefix}_alt';
+  if (adminText(data, creditKey).isEmpty) data[creditKey] = 'KoreaQuest';
+  if (adminText(data, sourceKey).isEmpty) data[sourceKey] = publicUrl;
+  if (adminText(data, altKey).isEmpty) data[altKey] = 'Ảnh tải lên KoreaQuest';
+}
+
 class AdminMediaPreview extends StatelessWidget {
   const AdminMediaPreview({required this.kind, required this.url, super.key});
 
@@ -181,11 +197,11 @@ class AdminMediaPreview extends StatelessWidget {
     final trimmedUrl = url.trim();
     if (trimmedUrl.isEmpty) return const SizedBox.shrink();
 
-    final previewUrl = kind == 'youtube'
-        ? _youtubeThumbnail(trimmedUrl)
-        : _isHttpUrl(trimmedUrl)
-        ? trimmedUrl
-        : null;
+    if (kind == 'youtube') {
+      return YoutubePlayer(url: trimmedUrl, label: 'xem trước');
+    }
+
+    final previewUrl = _isHttpUrl(trimmedUrl) ? trimmedUrl : null;
     if (previewUrl == null) {
       return const Text(
         'Không thể xem trước: URL chưa đúng định dạng HTTP(S)/YouTube.',
@@ -246,25 +262,6 @@ class AdminMediaPreview extends StatelessWidget {
     return uri != null &&
         (uri.scheme == 'http' || uri.scheme == 'https') &&
         uri.host.isNotEmpty;
-  }
-
-  static String? _youtubeThumbnail(String value) {
-    final uri = Uri.tryParse(value);
-    if (uri == null || !_isHttpUrl(value)) return null;
-    final host = uri.host.toLowerCase().replaceFirst('www.', '');
-    String? videoId;
-    if (host == 'youtu.be') {
-      videoId = uri.pathSegments.firstOrNull;
-    } else if (host == 'youtube.com' || host.endsWith('.youtube.com')) {
-      videoId = uri.queryParameters['v'];
-      if (videoId == null && uri.pathSegments.length >= 2) {
-        if (const {'embed', 'shorts'}.contains(uri.pathSegments.first)) {
-          videoId = uri.pathSegments[1];
-        }
-      }
-    }
-    if (videoId == null || videoId.isEmpty) return null;
-    return 'https://img.youtube.com/vi/$videoId/hqdefault.jpg';
   }
 }
 

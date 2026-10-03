@@ -4,6 +4,7 @@ import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/admin/domain/admin_models.dart';
 import 'package:korea_quest/features/admin/presentation/widgets/admin_editor_fields.dart';
+import 'package:korea_quest/features/admin/presentation/widgets/admin_image_upload_button.dart';
 
 class LocationOpeningEditor extends StatelessWidget {
   const LocationOpeningEditor({
@@ -58,6 +59,16 @@ class LocationOpeningEditor extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.md),
+        if (mediaKind == 'image') ...[
+          const SizedBox(height: AppSpacing.sm),
+          AdminImageUploadButton(
+            draft: draft,
+            onUploaded: (url) {
+              applyUploadedImage(data, url, urlKey: 'hook_media_url');
+              onChanged();
+            },
+          ),
+        ],
         _field(data, 'hook_caption', 'Caption mở đầu', onChanged, maxLines: 3),
         const SizedBox(height: AppSpacing.sm),
         AdminMediaPreview(
@@ -241,6 +252,14 @@ class LocationOverviewEditor extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.sm),
+        AdminImageUploadButton(
+          draft: draft,
+          onUploaded: (url) {
+            applyUploadedImage(data, url, urlKey: 'cover_image_url');
+            onChanged();
+          },
+        ),
+        const SizedBox(height: AppSpacing.sm),
         AdminMediaPreview(
           kind: 'image',
           url: adminText(data, 'cover_image_url'),
@@ -263,6 +282,14 @@ class LocationOverviewEditor extends StatelessWidget {
             ),
             _field(data, 'thumbnail_alt', 'Mô tả thay thế', onChanged),
           ],
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        AdminImageUploadButton(
+          draft: draft,
+          onUploaded: (url) {
+            applyUploadedImage(data, url, urlKey: 'thumbnail_url');
+            onChanged();
+          },
         ),
         const SizedBox(height: AppSpacing.lg),
         Text('Dấu mộc', style: Theme.of(context).textTheme.titleMedium),
@@ -292,6 +319,14 @@ class LocationOverviewEditor extends StatelessWidget {
               onChanged,
             ),
           ],
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        AdminImageUploadButton(
+          draft: draft,
+          onUploaded: (url) {
+            applyUploadedImage(data, url, urlKey: 'stamp_image_url');
+            onChanged();
+          },
         ),
         const SizedBox(height: AppSpacing.lg),
         AdminRepeatableSection(

@@ -1,3 +1,6 @@
+import 'dart:math';
+import 'dart:typed_data';
+
 import 'package:korea_quest/features/admin/domain/admin_models.dart';
 import 'package:korea_quest/features/admin/domain/admin_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -143,6 +146,37 @@ class SupabaseAdminRepository implements AdminRepository {
         'revision_id': draft.revisionId,
         'expected_lock_version': draft.lockVersion,
       },
+    );
+  }
+
+  @override
+  Future<AdminUploadedImage> uploadContentImage({
+    required String locationId,
+    required String revisionId,
+    required String filename,
+    required Uint8List bytes,
+    required String contentType,
+  }) async {
+    final extension = switch (contentType) {
+      'image/jpeg' => 'jpg',
+      'image/png' => 'png',
+      'image/webp' => 'webp',
+      _ => throw const FormatException('Định dạng ảnh không được hỗ trợ.'),
+    };
+    final random = Random.secure().nextInt(1 << 32).toRadixString(16);
+    final objectName =
+        '${DateTime.now().microsecondsSinceEpoch}-$random.$extension';
+    final storagePath =
+        'locations/$locationId/revisions/$revisionId/$objectName';
+    final storage = _client.storage.from('content-media');
+    await storage.uploadBinary(
+      storagePath,
+      bytes,
+      fileOptions: FileOptions(contentType: contentType, upsert: false),
+    );
+    return AdminUploadedImage(
+      storagePath: storagePath,
+      publicUrl: storage.getPublicUrl(storagePath),
     );
   }
 

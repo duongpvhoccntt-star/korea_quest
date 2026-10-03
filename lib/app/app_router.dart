@@ -4,6 +4,7 @@ import 'package:korea_quest/design_system/components/app_structure.dart';
 import 'package:korea_quest/features/achievements/presentation/pages/achievements_page.dart';
 import 'package:korea_quest/features/admin/presentation/pages/admin_database_page.dart';
 import 'package:korea_quest/features/auth/presentation/pages/auth_page.dart';
+import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
 import 'package:korea_quest/features/explore/presentation/pages/published_explore_page.dart';
 import 'package:korea_quest/features/explore/presentation/pages/published_location_page.dart';
 import 'package:korea_quest/features/home/presentation/pages/home_page.dart';
@@ -39,8 +40,22 @@ abstract final class AppRouteNames {
 }
 
 final appRouterProvider = Provider<GoRouter>((ref) {
-  return GoRouter(
+  final router = GoRouter(
     initialLocation: '/',
+    redirect: (context, state) {
+      const publicPaths = {
+        '/',
+        '/login',
+        '/register',
+        '/forgot-password',
+        '/admin',
+      };
+      final isGuest = ref.read(authRepositoryProvider).currentUser == null;
+      if (isGuest && !publicPaths.contains(state.uri.path)) {
+        return '/login';
+      }
+      return null;
+    },
     errorBuilder: (context, state) =>
         const SystemStatePage(kind: SystemStateKind.notFound),
     routes: [
@@ -189,4 +204,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
+
+  ref.listen(authUserStreamProvider, (_, _) => router.refresh());
+  ref.onDispose(router.dispose);
+  return router;
 });
