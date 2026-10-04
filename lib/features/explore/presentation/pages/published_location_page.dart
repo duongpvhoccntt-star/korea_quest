@@ -82,28 +82,103 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
           color: AppColors.pageBg,
           child: Scrollbar(
             controller: _scrollController,
-            child: SingleChildScrollView(
+            child: CustomScrollView(
               controller: _scrollController,
-              child: ResponsiveContent(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
-                  child: LocationContentView(
-                    location: item,
-                    currentStage: stage,
-                    onStageSelected: _openStage,
-                    onSubmitQuizAnswer: (questionId, answer) => ref
-                        .read(locationContentRepositoryProvider)
-                        .submitQuizAnswer(
-                          questionId: questionId,
-                          answer: answer,
-                        ),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: ResponsiveContent(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: AppSpacing.xl),
+                      child: LocationContentView(
+                        location: item,
+                        currentStage: stage,
+                        onStageSelected: _openStage,
+                        onSubmitQuizAnswer: (questionId, answer) => ref
+                            .read(locationContentRepositoryProvider)
+                            .submitQuizAnswer(
+                              questionId: questionId,
+                              answer: answer,
+                            ),
+                        showJourneyStepper: false,
+                        showStageBody: false,
+                        showStageNavigation: false,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _JourneyStepperHeaderDelegate(
+                    currentStage: stage,
+                    onStageSelected: _openStage,
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: ResponsiveContent(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: AppSpacing.lg,
+                        bottom: AppSpacing.xl,
+                      ),
+                      child: LocationContentView(
+                        location: item,
+                        currentStage: stage,
+                        onStageSelected: _openStage,
+                        onSubmitQuizAnswer: (questionId, answer) => ref
+                            .read(locationContentRepositoryProvider)
+                            .submitQuizAnswer(
+                              questionId: questionId,
+                              answer: answer,
+                            ),
+                        showLocationHeader: false,
+                        showJourneyStepper: false,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         );
       },
     );
   }
+}
+
+class _JourneyStepperHeaderDelegate extends SliverPersistentHeaderDelegate {
+  const _JourneyStepperHeaderDelegate({
+    required this.currentStage,
+    required this.onStageSelected,
+  });
+
+  final int currentStage;
+  final ValueChanged<int> onStageSelected;
+
+  @override
+  double get minExtent => 108;
+
+  @override
+  double get maxExtent => 108;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) => ColoredBox(
+    color: AppColors.pageBg,
+    child: ResponsiveContent(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        child: JourneyStepper(
+          currentStage: currentStage,
+          onStageSelected: onStageSelected,
+        ),
+      ),
+    ),
+  );
+
+  @override
+  bool shouldRebuild(_JourneyStepperHeaderDelegate oldDelegate) =>
+      currentStage != oldDelegate.currentStage;
 }

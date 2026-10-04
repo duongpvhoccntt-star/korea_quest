@@ -14,6 +14,10 @@ class LocationContentView extends StatelessWidget {
     required this.onSubmitQuizAnswer,
     this.currentStage = 1,
     this.onStageSelected,
+    this.showLocationHeader = true,
+    this.showJourneyStepper = true,
+    this.showStageBody = true,
+    this.showStageNavigation = true,
     super.key,
   });
 
@@ -22,6 +26,10 @@ class LocationContentView extends StatelessWidget {
   onSubmitQuizAnswer;
   final int currentStage;
   final ValueChanged<int>? onStageSelected;
+  final bool showLocationHeader;
+  final bool showJourneyStepper;
+  final bool showStageBody;
+  final bool showStageNavigation;
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +37,18 @@ class LocationContentView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _LocationHeader(location: location, currentStage: stage),
-        const SizedBox(height: AppSpacing.lg),
-        _JourneyStepper(currentStage: stage, onStageSelected: onStageSelected),
-        const SizedBox(height: AppSpacing.xl),
-        _stageBody(stage),
-        if (onStageSelected != null) ...[
+        if (showLocationHeader)
+          _LocationHeader(location: location, currentStage: stage),
+        if (showLocationHeader && showJourneyStepper)
+          const SizedBox(height: AppSpacing.lg),
+        if (showJourneyStepper)
+          JourneyStepper(currentStage: stage, onStageSelected: onStageSelected),
+        if (showJourneyStepper && showStageBody)
+          const SizedBox(height: AppSpacing.xl),
+        if (showStageBody) _stageBody(stage),
+        if (showStageNavigation &&
+            showStageBody &&
+            onStageSelected != null) ...[
           const SizedBox(height: AppSpacing.xl),
           _StageNavigation(
             currentStage: stage,
@@ -231,8 +245,12 @@ class _LocationHeader extends StatelessWidget {
   );
 }
 
-class _JourneyStepper extends StatelessWidget {
-  const _JourneyStepper({required this.currentStage, this.onStageSelected});
+class JourneyStepper extends StatelessWidget {
+  const JourneyStepper({
+    required this.currentStage,
+    this.onStageSelected,
+    super.key,
+  });
 
   final int currentStage;
   final ValueChanged<int>? onStageSelected;
@@ -359,7 +377,7 @@ class _StageNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     final label = currentStage == 9
         ? 'Trở về bản đồ Hàn Quốc'
-        : 'Tiếp tục đến ${_JourneyStepper.stages[currentStage].$2}';
+        : 'Tiếp tục đến ${JourneyStepper.stages[currentStage].$2}';
     return Align(
       alignment: Alignment.centerRight,
       child: FilledButton.icon(
