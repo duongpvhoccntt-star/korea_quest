@@ -96,5 +96,37 @@ void main() {
         throwsA(isA<AuthException>()),
       );
     });
+
+    test('register rejects malformed email and short password', () async {
+      expect(
+        () => repository.register(
+          fullName: 'Nguyễn Văn A',
+          displayName: 'Văn A',
+          email: 'khong-phai-email',
+          password: 'password123',
+        ),
+        throwsA(isA<AuthException>()),
+      );
+      expect(
+        () => repository.register(
+          fullName: 'Nguyễn Văn A',
+          displayName: 'Văn A',
+          email: 'vana@example.com',
+          password: '1234567',
+        ),
+        throwsA(isA<AuthException>()),
+      );
+    });
+
+    test('password reset validates email without exposing accounts', () async {
+      await expectLater(
+        repository.sendPasswordResetEmail(email: 'unknown@example.com'),
+        completes,
+      );
+      await expectLater(
+        repository.sendPasswordResetEmail(email: 'invalid'),
+        throwsA(isA<AuthException>()),
+      );
+    });
   });
 }

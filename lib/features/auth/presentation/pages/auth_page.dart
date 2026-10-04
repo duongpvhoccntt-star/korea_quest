@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:korea_quest/app/app_config.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_buttons.dart';
 import 'package:korea_quest/design_system/components/app_feedback.dart';
@@ -11,6 +12,7 @@ import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/shadows/app_shadows.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/admin/presentation/providers/admin_providers.dart';
+import 'package:korea_quest/features/auth/domain/auth_models.dart';
 import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
 
 enum AuthPageMode { register, login, forgotPassword }
@@ -30,7 +32,9 @@ class _AuthPageState extends ConsumerState<AuthPage> {
   final _passwordController = TextEditingController();
   final _fullNameController = TextEditingController();
   final _displayNameController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   bool _isLoading = false;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -50,6 +54,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
     _passwordController.dispose();
     _fullNameController.dispose();
     _displayNameController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -57,87 +62,109 @@ class _AuthPageState extends ConsumerState<AuthPage> {
     final identity = _identityController.text.trim();
     final password = _passwordController.text;
 
-    if (identity.isEmpty) {
-      AppToast.show(context, 'Vui lòng nhập email hoặc tên đăng nhập.');
+    final validationError = _validate(identity: identity, password: password);
+    if (validationError != null) {
+      setState(() => _errorMessage = validationError);
       return;
     }
 
-    if (_mode == AuthPageMode.forgotPassword) {
-      AppToast.show(context, 'Đã gửi hướng dẫn khôi phục mật khẩu qua email.');
-      setState(() => _mode = AuthPageMode.login);
-      return;
-    }
-
-    if (password.isEmpty) {
-      AppToast.show(context, 'Vui lòng nhập mật khẩu.');
-      return;
-    }
-
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
     try {
-      if (_mode == AuthPageMode.register) {
+      final repository = ref.read(authRepositoryProvider);
+      if (_mode == AuthPageMode.forgotPassword) {
+        await repository.sendPasswordResetEmail(email: identity);
+        if (mounted) {
+          AppToast.show(
+            context,
+            'Nếu email tồn tại, hướng dẫn khôi phục đã được gửi.',
+          );
+          setState(() => _mode = AuthPageMode.login);
+        }
+      } else if (_mode == AuthPageMode.register) {
         final fullName = _fullNameController.text.trim();
         final displayName = _displayNameController.text.trim();
-        if (fullName.isEmpty) {
-          AppToast.show(context, 'Vui lòng nhập họ và tên.');
-          setState(() => _isLoading = false);
-          return;
-        }
-
-        await ref
-            .read(authRepositoryProvider)
-            .register(
-              fullName: fullName,
-              displayName: displayName,
-              email: identity,
-              password: password,
+        await repository.register(
+          fullName: fullName,
+          displayName: displayName,
+          email: identity,
+          password: password,
+        );
+        if (mounted) {
+          if (repository.currentUser == null) {
+            AppToast.show(
+              context,
+              'Tài khoản đã được tạo. Hãy kiểm tra email để xác minh.',
             );
-        if (mounted) {
-          AppToast.show(context, 'Tạo tài khoản thành công!');
-          context.go('/home');
-        }
-      } else if (identity.toLowerCase() == 'admin' && password == 'admin123') {
-        ref.read(adminDemoOverrideProvider.notifier).enable();
-        await ref
-            .read(adminRepositoryProvider)
-            .signIn(email: 'admin', password: 'admin123');
-        await ref
-            .read(authRepositoryProvider)
-            .signIn(identity: 'admin', password: 'admin123');
-        ref.invalidate(adminAccessProvider);
-        ref.invalidate(adminLocationsProvider);
-        if (mounted) {
-          AppToast.show(context, 'Đăng nhập Quản trị viên thành công.');
-          context.go('/admin');
-        }
-      } else {
-        // Login mode — nếu là email admin thì đăng nhập qua Supabase Admin
-        final isAdminEmail = identity.toLowerCase() == 'admin@koreaquest.com';
-        if (isAdminEmail) {
-          await ref
-              .read(adminRepositoryProvider)
-              .signIn(email: identity, password: password);
-          ref.invalidate(adminAccessProvider);
-          ref.invalidate(adminLocationsProvider);
-          if (mounted) {
-            AppToast.show(context, 'Đăng nhập Quản trị viên thành công.');
-            context.go('/admin');
-          }
-        } else {
-          await ref
-              .read(authRepositoryProvider)
-              .signIn(identity: identity, password: password);
-          if (mounted) {
-            AppToast.show(context, 'Đăng nhập thành công.');
+            setState(() => _mode = AuthPageMode.login);
+          } else {
+            AppToast.show(context, 'Tạo tài khoản thành công!');
             context.go('/home');
           }
         }
+      } else {
+        final user = await repository.signIn(
+          identity: identity,
+          password: password,
+        );
+        if (user.isAdmin && _usesDemoAuth) {
+          await _startDemoAdminSession(identity, password);
+        }
+        if (user.isAdmin) {
+          ref.invalidate(adminAccessProvider);
+          ref.invalidate(adminLocationsProvider);
+        }
+        if (mounted) {
+          AppToast.show(
+            context,
+            user.isAdmin
+                ? 'Đăng nhập Quản trị viên thành công.'
+                : 'Đăng nhập thành công.',
+          );
+          context.go(user.isAdmin ? '/admin' : '/home');
+        }
       }
     } catch (error) {
-      if (mounted) AppToast.show(context, error.toString());
+      if (mounted) {
+        setState(() => _errorMessage = error.toString());
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  String? _validate({required String identity, required String password}) {
+    if (identity.isEmpty) return 'Vui lòng nhập email.';
+    if (_mode != AuthPageMode.login || AppConfig.hasSupabaseConfiguration) {
+      final at = identity.indexOf('@');
+      if (at <= 0 || identity.indexOf('.', at) <= at + 1) {
+        return 'Email không đúng định dạng.';
+      }
+    }
+    if (_mode == AuthPageMode.forgotPassword) return null;
+    if (password.isEmpty) return 'Vui lòng nhập mật khẩu.';
+    if (_mode == AuthPageMode.register) {
+      if (_fullNameController.text.trim().isEmpty) {
+        return 'Vui lòng nhập họ và tên.';
+      }
+      if (password.length < 8) return 'Mật khẩu phải có ít nhất 8 ký tự.';
+      if (_confirmPasswordController.text != password) {
+        return 'Mật khẩu xác nhận không khớp.';
+      }
+    }
+    return null;
+  }
+
+  bool get _usesDemoAuth =>
+      !AppConfig.hasSupabaseConfiguration || AppConfig.adminDemoMode;
+
+  Future<void> _startDemoAdminSession(String identity, String password) async {
+    ref.read(adminDemoOverrideProvider.notifier).enable();
+    await ref
+        .read(adminRepositoryProvider)
+        .signIn(email: identity, password: password);
   }
 
   Future<void> _quickLoginAdmin() async {
@@ -148,13 +175,13 @@ class _AuthPageState extends ConsumerState<AuthPage> {
     setState(() => _isLoading = true);
 
     try {
-      ref.read(adminDemoOverrideProvider.notifier).enable();
-      await ref
-          .read(adminRepositoryProvider)
-          .signIn(email: identity, password: password);
-      await ref
+      final user = await ref
           .read(authRepositoryProvider)
           .signIn(identity: identity, password: password);
+      if (!user.isAdmin) {
+        throw const AuthException('Tài khoản này không có quyền quản trị.');
+      }
+      await _startDemoAdminSession(identity, password);
       ref.invalidate(adminAccessProvider);
       ref.invalidate(adminLocationsProvider);
       if (mounted) {
@@ -162,7 +189,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
         context.go('/admin');
       }
     } catch (error) {
-      if (mounted) AppToast.show(context, error.toString());
+      if (mounted) setState(() => _errorMessage = error.toString());
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -182,7 +209,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
         context.go('/home');
       }
     } catch (error) {
-      if (mounted) AppToast.show(context, error.toString());
+      if (mounted) setState(() => _errorMessage = error.toString());
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -230,10 +257,16 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                       isForgot: isForgot,
                       identityController: _identityController,
                       passwordController: _passwordController,
+                      confirmPasswordController: _confirmPasswordController,
                       fullNameController: _fullNameController,
                       displayNameController: _displayNameController,
+                      errorMessage: _errorMessage,
+                      showDemoAccounts: _usesDemoAuth,
                       onSubmit: _submit,
-                      onModeChanged: (mode) => setState(() => _mode = mode),
+                      onModeChanged: (mode) => setState(() {
+                        _mode = mode;
+                        _errorMessage = null;
+                      }),
                       onQuickLoginAdmin: _quickLoginAdmin,
                       onQuickLoginStudent: _quickLoginStudent,
                     ),
@@ -352,8 +385,11 @@ class _AuthFormPanel extends StatelessWidget {
     required this.isForgot,
     required this.identityController,
     required this.passwordController,
+    required this.confirmPasswordController,
     required this.fullNameController,
     required this.displayNameController,
+    required this.errorMessage,
+    required this.showDemoAccounts,
     required this.onSubmit,
     required this.onModeChanged,
     required this.onQuickLoginAdmin,
@@ -368,8 +404,11 @@ class _AuthFormPanel extends StatelessWidget {
   final bool isForgot;
   final TextEditingController identityController;
   final TextEditingController passwordController;
+  final TextEditingController confirmPasswordController;
   final TextEditingController fullNameController;
   final TextEditingController displayNameController;
+  final String? errorMessage;
+  final bool showDemoAccounts;
   final VoidCallback onSubmit;
   final ValueChanged<AuthPageMode> onModeChanged;
   final VoidCallback onQuickLoginAdmin;
@@ -438,14 +477,32 @@ class _AuthFormPanel extends StatelessWidget {
               const SizedBox(height: AppSpacing.md),
             ],
             AppTextField(
-              label: isRegister ? 'Email' : 'Email hoặc tên đăng nhập',
-              hint: isRegister ? 'duong@example.com' : 'Nhập admin hoặc email',
+              label: 'Email',
+              hint: showDemoAccounts && !isRegister
+                  ? 'Email hoặc admin (chế độ demo)'
+                  : 'ban@example.com',
               controller: identityController,
               prefixIcon: Icons.email_outlined,
             ),
             if (!isForgot) ...[
               const SizedBox(height: AppSpacing.md),
               PasswordField(label: 'Mật khẩu', controller: passwordController),
+            ],
+            if (isRegister) ...[
+              const SizedBox(height: AppSpacing.md),
+              PasswordField(
+                label: 'Xác nhận mật khẩu',
+                controller: confirmPasswordController,
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              const Text(
+                'Dùng ít nhất 8 ký tự để bảo vệ tài khoản của bạn.',
+                style: TextStyle(color: AppColors.stitchMuted, fontSize: 12),
+              ),
+            ],
+            if (errorMessage != null) ...[
+              const SizedBox(height: AppSpacing.md),
+              _AuthErrorMessage(message: errorMessage!),
             ],
             const SizedBox(height: AppSpacing.lg),
             PrimaryButton(
@@ -474,12 +531,42 @@ class _AuthFormPanel extends StatelessWidget {
                     : () => onModeChanged(AuthPageMode.login),
                 child: const Text('Quay lại đăng nhập'),
               ),
-            const SizedBox(height: AppSpacing.md),
-            _QuickDemoSection(
-              isLoading: isLoading,
-              onLoginAdmin: onQuickLoginAdmin,
-              onLoginStudent: onQuickLoginStudent,
-            ),
+            if (showDemoAccounts && mode == AuthPageMode.login) ...[
+              const SizedBox(height: AppSpacing.md),
+              _QuickDemoSection(
+                isLoading: isLoading,
+                onLoginAdmin: onQuickLoginAdmin,
+                onLoginStudent: onQuickLoginStudent,
+              ),
+            ],
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+class _AuthErrorMessage extends StatelessWidget {
+  const _AuthErrorMessage({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    liveRegion: true,
+    child: DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.palePink,
+        borderRadius: BorderRadius.circular(AppRadius.medium),
+        border: Border.all(color: AppColors.koreanRed),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.sm),
+        child: Row(
+          children: [
+            const Icon(Icons.error_outline_rounded, color: AppColors.danger),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(child: Text(message)),
           ],
         ),
       ),

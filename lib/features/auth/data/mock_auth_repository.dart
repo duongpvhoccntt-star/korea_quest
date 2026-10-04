@@ -79,8 +79,11 @@ class MockAuthRepository implements AuthRepository {
     if (key.isEmpty) {
       throw const AuthException('Email không được để trống.');
     }
-    if (password.length < 6) {
-      throw const AuthException('Mật khẩu phải có ít nhất 6 ký tự.');
+    if (!_isValidEmail(key)) {
+      throw const AuthException('Email không đúng định dạng.');
+    }
+    if (password.length < 8) {
+      throw const AuthException('Mật khẩu phải có ít nhất 8 ký tự.');
     }
     if (_accounts.containsKey(key)) {
       throw const AuthException('Email hoặc tên đăng nhập đã được sử dụng.');
@@ -102,8 +105,21 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    final key = email.trim().toLowerCase();
+    if (!_isValidEmail(key)) {
+      throw const AuthException('Email không đúng định dạng.');
+    }
+  }
+
+  @override
   Future<void> signOut() async {
     _currentUser = null;
     _userController.add(null);
+  }
+
+  bool _isValidEmail(String value) {
+    final at = value.indexOf('@');
+    return at > 0 && at < value.length - 3 && value.indexOf('.', at) > at + 1;
   }
 }

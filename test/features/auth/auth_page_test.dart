@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -72,6 +72,24 @@ void main() {
       // Now on Register - shows "Họ và tên" and "Tên hiển thị"
       expect(find.text('Họ và tên'), findsOneWidget);
       expect(find.text('Tên hiển thị'), findsOneWidget);
+      expect(find.text('Xác nhận mật khẩu'), findsOneWidget);
+    });
+
+    testWidgets('register form validates matching secure passwords', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1280, 1024);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(buildTestApp(mode: AuthPageMode.register));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Tạo tài khoản'));
+      await tester.pump();
+
+      expect(find.text('Vui lòng nhập email.'), findsOneWidget);
     });
 
     testWidgets('tapping quick admin button navigates to /admin', (

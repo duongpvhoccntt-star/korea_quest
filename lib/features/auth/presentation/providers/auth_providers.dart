@@ -1,9 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:korea_quest/app/app_config.dart';
 import 'package:korea_quest/features/auth/data/mock_auth_repository.dart';
+import 'package:korea_quest/features/auth/data/supabase_auth_repository.dart';
 import 'package:korea_quest/features/auth/domain/auth_models.dart';
 import 'package:korea_quest/features/auth/domain/auth_repository.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
+  if (AppConfig.hasSupabaseConfiguration && !AppConfig.adminDemoMode) {
+    return SupabaseAuthRepository(Supabase.instance.client);
+  }
   final repository = MockAuthRepository();
   ref.onDispose(repository.dispose);
   return repository;
