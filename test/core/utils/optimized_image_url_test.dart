@@ -19,14 +19,11 @@ void main() {
       expect(uri.queryParameters['width'], '720');
     });
 
-    test('resizes an existing Wikimedia thumbnail URL', () {
-      expect(
-        optimizedImageUrl(
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/photo.jpg/1920px-photo.jpg',
-          maxWidth: 720,
-        ),
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/photo.jpg/720px-photo.jpg',
-      );
+    test('keeps an existing Wikimedia thumbnail URL unchanged', () {
+      const url =
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/photo.jpg/1920px-photo.jpg';
+
+      expect(optimizedImageUrl(url, maxWidth: 720), url);
     });
 
     test('keeps Supabase Storage URLs unchanged', () {

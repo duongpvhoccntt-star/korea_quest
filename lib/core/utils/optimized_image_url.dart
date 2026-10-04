@@ -1,7 +1,9 @@
 /// Returns a smaller rendition for known Wikimedia image URLs.
 ///
 /// URLs from other providers, including Supabase Storage uploads, are kept
-/// unchanged so the original public URL remains the source of truth.
+/// unchanged so the original public URL remains the source of truth. Existing
+/// Wikimedia thumbnails are also preserved because not every arbitrary width has
+/// a valid rendition on the upstream server.
 String optimizedImageUrl(String url, {required int maxWidth}) {
   if (maxWidth <= 0) return url;
 
@@ -21,14 +23,6 @@ String optimizedImageUrl(String url, {required int maxWidth}) {
       'title': 'Special:Redirect/file/$fileName',
       'width': '$maxWidth',
     }).toString();
-  }
-
-  if (uri.host == 'upload.wikimedia.org' && uri.path.contains('/thumb/')) {
-    final resizedPath = uri.path.replaceFirst(
-      RegExp(r'/\d+px-'),
-      '/${maxWidth}px-',
-    );
-    return uri.replace(path: resizedPath).toString();
   }
 
   return url;
