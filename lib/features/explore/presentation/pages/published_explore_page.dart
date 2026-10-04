@@ -836,6 +836,7 @@ class _LocationImage extends StatelessWidget {
     return Image.network(
       location.thumbnailUrl,
       fit: BoxFit.cover,
+      webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
       semanticLabel: location.thumbnailAlt.isEmpty
           ? location.name
           : location.thumbnailAlt,
