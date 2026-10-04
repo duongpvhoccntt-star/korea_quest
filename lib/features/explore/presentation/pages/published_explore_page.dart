@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:korea_quest/core/utils/optimized_image_url.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_feedback.dart';
 import 'package:korea_quest/design_system/components/responsive_content.dart';
@@ -834,7 +835,7 @@ class _LocationImage extends StatelessWidget {
       );
     }
     return Image.network(
-      location.thumbnailUrl,
+      optimizedImageUrl(location.thumbnailUrl, maxWidth: 720),
       fit: BoxFit.cover,
       webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
       semanticLabel: location.thumbnailAlt.isEmpty

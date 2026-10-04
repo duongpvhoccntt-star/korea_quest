@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:korea_quest/core/utils/optimized_image_url.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/shadows/app_shadows.dart';
@@ -1272,7 +1273,7 @@ class _Media extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   Image.network(
-                    url,
+                    optimizedImageUrl(url, maxWidth: large ? 1280 : 720),
                     fit: BoxFit.cover,
                     webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
                     semanticLabel: media.string('alt').isEmpty
