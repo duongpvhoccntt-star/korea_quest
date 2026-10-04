@@ -1275,7 +1275,6 @@ class _Media extends StatelessWidget {
                   Image.network(
                     optimizedImageUrl(url, maxWidth: large ? 1280 : 720),
                     fit: BoxFit.cover,
-                    webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
                     semanticLabel: media.string('alt').isEmpty
                         ? fallbackLabel
                         : media.string('alt'),

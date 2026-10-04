@@ -229,7 +229,6 @@ class AdminMediaPreview extends StatelessWidget {
                     Image.network(
                       optimizedImageUrl(previewUrl, maxWidth: 960),
                       fit: BoxFit.cover,
-                      webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
                       errorBuilder: (context, error, stackTrace) =>
                           const ColoredBox(
                             color: AppColors.creamDark,
