@@ -30,12 +30,6 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
   );
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _scrollController.setReduceMotion(MediaQuery.disableAnimationsOf(context));
-  }
-
-  @override
   void didUpdateWidget(covariant PublishedLocationPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.slug != widget.slug ||

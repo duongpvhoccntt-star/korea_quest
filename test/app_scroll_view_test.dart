@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_smooth_wheel_scroll/flutter_smooth_wheel_scroll.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:korea_quest/design_system/components/app_scroll_view.dart';
 
@@ -54,45 +53,30 @@ Future<void> _wheel(
 }
 
 void main() {
-  testWidgets('uses a 220 ms non-bouncing spring for mouse-wheel input', (
+  testWidgets('mouse-wheel input scrolls immediately with native behavior', (
     tester,
   ) async {
     await tester.pumpWidget(_scrollView());
     final controller = _controller(tester);
-    final motion = controller.motion as SpringWheelMotion;
-
-    expect(motion.duration, const Duration(milliseconds: 220));
-    expect(motion.bounce, 0);
 
     await _wheel(tester, 60);
-    expect(controller.offset, 0);
-
-    await tester.pump(const Duration(milliseconds: 110));
-    expect(controller.offset, greaterThan(0));
-    expect(controller.offset, lessThan(60));
-
-    await tester.pumpAndSettle();
-    expect(controller.offset, closeTo(60, 0.01));
+    expect(controller.offset, 60);
   });
 
-  testWidgets('accumulates repeated wheel input and clamps to the extents', (
+  testWidgets('repeated wheel input clamps to the scroll extents', (
     tester,
   ) async {
     await tester.pumpWidget(_scrollView(height: 400));
     final controller = _controller(tester);
 
     await _wheel(tester, 60);
-    await tester.pump(const Duration(milliseconds: 20));
     await _wheel(tester, 60);
-    await tester.pump(const Duration(milliseconds: 20));
     await _wheel(tester, 60);
-    await tester.pumpAndSettle();
 
     expect(controller.position.maxScrollExtent, 100);
     expect(controller.offset, 100);
 
     await _wheel(tester, -300);
-    await tester.pumpAndSettle();
     expect(controller.offset, 0);
   });
 
@@ -107,14 +91,12 @@ void main() {
     expect(controller.offset, 60);
   });
 
-  testWidgets('disables wheel animation for reduced-motion users', (
+  testWidgets('mouse wheel remains available for reduced-motion users', (
     tester,
   ) async {
     await tester.pumpWidget(_scrollView(disableAnimations: true));
     final controller = _controller(tester);
-    final motion = controller.motion as SpringWheelMotion;
 
-    expect(motion.duration, Duration.zero);
     await _wheel(tester, 60);
     expect(controller.offset, 60);
   });
