@@ -7,6 +7,7 @@ import 'package:korea_quest/design_system/shadows/app_shadows.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/shared/widgets/youtube_player.dart';
 import 'package:korea_quest/features/explore/domain/published_location.dart';
+import 'package:url_launcher/link.dart';
 
 class LocationContentView extends StatelessWidget {
   const LocationContentView({
@@ -65,29 +66,9 @@ class LocationContentView extends StatelessWidget {
       onStart: onStageSelected == null ? null : () => onStageSelected!(2),
     ),
     2 => _OverviewStage(location: location),
-    3 => _ListStage(
-      stage: 3,
-      icon: Icons.history_edu_rounded,
-      title: 'Lịch sử',
-      subtitle:
-          'Timeline các mốc nội dung, có ảnh, mô tả ngắn và thông tin mở rộng.',
-      emptyMessage: 'Nội dung lịch sử đang được cập nhật.',
+    3 => _HistoryStage(
+      key: ValueKey('history-stage-${location.id}'),
       items: location.history,
-      builder: (item, index) => _TimelineCard(
-        index: index,
-        title: _fallback(item.string('title'), 'Mốc lịch sử ${index + 1}'),
-        eyebrow: item.string('period_label'),
-        description: _paragraphs([
-          item.string('short_description'),
-          item.string('long_description'),
-        ]),
-        media: item.jsonObject('media'),
-        details: [
-          ('Nhân vật liên quan', item.string('related_people')),
-          ('Danh mục', item.stringList('categories').join(' · ')),
-          ('Bạn có biết?', item.string('fun_fact')),
-        ],
-      ),
     ),
     4 => _ListStage(
       stage: 4,
@@ -680,53 +661,616 @@ class _ListStage extends StatelessWidget {
   );
 }
 
-class _TimelineCard extends StatelessWidget {
-  const _TimelineCard({
-    required this.index,
-    required this.title,
-    required this.description,
-    required this.details,
-    this.eyebrow = '',
-    this.media = const {},
-  });
+class _HistoryStage extends StatefulWidget {
+  const _HistoryStage({required this.items, super.key});
 
-  final int index;
-  final String title;
-  final String eyebrow;
-  final String description;
-  final JsonMap media;
-  final List<(String, String)> details;
+  final List<JsonMap> items;
 
   @override
-  Widget build(BuildContext context) => Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Column(
-        children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundColor: AppColors.palePink,
-            foregroundColor: AppColors.koreanRed,
-            child: Text(
-              '${index + 1}',
-              style: const TextStyle(fontWeight: FontWeight.w900),
-            ),
+  State<_HistoryStage> createState() => _HistoryStageState();
+}
+
+class _HistoryStageState extends State<_HistoryStage> {
+  int? _expandedIndex;
+  final Set<int> _viewedIndexes = {};
+
+  void _toggle(int index) {
+    setState(() {
+      _viewedIndexes.add(index);
+      _expandedIndex = _expandedIndex == index ? null : index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: AppSpacing.xxl),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const _HistoryHeader(),
+        const SizedBox(height: AppSpacing.section),
+        if (widget.items.isEmpty)
+          const _Empty('Nội dung lịch sử đang được cập nhật.')
+        else
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isDesktop = constraints.maxWidth >= 840;
+              return isDesktop
+                  ? _HistoryDesktopTimeline(
+                      items: widget.items,
+                      expandedIndex: _expandedIndex,
+                      viewedIndexes: _viewedIndexes,
+                      onToggle: _toggle,
+                    )
+                  : _HistoryMobileTimeline(
+                      items: widget.items,
+                      expandedIndex: _expandedIndex,
+                      viewedIndexes: _viewedIndexes,
+                      onToggle: _toggle,
+                    );
+            },
           ),
-          Container(width: 2, height: 96, color: AppColors.borderSoft),
-        ],
+      ],
+    ),
+  );
+}
+
+class _HistoryHeader extends StatelessWidget {
+  const _HistoryHeader();
+
+  @override
+  Widget build(BuildContext context) => Column(
+    children: [
+      Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.xxs,
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.palePink,
+          borderRadius: BorderRadius.circular(AppRadius.round),
+        ),
+        child: const Text(
+          'CHẶNG 03/09',
+          style: TextStyle(
+            color: AppColors.koreanRed,
+            fontSize: 12,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1.1,
+          ),
+        ),
       ),
-      const SizedBox(width: AppSpacing.md),
-      Expanded(
-        child: _ContentCard(
-          title: title,
-          eyebrow: eyebrow,
-          description: description,
-          media: media,
-          details: details,
+      const SizedBox(height: AppSpacing.md),
+      Semantics(
+        header: true,
+        child: Text(
+          'Lịch sử & Di sản',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+            color: AppColors.koreanRed,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ),
+      const SizedBox(height: AppSpacing.sm),
+      ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 720),
+        child: const Text(
+          'Khám phá những dấu ấn thời gian và câu chuyện văn hóa tạo nên '
+          'bức tranh đa sắc của quá khứ.',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: AppColors.stitchMuted,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            height: 1.5,
+          ),
         ),
       ),
     ],
   );
+}
+
+class _HistoryDesktopTimeline extends StatelessWidget {
+  const _HistoryDesktopTimeline({
+    required this.items,
+    required this.expandedIndex,
+    required this.viewedIndexes,
+    required this.onToggle,
+  });
+
+  final List<JsonMap> items;
+  final int? expandedIndex;
+  final Set<int> viewedIndexes;
+  final ValueChanged<int> onToggle;
+
+  @override
+  Widget build(BuildContext context) => Stack(
+    children: [
+      const Positioned.fill(
+        child: IgnorePointer(
+          child: RepaintBoundary(
+            child: CustomPaint(painter: _HistoryRailPainter.centered()),
+          ),
+        ),
+      ),
+      Column(
+        children: [
+          for (var index = 0; index < items.length; index++) ...[
+            _HistoryDesktopMilestone(
+              item: items[index],
+              index: index,
+              isExpanded: expandedIndex == index,
+              isViewed: viewedIndexes.contains(index),
+              onToggle: () => onToggle(index),
+            ),
+            if (index != items.length - 1)
+              const SizedBox(height: AppSpacing.section),
+          ],
+        ],
+      ),
+    ],
+  );
+}
+
+class _HistoryDesktopMilestone extends StatelessWidget {
+  const _HistoryDesktopMilestone({
+    required this.item,
+    required this.index,
+    required this.isExpanded,
+    required this.isViewed,
+    required this.onToggle,
+  });
+
+  final JsonMap item;
+  final int index;
+  final bool isExpanded;
+  final bool isViewed;
+  final VoidCallback onToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    final card = _HistoryCard(
+      item: item,
+      index: index,
+      isExpanded: isExpanded,
+      isViewed: isViewed,
+      onToggle: onToggle,
+    );
+    final media = _HistoryMedia(item: item, index: index, tilted: true);
+    final cardFirst = index.isEven;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(child: cardFirst ? card : media),
+        const SizedBox(width: AppSpacing.lg),
+        SizedBox(
+          width: 56,
+          child: _HistoryMarker(
+            index: index,
+            isExpanded: isExpanded,
+            isViewed: isViewed,
+          ),
+        ),
+        const SizedBox(width: AppSpacing.lg),
+        Expanded(child: cardFirst ? media : card),
+      ],
+    );
+  }
+}
+
+class _HistoryMobileTimeline extends StatelessWidget {
+  const _HistoryMobileTimeline({
+    required this.items,
+    required this.expandedIndex,
+    required this.viewedIndexes,
+    required this.onToggle,
+  });
+
+  final List<JsonMap> items;
+  final int? expandedIndex;
+  final Set<int> viewedIndexes;
+  final ValueChanged<int> onToggle;
+
+  @override
+  Widget build(BuildContext context) => Stack(
+    children: [
+      const Positioned.fill(
+        child: IgnorePointer(
+          child: RepaintBoundary(
+            child: CustomPaint(painter: _HistoryRailPainter.inset()),
+          ),
+        ),
+      ),
+      Column(
+        children: [
+          for (var index = 0; index < items.length; index++) ...[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 64,
+                  child: _HistoryMarker(
+                    index: index,
+                    isExpanded: expandedIndex == index,
+                    isViewed: viewedIndexes.contains(index),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Column(
+                    children: [
+                      _HistoryCard(
+                        item: items[index],
+                        index: index,
+                        isExpanded: expandedIndex == index,
+                        isViewed: viewedIndexes.contains(index),
+                        onToggle: () => onToggle(index),
+                      ),
+                      if (items[index]
+                          .jsonObject('media')
+                          .string('url')
+                          .isNotEmpty) ...[
+                        const SizedBox(height: AppSpacing.lg),
+                        _HistoryMedia(
+                          item: items[index],
+                          index: index,
+                          tilted: false,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if (index != items.length - 1)
+              const SizedBox(height: AppSpacing.xxl),
+          ],
+        ],
+      ),
+    ],
+  );
+}
+
+class _HistoryCard extends StatelessWidget {
+  const _HistoryCard({
+    required this.item,
+    required this.index,
+    required this.isExpanded,
+    required this.isViewed,
+    required this.onToggle,
+  });
+
+  final JsonMap item;
+  final int index;
+  final bool isExpanded;
+  final bool isViewed;
+  final VoidCallback onToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    final period = item.string('period_label');
+    final title = item.string('title');
+    final shortDescription = item.string('short_description');
+    final longDescription = item.string('long_description');
+    final summary = shortDescription.isNotEmpty
+        ? shortDescription
+        : longDescription;
+    final relatedPeople = item.string('related_people');
+    final funFact = item.string('fun_fact');
+    final categories = item.stringList('categories');
+    final media = item.jsonObject('media');
+    final mediaCredit = media.string('credit');
+    final sourceUrl = media.string('source_url');
+    final sourceUri = _validWebUri(sourceUrl);
+    final hasSeparateDescription =
+        longDescription.isNotEmpty && longDescription != summary;
+    final hasDetails =
+        hasSeparateDescription ||
+        relatedPeople.isNotEmpty ||
+        funFact.isNotEmpty ||
+        mediaCredit.isNotEmpty ||
+        sourceUrl.isNotEmpty;
+    final disableAnimations =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    final duration = disableAnimations
+        ? Duration.zero
+        : const Duration(milliseconds: 200);
+    final accent = isExpanded
+        ? AppColors.sky
+        : isViewed
+        ? AppColors.completedGreen
+        : AppColors.koreanRed;
+    final details = isExpanded
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: AppSpacing.lg),
+              const Divider(color: AppColors.borderSoft),
+              if (hasSeparateDescription) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  longDescription,
+                  style: const TextStyle(
+                    color: AppColors.stitchText,
+                    height: 1.6,
+                  ),
+                ),
+              ],
+              _DetailRows(
+                entries: [
+                  ('Nhân vật liên quan', relatedPeople),
+                  ('Bạn có biết?', funFact),
+                  ('Nguồn ảnh/video', mediaCredit),
+                  if (sourceUrl.isNotEmpty && sourceUri == null)
+                    ('Liên kết nguồn', sourceUrl),
+                ],
+              ),
+              if (sourceUri != null)
+                Link(
+                  uri: sourceUri,
+                  target: LinkTarget.blank,
+                  builder: (context, followLink) => TextButton.icon(
+                    onPressed: followLink,
+                    icon: const Icon(Icons.open_in_new_rounded),
+                    label: const Text('Xem nguồn media'),
+                  ),
+                ),
+            ],
+          )
+        : const SizedBox.shrink();
+    final expandableDetails = disableAnimations
+        ? details
+        : AnimatedSize(
+            duration: duration,
+            curve: Curves.easeOutCubic,
+            alignment: Alignment.topCenter,
+            child: details,
+          );
+
+    return Semantics(
+      container: true,
+      label: title.isEmpty ? 'Mốc lịch sử ${index + 1}' : title,
+      child: AnimatedContainer(
+        key: ValueKey('history-card-$index'),
+        duration: duration,
+        curve: Curves.easeOutCubic,
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        decoration: BoxDecoration(
+          color: AppColors.paper,
+          borderRadius: BorderRadius.circular(AppRadius.large),
+          border: Border.all(
+            color: isExpanded ? AppColors.sky : AppColors.borderSoft,
+            width: isExpanded ? 2 : 1,
+          ),
+          boxShadow: AppShadows.large,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (period.isNotEmpty)
+              Text(
+                period,
+                style: TextStyle(color: accent, fontWeight: FontWeight.w900),
+              ),
+            if (title.isNotEmpty) ...[
+              if (period.isNotEmpty) const SizedBox(height: AppSpacing.xxs),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: AppColors.stitchText,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+            if (summary.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                summary,
+                style: const TextStyle(
+                  color: AppColors.stitchMuted,
+                  fontSize: 15,
+                  height: 1.55,
+                ),
+              ),
+            ],
+            if (categories.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.md),
+              Wrap(
+                spacing: AppSpacing.xs,
+                runSpacing: AppSpacing.xs,
+                children: [
+                  for (final category in categories)
+                    _Chip(
+                      label: category,
+                      color: index.isEven
+                          ? AppColors.palePink
+                          : AppColors.skyLight,
+                    ),
+                ],
+              ),
+            ],
+            expandableDetails,
+            if (hasDetails) ...[
+              const SizedBox(height: AppSpacing.md),
+              Semantics(
+                expanded: isExpanded,
+                child: FilledButton.tonalIcon(
+                  key: ValueKey('history-toggle-$index'),
+                  onPressed: onToggle,
+                  icon: Icon(
+                    isExpanded
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.arrow_forward_rounded,
+                  ),
+                  label: Text(isExpanded ? 'Thu gọn' : 'Khám phá ngay'),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HistoryMedia extends StatelessWidget {
+  const _HistoryMedia({
+    required this.item,
+    required this.index,
+    required this.tilted,
+  });
+
+  final JsonMap item;
+  final int index;
+  final bool tilted;
+
+  @override
+  Widget build(BuildContext context) {
+    final media = item.jsonObject('media');
+    if (media.string('url').isEmpty) return const SizedBox.shrink();
+
+    final title = item.string('title');
+    final frame = DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.paper,
+        borderRadius: BorderRadius.circular(AppRadius.large),
+        border: Border.all(color: AppColors.borderSoft),
+        boxShadow: AppShadows.large,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.xs),
+        child: _Media(
+          media: media,
+          fallbackLabel: title.isEmpty ? 'Mốc lịch sử ${index + 1}' : title,
+          compact: true,
+        ),
+      ),
+    );
+    final visual = tilted && media.string('kind') != 'youtube'
+        ? Transform.rotate(angle: index.isEven ? 0.025 : -0.025, child: frame)
+        : frame;
+
+    return RepaintBoundary(
+      key: ValueKey('history-media-$index'),
+      child: visual,
+    );
+  }
+}
+
+class _HistoryMarker extends StatelessWidget {
+  const _HistoryMarker({
+    required this.index,
+    required this.isExpanded,
+    required this.isViewed,
+  });
+
+  final int index;
+  final bool isExpanded;
+  final bool isViewed;
+
+  @override
+  Widget build(BuildContext context) {
+    final status = isExpanded
+        ? 'đang mở'
+        : isViewed
+        ? 'đã xem'
+        : 'chưa xem';
+    final marker = isExpanded
+        ? Container(
+            width: 56,
+            height: 56,
+            padding: const EdgeInsets.all(AppSpacing.xs),
+            decoration: const BoxDecoration(
+              color: AppColors.skyLight,
+              shape: BoxShape.circle,
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.paper,
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.sky, width: 3),
+              ),
+              child: const Icon(
+                Icons.explore_rounded,
+                color: AppColors.sky,
+                size: 20,
+              ),
+            ),
+          )
+        : Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: AppColors.paper,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isViewed
+                    ? AppColors.completedGreen
+                    : AppColors.lockedGray,
+                width: 3,
+              ),
+              boxShadow: AppShadows.small,
+            ),
+            alignment: Alignment.center,
+            child: isViewed
+                ? const Icon(
+                    Icons.check_rounded,
+                    color: AppColors.completedGreen,
+                  )
+                : Text(
+                    '${index + 1}',
+                    style: const TextStyle(
+                      color: AppColors.stitchMuted,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+          );
+
+    return Semantics(
+      key: ValueKey('history-marker-$index'),
+      label: 'Mốc lịch sử ${index + 1}, $status',
+      child: ExcludeSemantics(child: Center(child: marker)),
+    );
+  }
+}
+
+class _HistoryRailPainter extends CustomPainter {
+  const _HistoryRailPainter.centered() : centered = true;
+
+  const _HistoryRailPainter.inset() : centered = false;
+
+  final bool centered;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final x = centered ? size.width / 2 : AppSpacing.xl;
+    final paint = Paint()
+      ..color = AppColors.palePink
+      ..strokeWidth = 2
+      ..strokeCap = StrokeCap.round;
+    const dash = AppSpacing.sm;
+    const gap = AppSpacing.xs;
+    var y = AppSpacing.lg;
+    final end = size.height - AppSpacing.lg;
+    while (y < end) {
+      canvas.drawLine(Offset(x, y), Offset(x, (y + dash).clamp(y, end)), paint);
+      y += dash + gap;
+    }
+  }
+
+  @override
+  bool shouldRepaint(_HistoryRailPainter oldDelegate) =>
+      centered != oldDelegate.centered;
+}
+
+Uri? _validWebUri(String value) {
+  final uri = Uri.tryParse(value.trim());
+  if (uri == null || (uri.scheme != 'http' && uri.scheme != 'https')) {
+    return null;
+  }
+  return uri;
 }
 
 class _ContentCard extends StatelessWidget {

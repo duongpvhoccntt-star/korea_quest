@@ -155,11 +155,13 @@ class _JourneyStepperHeaderDelegate extends SliverPersistentHeaderDelegate {
   final int currentStage;
   final ValueChanged<int> onStageSelected;
 
-  @override
-  double get minExtent => 108;
+  static const _extent = 116.0;
 
   @override
-  double get maxExtent => 108;
+  double get minExtent => _extent;
+
+  @override
+  double get maxExtent => _extent;
 
   @override
   Widget build(
