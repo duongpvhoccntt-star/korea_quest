@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_feedback.dart';
+import 'package:korea_quest/design_system/components/app_scroll_view.dart';
 import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/explore/presentation/providers/location_content_providers.dart';
@@ -24,9 +25,15 @@ class PublishedLocationPage extends ConsumerStatefulWidget {
 }
 
 class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
-  final ScrollController _scrollController = ScrollController(
+  final AppScrollController _scrollController = AppScrollController(
     keepScrollOffset: false,
   );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _scrollController.setReduceMotion(MediaQuery.disableAnimationsOf(context));
+  }
 
   @override
   void didUpdateWidget(covariant PublishedLocationPage oldWidget) {

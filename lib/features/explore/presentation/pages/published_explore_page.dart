@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:korea_quest/core/utils/optimized_image_url.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_feedback.dart';
+import 'package:korea_quest/design_system/components/app_scroll_view.dart';
 import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/shadows/app_shadows.dart';
@@ -52,7 +53,7 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
 
     return ColoredBox(
       color: AppColors.pageBg,
-      child: SingleChildScrollView(
+      child: AppScrollView(
         child: ResponsiveContent(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
@@ -340,6 +341,8 @@ class _MapExperience extends StatelessWidget {
                     child: RepaintBoundary(
                       child: CustomPaint(
                         painter: _KoreaMapPainter(),
+                        isComplex: true,
+                        willChange: false,
                         child: const SizedBox.expand(),
                       ),
                     ),

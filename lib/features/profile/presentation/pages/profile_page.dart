@@ -6,6 +6,7 @@ import 'package:korea_quest/design_system/components/app_buttons.dart';
 import 'package:korea_quest/design_system/components/app_feedback.dart';
 import 'package:korea_quest/design_system/components/app_fields.dart';
 import 'package:korea_quest/design_system/components/progress_components.dart';
+import 'package:korea_quest/design_system/components/app_scroll_view.dart';
 import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/shadows/app_shadows.dart';
@@ -44,7 +45,7 @@ class ProfilePage extends ConsumerWidget {
 
     return ColoredBox(
       color: AppColors.pageBg,
-      child: SingleChildScrollView(
+      child: AppScrollView(
         child: ResponsiveContent(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),

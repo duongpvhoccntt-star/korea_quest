@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_buttons.dart';
 import 'package:korea_quest/design_system/components/app_feedback.dart';
+import 'package:korea_quest/design_system/components/app_scroll_view.dart';
 import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
@@ -73,35 +74,37 @@ class _AdminDashboardState extends ConsumerState<AdminDashboard> {
       return const LoadingIndicator(label: 'Đang tạo hoặc mở bản nháp…');
     }
 
-    return ResponsiveContent(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _AdminHero(
-              selected: _area,
-              onSelected: (value) => setState(() => _area = value),
-            ),
-            const SizedBox(height: AppSpacing.xl),
-            switch (_area) {
-              _AdminArea.locations => _LocationsPanel(
-                onOpen: _open,
-                onArchive: _archive,
-                onCreate: () =>
-                    setState(() => _editingDraft = AdminLocationDraft()),
+    return AppScrollView(
+      child: ResponsiveContent(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _AdminHero(
+                selected: _area,
+                onSelected: (value) => setState(() => _area = value),
               ),
-              _AdminArea.levels => const GameConfigAdmin(
-                section: GameConfigSection.levels,
-              ),
-              _AdminArea.achievements => const GameConfigAdmin(
-                section: GameConfigSection.achievements,
-              ),
-              _AdminArea.challenges => const GameConfigAdmin(
-                section: GameConfigSection.challenges,
-              ),
-            },
-          ],
+              const SizedBox(height: AppSpacing.xl),
+              switch (_area) {
+                _AdminArea.locations => _LocationsPanel(
+                  onOpen: _open,
+                  onArchive: _archive,
+                  onCreate: () =>
+                      setState(() => _editingDraft = AdminLocationDraft()),
+                ),
+                _AdminArea.levels => const GameConfigAdmin(
+                  section: GameConfigSection.levels,
+                ),
+                _AdminArea.achievements => const GameConfigAdmin(
+                  section: GameConfigSection.achievements,
+                ),
+                _AdminArea.challenges => const GameConfigAdmin(
+                  section: GameConfigSection.challenges,
+                ),
+              },
+            ],
+          ),
         ),
       ),
     );

@@ -7,6 +7,7 @@ import 'package:korea_quest/core/responsive/responsive_breakpoints.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_buttons.dart';
 import 'package:korea_quest/design_system/components/app_feedback.dart';
+import 'package:korea_quest/design_system/components/app_scroll_view.dart';
 import 'package:korea_quest/design_system/components/app_structure.dart';
 import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
@@ -83,24 +84,34 @@ class _LandingContent extends ConsumerWidget {
     final journey = ref.watch(journeyProvider(active.id)).value;
     final missions = ref.watch(missionsProvider(active.id)).value ?? const [];
 
-    return SingleChildScrollView(
-      child: CustomPaint(
-        painter: const _DotPatternPainter(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _HeroSection(
-              active: active,
-              locations: locations,
-              progress: journey?.percentage ?? 0,
-              onShowHowItWorks: onShowHowItWorks,
+    return AppScrollView(
+      child: Stack(
+        children: [
+          const Positioned.fill(
+            child: RepaintBoundary(
+              child: CustomPaint(
+                painter: _DotPatternPainter(),
+                isComplex: true,
+                willChange: false,
+              ),
             ),
-            const _FeatureStrip(),
-            _HowItWorksSection(key: howItWorksKey, missions: missions),
-            _FeaturedLocations(locations: locations, active: active),
-            const AppFooter(),
-          ],
-        ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _HeroSection(
+                active: active,
+                locations: locations,
+                progress: journey?.percentage ?? 0,
+                onShowHowItWorks: onShowHowItWorks,
+              ),
+              const _FeatureStrip(),
+              _HowItWorksSection(key: howItWorksKey, missions: missions),
+              _FeaturedLocations(locations: locations, active: active),
+              const AppFooter(),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -339,7 +350,15 @@ class _QuestMap extends StatelessWidget {
               : const [(.18, .36), (.70, .23), (.74, .58), (.27, .72)];
           return Stack(
             children: [
-              const Positioned.fill(child: CustomPaint(painter: _MapPainter())),
+              const Positioned.fill(
+                child: RepaintBoundary(
+                  child: CustomPaint(
+                    painter: _MapPainter(),
+                    isComplex: true,
+                    willChange: false,
+                  ),
+                ),
+              ),
               Positioned(
                 left: AppSpacing.xl,
                 top: AppSpacing.lg,

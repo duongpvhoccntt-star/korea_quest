@@ -6,6 +6,7 @@ import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_buttons.dart';
 import 'package:korea_quest/design_system/components/app_feedback.dart';
 import 'package:korea_quest/design_system/components/app_fields.dart';
+import 'package:korea_quest/design_system/components/app_scroll_view.dart';
 import 'package:korea_quest/design_system/components/app_structure.dart';
 import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
@@ -237,8 +238,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
 
     return AppScaffold(
       showFooter: false,
-      body: SingleChildScrollView(
-        primary: true,
+      body: AppScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

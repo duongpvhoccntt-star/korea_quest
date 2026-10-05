@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_buttons.dart';
 import 'package:korea_quest/design_system/components/app_feedback.dart';
+import 'package:korea_quest/design_system/components/app_scroll_view.dart';
 import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/admin/domain/admin_models.dart';
@@ -280,7 +281,7 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
         if (!didPop) _requestClose();
       },
       child: ResponsiveContent(
-        child: SingleChildScrollView(
+        child: AppScrollView(
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
