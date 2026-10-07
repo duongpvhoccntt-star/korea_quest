@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 enum LocationStatus { completed, inProgress, available, locked }
 
 enum MissionStatus { notStarted, inProgress, completed, locked }
@@ -13,6 +15,9 @@ class AppUser {
     required this.displayName,
     required this.handle,
     required this.joinedDate,
+    this.bio,
+    this.avatarPreset,
+    this.avatarBytes,
   });
 
   final String id;
@@ -20,6 +25,29 @@ class AppUser {
   final String displayName;
   final String handle;
   final DateTime joinedDate;
+  final String? bio;
+  final String? avatarPreset;
+  final Uint8List? avatarBytes;
+
+  AppUser copyWith({
+    String? id,
+    String? fullName,
+    String? displayName,
+    String? handle,
+    DateTime? joinedDate,
+    String? bio,
+    String? avatarPreset,
+    Uint8List? avatarBytes,
+  }) => AppUser(
+    id: id ?? this.id,
+    fullName: fullName ?? this.fullName,
+    displayName: displayName ?? this.displayName,
+    handle: handle ?? this.handle,
+    joinedDate: joinedDate ?? this.joinedDate,
+    bio: bio ?? this.bio,
+    avatarPreset: avatarPreset ?? this.avatarPreset,
+    avatarBytes: avatarBytes ?? this.avatarBytes,
+  );
 }
 
 class UserProgress {

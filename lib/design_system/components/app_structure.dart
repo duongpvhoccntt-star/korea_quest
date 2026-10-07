@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:korea_quest/core/responsive/responsive_breakpoints.dart';
@@ -9,6 +9,7 @@ import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
+import 'package:korea_quest/features/auth/presentation/widgets/sign_out_action.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
 
 import 'package:korea_quest/shared/widgets/ai_command_box.dart';
@@ -60,6 +61,8 @@ class AppShell extends StatelessWidget {
 class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
   const AppHeader({super.key});
 
+  static const _signOutAction = 'sign-out';
+
   static const _guestDestinations = [
     ('Trang chủ', '/'),
     ('Khám phá', '/explore'),
@@ -85,7 +88,8 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
     final isDesktop = width >= ResponsiveBreakpoints.headerDesktop;
     final showXp = width >= ResponsiveBreakpoints.wide;
     final path = GoRouterState.of(context).uri.path;
-    final isGuest = ref.watch(authUserStreamProvider).value == null;
+    final authUser = ref.watch(authUserStreamProvider).value;
+    final isGuest = authUser == null;
     final destinations = isGuest ? _guestDestinations : _memberDestinations;
     final user = isGuest ? null : ref.watch(currentUserProvider).value;
     final progress = isGuest ? null : ref.watch(userProgressProvider).value;
@@ -97,6 +101,7 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
           border: Border(bottom: BorderSide(color: AppColors.line)),
         ),
         child: ResponsiveContent(
+          maxWidth: double.infinity,
           child: SizedBox(
             height: preferredSize.height,
             child: Row(
@@ -154,13 +159,80 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                       icon: const Icon(Icons.settings_outlined),
                     ),
                     const SizedBox(width: AppSpacing.xs),
-                    UserAvatar(displayName: user?.displayName ?? 'Dương'),
+                    PopupMenuButton<String>(
+                      tooltip: 'Mở menu tài khoản',
+                      onSelected: (value) =>
+                          _handleMenuSelection(context, ref, value),
+                      itemBuilder: (_) => [
+                        PopupMenuItem<String>(
+                          enabled: false,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                user?.displayName ?? authUser.displayName,
+                                style: const TextStyle(
+                                  color: AppColors.stitchText,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              Text(
+                                authUser.usernameOrEmail,
+                                style: const TextStyle(
+                                  color: AppColors.stitchMuted,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              if (progress != null)
+                                Text(
+                                  'Cấp ${progress.level} · ${progress.currentXp} XP',
+                                  style: const TextStyle(
+                                    color: AppColors.coral,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        const PopupMenuDivider(),
+                        const PopupMenuItem(
+                          value: '/profile',
+                          child: _AccountMenuItem(
+                            icon: Icons.person_outline_rounded,
+                            label: 'Hồ sơ của tôi',
+                          ),
+                        ),
+                        const PopupMenuItem(
+                          value: '/settings',
+                          child: _AccountMenuItem(
+                            icon: Icons.settings_outlined,
+                            label: 'Cài đặt',
+                          ),
+                        ),
+                        const PopupMenuDivider(),
+                        const PopupMenuItem(
+                          value: _signOutAction,
+                          child: _AccountMenuItem(
+                            icon: Icons.logout_rounded,
+                            label: 'Đăng xuất',
+                            color: AppColors.koreanRed,
+                          ),
+                        ),
+                      ],
+                      child: UserAvatar(
+                        displayName: user?.displayName ?? authUser.displayName,
+                        avatarPreset: user?.avatarPreset,
+                        avatarBytes: user?.avatarBytes,
+                      ),
+                    ),
                   ],
                 ] else
                   PopupMenuButton<String>(
                     tooltip: 'Mở điều hướng',
                     icon: const Icon(Icons.menu_rounded),
-                    onSelected: context.go,
+                    onSelected: (value) =>
+                        _handleMenuSelection(context, ref, value),
                     itemBuilder: (_) => [
                       for (final destination in destinations)
                         PopupMenuItem(
@@ -177,11 +249,21 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                           value: '/register',
                           child: Text('Bắt đầu hành trình'),
                         ),
-                      ] else
+                      ] else ...[
                         const PopupMenuItem(
                           value: '/settings',
                           child: Text('Cài đặt'),
                         ),
+                        const PopupMenuDivider(),
+                        const PopupMenuItem(
+                          value: _signOutAction,
+                          child: _AccountMenuItem(
+                            icon: Icons.logout_rounded,
+                            label: 'Đăng xuất',
+                            color: AppColors.koreanRed,
+                          ),
+                        ),
+                      ],
                     ],
                   ),
               ],
@@ -196,6 +278,39 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
       destination == '/'
       ? currentPath == '/'
       : currentPath.startsWith(destination);
+
+  static void _handleMenuSelection(
+    BuildContext context,
+    WidgetRef ref,
+    String value,
+  ) {
+    if (value == _signOutAction) {
+      confirmAndSignOut(context, ref);
+      return;
+    }
+    context.go(value);
+  }
+}
+
+class _AccountMenuItem extends StatelessWidget {
+  const _AccountMenuItem({
+    required this.icon,
+    required this.label,
+    this.color = AppColors.stitchText,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    children: [
+      Icon(icon, color: color, size: 20),
+      const SizedBox(width: AppSpacing.sm),
+      Text(label, style: TextStyle(color: color)),
+    ],
+  );
 }
 
 class _BrandLockup extends StatelessWidget {

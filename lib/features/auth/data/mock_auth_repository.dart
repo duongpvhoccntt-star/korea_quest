@@ -113,6 +113,29 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final user = _currentUser;
+    if (user == null) {
+      throw const AuthException('Bạn chưa đăng nhập.');
+    }
+    final key = user.usernameOrEmail.trim().toLowerCase();
+    final record = _accounts[key];
+    if (record == null) {
+      throw const AuthException('Tài khoản không tồn tại.');
+    }
+    if (record.password != currentPassword) {
+      throw const AuthException('Mật khẩu hiện tại không chính xác.');
+    }
+    if (newPassword.length < 8) {
+      throw const AuthException('Mật khẩu mới phải có ít nhất 8 ký tự.');
+    }
+    _accounts[key] = _AccountRecord(user: record.user, password: newPassword);
+  }
+
+  @override
   Future<void> signOut() async {
     _currentUser = null;
     _userController.add(null);

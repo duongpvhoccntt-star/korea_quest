@@ -11,6 +11,7 @@ class AppTextField extends StatelessWidget {
     this.prefixIcon,
     this.obscureText = false,
     this.suffixIcon,
+    this.maxLines = 1,
   });
 
   final String label;
@@ -21,6 +22,7 @@ class AppTextField extends StatelessWidget {
   final IconData? prefixIcon;
   final bool obscureText;
   final Widget? suffixIcon;
+  final int maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,8 @@ class AppTextField extends StatelessWidget {
       controller: controller,
       enabled: enabled,
       obscureText: obscureText,
+      maxLines: obscureText ? 1 : maxLines,
+      minLines: 1,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,

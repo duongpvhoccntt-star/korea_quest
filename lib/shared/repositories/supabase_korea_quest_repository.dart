@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:korea_quest/shared/models/domain_models.dart';
 import 'package:korea_quest/shared/repositories/korea_quest_repository.dart';
 import 'package:korea_quest/shared/repositories/mock_korea_quest_repository.dart';
@@ -17,7 +19,25 @@ class SupabaseKoreaQuestRepository implements KoreaQuestRepository {
   Future<AppUser> getCurrentUser() => _fallback.getCurrentUser();
 
   @override
+  Future<AppUser> updateUserProfile({
+    String? fullName,
+    String? displayName,
+    String? bio,
+    String? avatarPreset,
+    Uint8List? avatarBytes,
+  }) => _fallback.updateUserProfile(
+    fullName: fullName,
+    displayName: displayName,
+    bio: bio,
+    avatarPreset: avatarPreset,
+    avatarBytes: avatarBytes,
+  );
+
+  @override
   Future<UserProgress> getUserProgress() => _fallback.getUserProgress();
+
+  @override
+  Future<void> resetUserProgress() => _fallback.resetUserProgress();
 
   /// Only exposes locations returned by the public published read model.
   /// The admin editor is the source of this data; no local location is merged.

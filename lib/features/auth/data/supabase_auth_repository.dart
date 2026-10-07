@@ -120,6 +120,31 @@ class SupabaseAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    if (newPassword.length < 8) {
+      throw const AuthException('Mật khẩu mới phải có ít nhất 8 ký tự.');
+    }
+    final email = _client.auth.currentUser?.email;
+    if (email == null || email.isEmpty) {
+      throw const AuthException('Bạn chưa đăng nhập bằng địa chỉ email.');
+    }
+    try {
+      await _client.auth.signInWithPassword(
+        email: email,
+        password: currentPassword,
+      );
+      await _client.auth.updateUser(
+        supabase.UserAttributes(password: newPassword),
+      );
+    } on supabase.AuthException catch (error) {
+      throw AuthException(_friendlyMessage(error.message));
+    }
+  }
+
+  @override
   Future<void> signOut() async {
     try {
       await _client.auth.signOut();

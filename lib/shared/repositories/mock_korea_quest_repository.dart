@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:korea_quest/shared/models/domain_models.dart';
 import 'package:korea_quest/shared/repositories/korea_quest_repository.dart';
 
@@ -16,6 +18,11 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
     nextLevelXp: 1500,
     streakDays: 7,
   );
+
+  AppUser _currentUser = user;
+  UserProgress _currentProgress = progress;
+  List<Location> _locations = List.of(locations);
+  bool _progressReset = false;
 
   static const locations = [
     Location(
@@ -89,17 +96,65 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
   ];
 
   @override
-  Future<AppUser> getCurrentUser() async => user;
+  Future<AppUser> getCurrentUser() async => _currentUser;
 
   @override
-  Future<UserProgress> getUserProgress() async => progress;
+  Future<AppUser> updateUserProfile({
+    String? fullName,
+    String? displayName,
+    String? bio,
+    String? avatarPreset,
+    Uint8List? avatarBytes,
+  }) async {
+    _currentUser = AppUser(
+      id: _currentUser.id,
+      fullName: fullName ?? _currentUser.fullName,
+      displayName: displayName ?? _currentUser.displayName,
+      handle: _currentUser.handle,
+      joinedDate: _currentUser.joinedDate,
+      bio: bio ?? _currentUser.bio,
+      avatarPreset: avatarBytes != null
+          ? null
+          : avatarPreset ?? _currentUser.avatarPreset,
+      avatarBytes: avatarPreset != null
+          ? null
+          : avatarBytes ?? _currentUser.avatarBytes,
+    );
+    return _currentUser;
+  }
 
   @override
-  Future<List<Location>> getLocations() async => locations;
+  Future<UserProgress> getUserProgress() async => _currentProgress;
+
+  @override
+  Future<void> resetUserProgress() async {
+    _progressReset = true;
+    _currentProgress = const UserProgress(
+      level: 1,
+      currentXp: 0,
+      nextLevelXp: 500,
+      streakDays: 0,
+    );
+    _locations = [
+      for (var i = 0; i < locations.length; i++)
+        Location(
+          id: locations[i].id,
+          name: locations[i].name,
+          koreanName: locations[i].koreanName,
+          city: locations[i].city,
+          description: locations[i].description,
+          status: i == 0 ? LocationStatus.available : LocationStatus.locked,
+          rewardXp: locations[i].rewardXp,
+        ),
+    ];
+  }
+
+  @override
+  Future<List<Location>> getLocations() async => _locations;
 
   @override
   Future<Location?> getLocation(String id) async {
-    for (final location in locations) {
+    for (final location in _locations) {
       if (location.id == id) return location;
     }
     return null;
@@ -214,7 +269,19 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
   }
 
   @override
-  Future<List<Achievement>> getAchievements() async => achievements;
+  Future<List<Achievement>> getAchievements() async {
+    if (!_progressReset) return achievements;
+    return [
+      for (final achievement in achievements)
+        Achievement(
+          id: achievement.id,
+          title: achievement.title,
+          description: achievement.description,
+          icon: achievement.icon,
+          status: AchievementStatus.locked,
+        ),
+    ];
+  }
 
   @override
   Future<List<PassportStamp>> getPassportStamps() async => [
@@ -223,21 +290,21 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
       name: 'Gyeongbokgung',
       koreanName: '경복궁',
       seal: '宮',
-      earnedDate: DateTime(2026, 8, 2),
+      earnedDate: _progressReset ? null : DateTime(2026, 8, 2),
     ),
     PassportStamp(
       locationId: 'bukchon-hanok',
       name: 'Bukchon Hanok',
       koreanName: '북촌',
       seal: '村',
-      earnedDate: DateTime(2026, 8, 5),
+      earnedDate: _progressReset ? null : DateTime(2026, 8, 5),
     ),
     PassportStamp(
       locationId: 'namsan',
       name: 'Tháp Namsan',
       koreanName: '남산',
       seal: '山',
-      earnedDate: DateTime(2026, 8, 9),
+      earnedDate: _progressReset ? null : DateTime(2026, 8, 9),
     ),
     const PassportStamp(
       locationId: 'jeju',

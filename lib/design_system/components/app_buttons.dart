@@ -71,15 +71,21 @@ class SecondaryButton extends StatelessWidget {
 }
 
 class DangerButton extends StatelessWidget {
-  const DangerButton({required this.label, super.key, this.onPressed});
+  const DangerButton({
+    required this.label,
+    super.key,
+    this.onPressed,
+    this.icon = Icons.delete_outline_rounded,
+  });
 
   final String label;
   final VoidCallback? onPressed;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) => FilledButton.icon(
     onPressed: onPressed,
-    icon: const Icon(Icons.delete_outline_rounded),
+    icon: Icon(icon),
     label: Text(label),
     style: FilledButton.styleFrom(
       backgroundColor: AppColors.danger,

@@ -1,27 +1,73 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/shared/models/domain_models.dart';
 
 class UserAvatar extends StatelessWidget {
-  const UserAvatar({required this.displayName, super.key, this.radius = 22});
+  const UserAvatar({
+    required this.displayName,
+    super.key,
+    this.radius = 22,
+    this.avatarPreset,
+    this.avatarBytes,
+  });
 
   final String displayName;
   final double radius;
+  final String? avatarPreset;
+  final Uint8List? avatarBytes;
+
+  static const culturalPresets = <String, String>{
+    'hanbok': '🎎',
+    'seoul': '🗼',
+    'haechi': '🦁',
+    'scholar': '📜',
+    'foodie': '🍲',
+    'kpop': '🎵',
+  };
 
   @override
-  Widget build(BuildContext context) => Semantics(
-    label: 'Ảnh đại diện của $displayName',
-    child: CircleAvatar(
-      radius: radius,
-      backgroundColor: AppColors.coral,
-      foregroundColor: Colors.white,
-      child: Text(
-        displayName.characters.first.toUpperCase(),
-        style: TextStyle(fontWeight: FontWeight.w800, fontSize: radius * .8),
+  Widget build(BuildContext context) {
+    if (avatarBytes != null && avatarBytes!.isNotEmpty) {
+      return Semantics(
+        label: 'Ảnh đại diện của $displayName',
+        child: CircleAvatar(
+          radius: radius,
+          backgroundColor: AppColors.skyLight,
+          backgroundImage: MemoryImage(avatarBytes!),
+        ),
+      );
+    }
+
+    if (avatarPreset != null && culturalPresets.containsKey(avatarPreset)) {
+      final emoji = culturalPresets[avatarPreset]!;
+      return Semantics(
+        label: 'Ảnh đại diện của $displayName',
+        child: CircleAvatar(
+          radius: radius,
+          backgroundColor: AppColors.skyLight,
+          child: Text(emoji, style: TextStyle(fontSize: radius * 1.05)),
+        ),
+      );
+    }
+
+    return Semantics(
+      label: 'Ảnh đại diện của $displayName',
+      child: CircleAvatar(
+        radius: radius,
+        backgroundColor: AppColors.coral,
+        foregroundColor: Colors.white,
+        child: Text(
+          displayName.isNotEmpty
+              ? displayName.characters.first.toUpperCase()
+              : '?',
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: radius * .8),
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class StatusChip extends StatelessWidget {
