@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_feedback.dart';
 import 'package:korea_quest/design_system/components/progress_components.dart';
+import 'package:korea_quest/design_system/components/app_scroll_view.dart';
 import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/shadows/app_shadows.dart';
@@ -41,7 +42,7 @@ class HomePage extends ConsumerWidget {
 
     return ColoredBox(
       color: AppColors.pageBg,
-      child: SingleChildScrollView(
+      child: AppScrollView(
         child: ResponsiveContent(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
@@ -449,8 +450,14 @@ class _KoreaMapBackdrop extends StatelessWidget {
   const _KoreaMapBackdrop();
 
   @override
-  Widget build(BuildContext context) =>
-      CustomPaint(painter: _KoreaMapPainter(), child: const SizedBox.expand());
+  Widget build(BuildContext context) => RepaintBoundary(
+    child: CustomPaint(
+      painter: _KoreaMapPainter(),
+      isComplex: true,
+      willChange: false,
+      child: const SizedBox.expand(),
+    ),
+  );
 }
 
 class _KoreaMapPainter extends CustomPainter {

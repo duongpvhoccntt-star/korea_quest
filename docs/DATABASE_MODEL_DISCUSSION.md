@@ -2,6 +2,7 @@
 
 > Trạng thái: Tài liệu thảo luận kỹ thuật, chưa phải cam kết triển khai production.
 > Nguồn đối chiếu: migration `20260830151124_admin_content_schema.sql`, model/repository Admin, `CONTEXT.md`, ADR và `TEAM_OWNERSHIP.md` tại ngày 2026-09-06.
+> Trạng thái cloud: đã xác minh ngày 2026-09-06 bằng `supabase migration list --linked` trên project `KOREAQUEST` (org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`). Migration đã được áp dụng, 14 bảng tồn tại, chưa có dữ liệu.
 
 ## 1. Mục tiêu và phạm vi
 
@@ -14,7 +15,7 @@ Phạm vi hiện tại là **Admin Content MVP**:
 - Có ba nhóm quiz: Check-in, Văn hóa và Quiz tổng kết.
 - Chưa có bảng tiến độ cá nhân, quiz attempt, XP ledger, huy hiệu, dấu mộc hoặc từ vựng trong migration này.
 - `Explore` và `Journey` vẫn đọc `MockKoreaQuestRepository`; nội dung admin chưa được nối vào trải nghiệm người dùng.
-- Supabase project `KOREAQUEST` tồn tại với Project Ref `rsswzbgqapvrutcqasqv`, nhưng workspace hiện không có `supabase/.temp/project-ref`. Chưa có bằng chứng CLI rằng migration này đã được áp dụng lên cloud.
+- Supabase project `KOREAQUEST` (org PHAMVAN+, Project Ref `rsswzbgqapvrutcqasqv`) đã được áp dụng migration `20260830151124`. Tuy nhiên file SQL của migration này **chưa được commit vào repository** (chưa có thư mục `supabase/`), nên repo hiện không tự tái tạo được schema cloud.
 
 ## 2. Ubiquitous Language
 
@@ -396,16 +397,19 @@ Fixture trong `supabase/seed.sql` tạo tài khoản thử nghiệm và chỉ d�
 
 ## 13. Trạng thái hiện tại
 
+Kiểm tra ngày 2026-09-06 bằng Supabase CLI (`supabase link` + `supabase migration list --linked` + `supabase inspect db table-stats --linked`).
+
 | Hạng mục | Trạng thái quan sát được |
 |---|---|
-| Migration schema | Có trong working tree local tại `supabase/migrations/20260830151124_admin_content_schema.sql` |
-| pgTAP | Có 13 assertion về type, table, RPC, final quiz, word count, Admin và RLS draft |
-| Flutter Admin | Có model/repository và UI editor trong working tree local |
-| Supabase Cloud project | Project `KOREAQUEST`, ref `rsswzbgqapvrutcqasqv`, xuất hiện trong `supabase projects list` |
-| Liên kết CLI local | Không có `supabase/.temp/project-ref`; CLI báo chưa tìm thấy project ref |
-| Migration trên cloud | Chưa xác minh bằng `supabase migration list`; không được xem là đã triển khai |
+| Supabase Cloud project | Project `KOREAQUEST`, org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`, region Northeast Asia (Tokyo) |
+| Migration trên cloud | **Đã áp dụng** `20260830151124` (2026-08-30 15:11:24 UTC), xuất hiện ở cột Remote của `supabase migration list` |
+| Bảng trên cloud | Đủ 14 bảng: `admin_users`, `locations`, `location_revisions`, `location_quick_facts`, `location_sources`, `location_history`, `location_highlights`, `location_experiences`, `location_foods`, `location_fun_facts`, `quiz_questions`, `quiz_options`, `quiz_matching_pairs`, `quiz_ordering_items` |
+| Dữ liệu trên cloud | Tất cả bảng 0 row; chưa có Admin nào trong `admin_users` |
+| Migration schema trong repo | **Chưa có.** Không tồn tại thư mục `supabase/` trên nhánh `main`; cột Local của `supabase migration list` trống. Cần commit file `supabase/migrations/20260830151124_admin_content_schema.sql` để repo khớp với cloud |
+| pgTAP | Có 13 assertion về type, table, RPC, final quiz, word count, Admin và RLS draft (trong working tree local của owner, chưa commit) |
+| Flutter Admin | Có model/repository và UI editor trong working tree local của owner, chưa commit |
 | Explore/Journey runtime | Vẫn dùng `MockKoreaQuestRepository` |
-| Docker/local DB | Docker daemon chưa chạy nên migration và pgTAP chưa được thực thi local |
+| Docker/local DB | Chưa chạy migration và pgTAP local |
 
 ### Điểm chưa thống nhất giữa tài liệu và implementation
 
@@ -450,16 +454,16 @@ Fixture trong `supabase/seed.sql` tạo tài khoản thử nghiệm và chỉ d�
 - Chạy `supabase start`, `supabase db reset`, `supabase test db`.
 - Bổ sung test cho Published read, non-admin write, archive dependency và optimistic lock.
 
-### Phase 3 — Dry-run cloud migration
+### Phase 3 — Đồng bộ repo với cloud (đang thiếu)
 
-- Backup project cloud.
-- Chạy `supabase link --project-ref rsswzbgqapvrutcqasqv`.
-- Đối chiếu `supabase migration list` và chạy `supabase db push --dry-run`.
+- Migration `20260830151124` đã có trên cloud nhưng chưa có trong repo. Owner commit `supabase/migrations/20260830151124_admin_content_schema.sql`, `supabase/config.toml` và test pgTAP vào `main`.
+- Sau khi commit, chạy `supabase link --project-ref rsswzbgqapvrutcqasqv` rồi `supabase migration list --linked` để xác nhận cột Local và Remote khớp nhau.
+- Mọi migration tiếp theo phải đi qua repo trước, không chạy SQL trực tiếp trên dashboard.
 
-### Phase 4 — Triển khai Supabase Cloud
+### Phase 4 — Vận hành Supabase Cloud
 
-- Chỉ chạy `supabase db push` sau khi PR schema được duyệt.
-- Tạo Admin production bằng Auth + allowlist, không dùng fixture local.
+- Với migration mới: backup, `supabase db push --dry-run`, rồi chỉ `supabase db push` sau khi PR schema được duyệt.
+- Tạo Admin production bằng Auth + allowlist (`admin_users` hiện đang trống), không dùng fixture local.
 - Chạy smoke test RLS bằng tài khoản anon, user thường và Admin.
 
 ### Phase 5 — Kết nối Flutter
@@ -498,5 +502,6 @@ Fixture trong `supabase/seed.sql` tạo tài khoản thử nghiệm và chỉ d�
 
 - [ ] Mapping RPC ↔ Admin Repository chính xác.
 - [ ] Có owner và kế hoạch thay mock repository.
+- [ ] File migration trong repo khớp với `supabase migration list --linked` trên cloud.
 - [ ] Migration local, dry-run và cloud rollout đều có bằng chứng kiểm thử.
 - [ ] Ít nhất một thành viên khác review trước khi merge.

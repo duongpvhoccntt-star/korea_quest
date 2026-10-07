@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_buttons.dart';
+import 'package:korea_quest/design_system/components/app_scroll_view.dart';
 import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 
@@ -23,7 +24,7 @@ class ModulePage extends StatelessWidget {
   final VoidCallback? onAction;
 
   @override
-  Widget build(BuildContext context) => SingleChildScrollView(
+  Widget build(BuildContext context) => AppScrollView(
     child: ResponsiveContent(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxl),

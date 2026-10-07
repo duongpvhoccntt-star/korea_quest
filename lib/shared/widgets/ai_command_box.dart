@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:korea_quest/core/services/gemini_service.dart';
 import 'package:korea_quest/core/utils/ai_dispatcher.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
+import 'package:korea_quest/design_system/components/app_scroll_view.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 
@@ -243,7 +244,7 @@ class _AiCommandWidgetState extends ConsumerState<AiCommandWidget> {
 
           // Content body
           Flexible(
-            child: SingleChildScrollView(
+            child: AppScrollView(
               padding: const EdgeInsets.all(AppSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

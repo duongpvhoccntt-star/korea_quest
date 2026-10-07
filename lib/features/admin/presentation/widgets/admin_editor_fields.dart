@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:korea_quest/core/utils/optimized_image_url.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_buttons.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
@@ -226,7 +227,7 @@ class AdminMediaPreview extends StatelessWidget {
                   fit: StackFit.expand,
                   children: [
                     Image.network(
-                      previewUrl,
+                      optimizedImageUrl(previewUrl, maxWidth: 960),
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) =>
                           const ColoredBox(

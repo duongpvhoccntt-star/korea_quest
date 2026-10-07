@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_buttons.dart';
 import 'package:korea_quest/design_system/components/app_feedback.dart';
+import 'package:korea_quest/design_system/components/app_scroll_view.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/admin/domain/admin_models.dart';
 import 'package:korea_quest/features/admin/presentation/providers/admin_providers.dart';
@@ -475,7 +476,7 @@ class _AchievementDialogState extends State<_AchievementDialog> {
       title: Text(widget.current == null ? 'Tạo huy hiệu' : 'Sửa huy hiệu'),
       content: SizedBox(
         width: 680,
-        child: SingleChildScrollView(
+        child: AppScrollView(
           child: Form(
             key: _key,
             child: Column(
@@ -712,7 +713,7 @@ class _ChallengeDialogState extends State<_ChallengeDialog> {
     title: Text(widget.current == null ? 'Tạo thử thách' : 'Sửa thử thách'),
     content: SizedBox(
       width: 680,
-      child: SingleChildScrollView(
+      child: AppScrollView(
         child: Form(
           key: _key,
           child: Column(

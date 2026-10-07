@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_feedback.dart';
+import 'package:korea_quest/design_system/components/app_scroll_view.dart';
 import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/explore/presentation/providers/location_content_providers.dart';
@@ -24,7 +25,7 @@ class PublishedLocationPage extends ConsumerStatefulWidget {
 }
 
 class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
-  final ScrollController _scrollController = ScrollController(
+  final AppScrollController _scrollController = AppScrollController(
     keepScrollOffset: false,
   );
 
@@ -82,28 +83,105 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
           color: AppColors.pageBg,
           child: Scrollbar(
             controller: _scrollController,
-            child: SingleChildScrollView(
+            child: CustomScrollView(
               controller: _scrollController,
-              child: ResponsiveContent(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
-                  child: LocationContentView(
-                    location: item,
-                    currentStage: stage,
-                    onStageSelected: _openStage,
-                    onSubmitQuizAnswer: (questionId, answer) => ref
-                        .read(locationContentRepositoryProvider)
-                        .submitQuizAnswer(
-                          questionId: questionId,
-                          answer: answer,
-                        ),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: ResponsiveContent(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: AppSpacing.xl),
+                      child: LocationContentView(
+                        location: item,
+                        currentStage: stage,
+                        onStageSelected: _openStage,
+                        onSubmitQuizAnswer: (questionId, answer) => ref
+                            .read(locationContentRepositoryProvider)
+                            .submitQuizAnswer(
+                              questionId: questionId,
+                              answer: answer,
+                            ),
+                        showJourneyStepper: false,
+                        showStageBody: false,
+                        showStageNavigation: false,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _JourneyStepperHeaderDelegate(
+                    currentStage: stage,
+                    onStageSelected: _openStage,
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: ResponsiveContent(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: AppSpacing.lg,
+                        bottom: AppSpacing.xl,
+                      ),
+                      child: LocationContentView(
+                        location: item,
+                        currentStage: stage,
+                        onStageSelected: _openStage,
+                        onSubmitQuizAnswer: (questionId, answer) => ref
+                            .read(locationContentRepositoryProvider)
+                            .submitQuizAnswer(
+                              questionId: questionId,
+                              answer: answer,
+                            ),
+                        showLocationHeader: false,
+                        showJourneyStepper: false,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         );
       },
     );
   }
+}
+
+class _JourneyStepperHeaderDelegate extends SliverPersistentHeaderDelegate {
+  const _JourneyStepperHeaderDelegate({
+    required this.currentStage,
+    required this.onStageSelected,
+  });
+
+  final int currentStage;
+  final ValueChanged<int> onStageSelected;
+
+  static const _extent = 116.0;
+
+  @override
+  double get minExtent => _extent;
+
+  @override
+  double get maxExtent => _extent;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) => ColoredBox(
+    color: AppColors.pageBg,
+    child: ResponsiveContent(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        child: JourneyStepper(
+          currentStage: currentStage,
+          onStageSelected: onStageSelected,
+        ),
+      ),
+    ),
+  );
+
+  @override
+  bool shouldRebuild(_JourneyStepperHeaderDelegate oldDelegate) =>
+      currentStage != oldDelegate.currentStage;
 }
