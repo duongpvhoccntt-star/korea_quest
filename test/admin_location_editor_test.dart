@@ -5,6 +5,7 @@ import 'package:korea_quest/app/app_theme.dart';
 import 'package:korea_quest/features/admin/data/demo_admin_repository.dart';
 import 'package:korea_quest/features/admin/domain/admin_models.dart';
 import 'package:korea_quest/features/admin/presentation/providers/admin_providers.dart';
+import 'package:korea_quest/features/admin/presentation/widgets/admin_editor_fields.dart';
 import 'package:korea_quest/features/admin/presentation/widgets/location_editor.dart';
 
 void main() {
@@ -40,6 +41,22 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.byType(Scrollable), findsWidgets);
+  });
+
+  testWidgets('overview uses the 10 to 200 word publication range', (
+    tester,
+  ) async {
+    await _pumpEditor(tester, const Size(1260, 3000));
+    await tester.tap(find.text('2. Tổng quan'));
+    await tester.pumpAndSettle();
+
+    final wordLimitedFields = tester
+        .widgetList<AdminEditorTextField>(find.byType(AdminEditorTextField))
+        .where((field) => field.maxWords == 200)
+        .toList();
+
+    expect(wordLimitedFields, isNotEmpty);
+    expect(wordLimitedFields.every((field) => field.minWords == 10), isTrue);
   });
 
   testWidgets('an unsaved draft can skip directly to another section', (
