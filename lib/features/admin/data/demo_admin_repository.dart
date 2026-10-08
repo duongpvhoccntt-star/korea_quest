@@ -144,24 +144,24 @@ class DemoAdminRepository
     }
     int visibleCount(List<Map<String, dynamic>> items) =>
         items.where((item) => item['is_visible'] != false).length;
-    if (visibleCount(draft.history) < 4) {
-      errors.add('Demo: cần ít nhất 4 mốc lịch sử.');
+    if (visibleCount(draft.history) < 2) {
+      errors.add('Demo: cần ít nhất 2 mốc lịch sử.');
     }
-    if (visibleCount(draft.highlights) < 4) {
-      errors.add('Demo: cần ít nhất 4 điểm nổi bật.');
+    if (visibleCount(draft.highlights) < 2) {
+      errors.add('Demo: cần ít nhất 2 điểm nổi bật.');
     }
-    if (visibleCount(draft.experiences) < 3) {
-      errors.add('Demo: cần ít nhất 3 trải nghiệm.');
+    if (visibleCount(draft.experiences) < 1) {
+      errors.add('Demo: cần ít nhất 1 trải nghiệm.');
     }
-    if (visibleCount(draft.foods) < 3) {
-      errors.add('Demo: cần ít nhất 3 món ăn.');
+    if (visibleCount(draft.foods) < 1) {
+      errors.add('Demo: cần ít nhất 1 món ăn.');
     }
-    if (visibleCount(draft.funFacts) < 4) {
-      errors.add('Demo: cần ít nhất 4 fun facts.');
+    if (visibleCount(draft.funFacts) < 2) {
+      errors.add('Demo: cần ít nhất 2 fun facts.');
     }
     final quizCount = visibleCount(draft.quiz);
-    if (draft.quiz.length > 20 || quizCount < 10) {
-      errors.add('Demo: Quiz tổng kết cần từ 10 đến 20 câu hỏi hiển thị.');
+    if (draft.quiz.length > 30 || quizCount < 5) {
+      errors.add('Demo: Quiz tổng kết cần từ 5 đến 30 câu hỏi hiển thị.');
     }
     return errors;
   }
