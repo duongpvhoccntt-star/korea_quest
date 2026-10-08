@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
 
 class AppTextField extends StatelessWidget {
   const AppTextField({
@@ -64,7 +65,9 @@ class _PasswordFieldState extends State<PasswordField> {
       obscureText: _obscured,
       prefixIcon: Icons.lock_outline_rounded,
       suffixIcon: IconButton(
-        tooltip: _obscured ? 'Hiện mật khẩu' : 'Ẩn mật khẩu',
+        tooltip: _obscured
+            ? appStrings(context).showPassword
+            : appStrings(context).hidePassword,
         onPressed: () => setState(() => _obscured = !_obscured),
         icon: Icon(
           _obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
@@ -84,9 +87,9 @@ class SearchField extends StatelessWidget {
   Widget build(BuildContext context) => TextField(
     controller: controller,
     onChanged: onChanged,
-    decoration: const InputDecoration(
-      hintText: 'Tìm địa điểm, hành trình…',
-      prefixIcon: Icon(Icons.search_rounded),
+    decoration: InputDecoration(
+      hintText: appStrings(context).searchHint,
+      prefixIcon: const Icon(Icons.search_rounded),
     ),
   );
 }

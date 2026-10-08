@@ -6,6 +6,7 @@ import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_scroll_view.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
 
 /// Widget nút AI và khung nhập lệnh AI Function Calling
 class AiCommandWidget extends ConsumerStatefulWidget {
@@ -64,13 +65,13 @@ class _AiCommandWidgetState extends ConsumerState<AiCommandWidget> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.medium),
         ),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.tune, color: AppColors.navy),
-            SizedBox(width: AppSpacing.xs),
+            const Icon(Icons.tune, color: AppColors.navy),
+            const SizedBox(width: AppSpacing.xs),
             Text(
-              'Cấu hình Gemini AI',
-              style: TextStyle(
+              appStrings(context).configureGemini,
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: AppColors.ink,
@@ -82,9 +83,9 @@ class _AiCommandWidgetState extends ConsumerState<AiCommandWidget> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Model đang chọn:',
-              style: TextStyle(
+            Text(
+              appStrings(context).selectedModel,
+              style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: AppColors.ink,
@@ -133,7 +134,7 @@ class _AiCommandWidgetState extends ConsumerState<AiCommandWidget> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Hủy'),
+            child: Text(appStrings(context).cancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -149,7 +150,7 @@ class _AiCommandWidgetState extends ConsumerState<AiCommandWidget> {
                   .setModel(modelController.text);
               Navigator.of(ctx).pop();
             },
-            child: const Text('Lưu cài đặt'),
+            child: Text(appStrings(context).saveSettings),
           ),
         ],
       ),
@@ -167,7 +168,7 @@ class _AiCommandWidgetState extends ConsumerState<AiCommandWidget> {
         elevation: 6,
         onPressed: () => setState(() => _isOpen = true),
         icon: const Icon(Icons.auto_awesome, size: 20),
-        label: const Text('AI Lệnh thoại'),
+        label: Text(appStrings(context).aiVoiceCommand),
       );
     }
 
@@ -221,7 +222,7 @@ class _AiCommandWidgetState extends ConsumerState<AiCommandWidget> {
                   ),
                 ),
                 IconButton(
-                  tooltip: 'Cài đặt API Key',
+                  tooltip: appStrings(context).apiKeySettings,
                   icon: Icon(
                     apiKey.isEmpty ? Icons.key_off : Icons.key,
                     color: apiKey.isEmpty ? AppColors.gold : Colors.white70,
@@ -230,7 +231,7 @@ class _AiCommandWidgetState extends ConsumerState<AiCommandWidget> {
                   onPressed: _showApiKeyDialog,
                 ),
                 IconButton(
-                  tooltip: 'Đóng',
+                  tooltip: appStrings(context).close,
                   icon: const Icon(
                     Icons.close,
                     color: Colors.white70,
@@ -252,9 +253,9 @@ class _AiCommandWidgetState extends ConsumerState<AiCommandWidget> {
                   // Nút debug trực tiếp (bước 1)
                   Row(
                     children: [
-                      const Text(
-                        'Thử nghiệm:',
-                        style: TextStyle(
+                      Text(
+                        appStrings(context).testLabel,
+                        style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.muted,
                           fontWeight: FontWeight.w600,
@@ -267,17 +268,22 @@ class _AiCommandWidgetState extends ConsumerState<AiCommandWidget> {
                           size: 14,
                           color: AppColors.navy,
                         ),
-                        label: const Text(
-                          'Mở Hồ sơ ngay',
-                          style: TextStyle(fontSize: 12, color: AppColors.navy),
+                        label: Text(
+                          appStrings(context).openProfileNow,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.navy,
+                          ),
                         ),
                         backgroundColor: AppColors.cream,
                         onPressed: () {
                           dispatchAiFunction(ref, 'navigateToProfile');
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Đã gọi: navigateToProfile'),
-                              duration: Duration(seconds: 2),
+                            SnackBar(
+                              content: Text(
+                                appStrings(context).profileCommandCalled,
+                              ),
+                              duration: const Duration(seconds: 2),
                             ),
                           );
                         },
@@ -293,7 +299,7 @@ class _AiCommandWidgetState extends ConsumerState<AiCommandWidget> {
                     maxLines: 3,
                     style: const TextStyle(fontSize: 14, color: AppColors.ink),
                     decoration: InputDecoration(
-                      hintText: 'Nhập lệnh (vd: "Chuyển sang trang hồ sơ")...',
+                      hintText: appStrings(context).aiCommandHint,
                       hintStyle: const TextStyle(
                         fontSize: 13,
                         color: AppColors.muted,
@@ -346,7 +352,9 @@ class _AiCommandWidgetState extends ConsumerState<AiCommandWidget> {
                             )
                           : const Icon(Icons.send_rounded, size: 16),
                       label: Text(
-                        _isLoading ? 'Đang gọi Gemini...' : 'Gửi lệnh tới AI',
+                        _isLoading
+                            ? appStrings(context).callingGemini
+                            : appStrings(context).sendToAi,
                       ),
                     ),
                   ),
@@ -406,7 +414,9 @@ class _AiCommandWidgetState extends ConsumerState<AiCommandWidget> {
                             const SizedBox(width: AppSpacing.xs),
                             Expanded(
                               child: Text(
-                                'Function Calling: ${_lastResult!.functionCalls.join(", ")} -> Đã chuyển trang!',
+                                appStrings(context).functionCallComplete(
+                                  _lastResult!.functionCalls.join(', '),
+                                ),
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
@@ -456,8 +466,8 @@ class _AiCommandWidgetState extends ConsumerState<AiCommandWidget> {
                             const SizedBox(width: 4),
                             Text(
                               _showRawJson
-                                  ? 'Ẩn JSON thô'
-                                  : 'Xem JSON thô từ Gemini',
+                                  ? appStrings(context).hideRawJson
+                                  : appStrings(context).showRawJson,
                               style: const TextStyle(
                                 fontSize: 11,
                                 color: AppColors.muted,

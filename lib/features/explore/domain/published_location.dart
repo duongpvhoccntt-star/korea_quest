@@ -13,6 +13,9 @@ class PublishedLocationSummary {
     required this.releaseStatus,
     required this.categories,
     this.estimatedDurationMinutes,
+    this.requestedLocale = 'vi',
+    this.resolvedLocale = 'vi',
+    this.isFallback = false,
   });
 
   factory PublishedLocationSummary.fromJson(JsonMap json) =>
@@ -28,6 +31,9 @@ class PublishedLocationSummary {
         releaseStatus: json.string('release_status'),
         categories: json.stringList('categories'),
         estimatedDurationMinutes: json.intOrNull('estimated_duration_minutes'),
+        requestedLocale: json.string('requested_locale'),
+        resolvedLocale: json.string('resolved_locale'),
+        isFallback: json['is_fallback'] == true,
       );
 
   final String id;
@@ -41,6 +47,9 @@ class PublishedLocationSummary {
   final String releaseStatus;
   final List<String> categories;
   final int? estimatedDurationMinutes;
+  final String requestedLocale;
+  final String resolvedLocale;
+  final bool isFallback;
 
   bool get isReleased => releaseStatus == 'released';
 }
@@ -80,6 +89,9 @@ class PublishedLocationDetail {
   List<JsonMap> get funFacts => data.mapList('fun_facts');
   List<JsonMap> get quiz => data.mapList('quiz');
   JsonMap get travel => data.jsonObject('travel');
+  String get requestedLocale => data.string('requested_locale');
+  String get resolvedLocale => data.string('resolved_locale');
+  bool get isFallback => data['is_fallback'] == true;
 }
 
 class QuizAnswerResult {

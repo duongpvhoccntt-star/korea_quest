@@ -8,18 +8,26 @@ class SupabaseLocationContentRepository implements LocationContentRepository {
   final SupabaseClient _client;
 
   @override
-  Future<List<PublishedLocationSummary>> listPublishedLocations() async {
-    final response = await _client.rpc('list_published_locations');
+  Future<List<PublishedLocationSummary>> listPublishedLocations({
+    String locale = 'vi',
+  }) async {
+    final response = await _client.rpc(
+      'list_published_locations',
+      params: {'requested_locale': locale},
+    );
     return jsonMapList(
       response,
     ).map(PublishedLocationSummary.fromJson).toList(growable: false);
   }
 
   @override
-  Future<PublishedLocationDetail?> getPublishedLocation(String slug) async {
+  Future<PublishedLocationDetail?> getPublishedLocation(
+    String slug, {
+    String locale = 'vi',
+  }) async {
     final response = await _client.rpc(
       'get_published_location',
-      params: {'target_slug': slug},
+      params: {'target_slug': slug, 'requested_locale': locale},
     );
     if (response == null) return null;
     final json = jsonMap(response);
@@ -30,10 +38,15 @@ class SupabaseLocationContentRepository implements LocationContentRepository {
   Future<QuizAnswerResult> submitQuizAnswer({
     required String questionId,
     required JsonMap answer,
+    String locale = 'vi',
   }) async {
     final response = await _client.rpc(
       'submit_quiz_answer',
-      params: {'question_id': questionId, 'answer': answer},
+      params: {
+        'question_id': questionId,
+        'answer': answer,
+        'requested_locale': locale,
+      },
     );
     return QuizAnswerResult.fromJson(jsonMap(response));
   }
@@ -48,16 +61,20 @@ class UnconfiguredLocationContentRepository
   );
 
   @override
-  Future<PublishedLocationDetail?> getPublishedLocation(String slug) async =>
-      _unavailable();
+  Future<PublishedLocationDetail?> getPublishedLocation(
+    String slug, {
+    String locale = 'vi',
+  }) async => _unavailable();
 
   @override
-  Future<List<PublishedLocationSummary>> listPublishedLocations() async =>
-      _unavailable();
+  Future<List<PublishedLocationSummary>> listPublishedLocations({
+    String locale = 'vi',
+  }) async => _unavailable();
 
   @override
   Future<QuizAnswerResult> submitQuizAnswer({
     required String questionId,
     required JsonMap answer,
+    String locale = 'vi',
   }) async => _unavailable();
 }

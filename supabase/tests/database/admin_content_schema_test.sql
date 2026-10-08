@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(33);
+select plan(38);
 
 select has_type(
   'public',
@@ -13,6 +13,29 @@ select has_table('public', 'admin_users', 'admin allowlist exists');
 select has_table('public', 'locations', 'location identities exist');
 select has_table('public', 'location_revisions', 'versioned content exists');
 select has_table('public', 'quiz_questions', 'quiz questions exist');
+select has_type('public', 'content_locale', 'content locale enum exists');
+select has_type(
+  'public',
+  'translation_review_status',
+  'translation review status enum exists'
+);
+select has_table(
+  'public',
+  'location_revision_translations',
+  'location translation overlays exist'
+);
+select has_function(
+  'public',
+  'list_published_locations',
+  array['text'],
+  'localized location list RPC exists'
+);
+select has_function(
+  'public',
+  'admin_save_location_translation',
+  array['uuid', 'text', 'jsonb'],
+  'admin translation save RPC exists'
+);
 select has_function(
   'public',
   'create_location_draft',

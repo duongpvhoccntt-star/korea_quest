@@ -1,3 +1,71 @@
+import 'dart:convert';
+
+enum ContentLocale {
+  vi,
+  en,
+  ko;
+
+  String get label => switch (this) {
+    vi => 'Tiếng Việt',
+    en => 'English',
+    ko => '한국어',
+  };
+
+  static ContentLocale fromJson(String value) => switch (value) {
+    'en' => en,
+    'ko' => ko,
+    _ => vi,
+  };
+}
+
+enum TranslationReviewStatus {
+  draft,
+  needsReview,
+  approved;
+
+  static TranslationReviewStatus fromJson(String value) => switch (value) {
+    'needs_review' => needsReview,
+    'approved' => approved,
+    _ => draft,
+  };
+
+  String get jsonValue => switch (this) {
+    draft => 'draft',
+    needsReview => 'needs_review',
+    approved => 'approved',
+  };
+}
+
+class AdminContentTranslation {
+  const AdminContentTranslation({
+    required this.locale,
+    required this.status,
+    required this.content,
+    required this.sourceLockVersion,
+    this.updatedAt,
+    this.approvedAt,
+  });
+
+  factory AdminContentTranslation.fromJson(Map<String, dynamic> json) =>
+      AdminContentTranslation(
+        locale: ContentLocale.fromJson(json['locale']?.toString() ?? 'vi'),
+        status: TranslationReviewStatus.fromJson(
+          json['status']?.toString() ?? 'draft',
+        ),
+        content: AdminLocationDraft._map(json['content']),
+        sourceLockVersion: json['source_lock_version'] as int? ?? 1,
+        updatedAt: _date(json['updated_at']),
+        approvedAt: _date(json['approved_at']),
+      );
+
+  final ContentLocale locale;
+  final TranslationReviewStatus status;
+  final Map<String, dynamic> content;
+  final int sourceLockVersion;
+  final DateTime? updatedAt;
+  final DateTime? approvedAt;
+}
+
 enum AdminRevisionStatus {
   draft,
   published,
@@ -75,6 +143,7 @@ class AdminLocationDraft {
     List<Map<String, dynamic>>? quiz,
     Map<String, dynamic>? travel,
     List<Map<String, dynamic>>? sources,
+    Map<ContentLocale, AdminContentTranslation>? translations,
   }) : overview = overview ?? emptyOverview(),
        history = history ?? [],
        highlights = highlights ?? [],
@@ -84,7 +153,8 @@ class AdminLocationDraft {
        funFacts = funFacts ?? [],
        quiz = quiz ?? [],
        travel = travel ?? emptyTravel(),
-       sources = sources ?? [];
+       sources = sources ?? [],
+       translations = translations ?? {};
 
   factory AdminLocationDraft.fromJson(Map<String, dynamic> json) {
     return AdminLocationDraft(
@@ -123,6 +193,7 @@ class AdminLocationDraft {
   final List<Map<String, dynamic>> quiz;
   final Map<String, dynamic> travel;
   final List<Map<String, dynamic>> sources;
+  final Map<ContentLocale, AdminContentTranslation> translations;
 
   bool get isPersisted => locationId != null && revisionId != null;
 
@@ -199,6 +270,122 @@ class AdminLocationDraft {
   }
 
   static List<Map<String, dynamic>> fromJsonList(Object? value) => _list(value);
+
+  Map<String, dynamic> toTranslationSource() {
+    dynamic copy(Object? value) => jsonDecode(jsonEncode(value));
+    dynamic translatableShape(Object? value, [String key = '']) {
+      const excluded = {
+        'id',
+        'kind',
+        'media_kind',
+        'release_status',
+        'categories',
+        'tags',
+        'icon_name',
+        'unlock_after_stage',
+        'is_visible',
+        'is_recommended',
+        'display_order',
+        'last_verified_at',
+      };
+      if (excluded.contains(key) ||
+          key.endsWith('_url') ||
+          key.endsWith('_id') ||
+          key.endsWith('_credit') ||
+          key.endsWith('_source_url')) {
+        return null;
+      }
+      if (value is String) return value;
+      if (value is List) {
+        return [for (final item in value) translatableShape(item)];
+      }
+      if (value is Map) {
+        final result = <String, dynamic>{};
+        for (final entry in value.entries) {
+          final localized = translatableShape(
+            entry.value,
+            entry.key.toString(),
+          );
+          if (localized != null) result[entry.key.toString()] = localized;
+        }
+        return result;
+      }
+      return null;
+    }
+
+    final o = overview;
+    final summary = <String, dynamic>{
+      for (final key in const [
+        'name',
+        'korean_name',
+        'english_name',
+        'city',
+        'region',
+        'country',
+        'short_description',
+        'thumbnail_alt',
+      ])
+        key: copy(o[key]),
+    };
+    final localizedQuiz = <Map<String, dynamic>>[
+      for (final question in quiz)
+        {
+          'prompt': copy(question['prompt']),
+          'explanation': copy(question['explanation']),
+          'options': [
+            for (final option in _list(question['options']))
+              {'text': copy(option['text'])},
+          ],
+          'matching_left': [
+            for (final pair in _list(question['pairs']))
+              {'text': copy(pair['left'])},
+          ],
+          'matching_right': [
+            for (final pair in _list(question['pairs']))
+              {'text': copy(pair['right'])},
+          ],
+          'ordering_items': [
+            for (final item in _list(question['items']))
+              {'text': copy(item['text'])},
+          ],
+        },
+    ];
+    final detail = <String, dynamic>{
+      for (final key in const [
+        'name',
+        'korean_name',
+        'english_name',
+        'city',
+        'region',
+        'country',
+        'location_type',
+        'short_description',
+        'long_description',
+      ])
+        key: copy(o[key]),
+      'cover_media': {'alt': copy(o['cover_image_alt'])},
+      'hook_media': {
+        'alt': copy(o['hook_media_alt']),
+        'title': copy(o['hook_title']),
+        'caption': copy(o['hook_caption']),
+      },
+      'quick_facts': translatableShape(o['quick_facts'] ?? const []),
+      'history': translatableShape(history),
+      'highlights': translatableShape(highlights),
+      'experiences': translatableShape(experiences),
+      'culture_guidelines': [
+        for (final value in (experienceGuide['dos'] as List? ?? const []))
+          {'kind': 'do', 'content': copy(value)},
+        for (final value in (experienceGuide['donts'] as List? ?? const []))
+          {'kind': 'dont', 'content': copy(value)},
+      ],
+      'foods': translatableShape(foods),
+      'fun_facts': translatableShape(funFacts),
+      'quiz': localizedQuiz,
+      'travel': translatableShape(travel),
+    };
+    return {'summary': summary, 'detail': detail};
+  }
 }
 
 int countWords(String value) {

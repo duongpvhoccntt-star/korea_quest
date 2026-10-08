@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 
@@ -26,7 +27,7 @@ class PrimaryButton extends StatelessWidget {
               child: CircularProgressIndicator(strokeWidth: 2),
             )
           : Icon(icon ?? Icons.arrow_forward_rounded),
-      label: Text(isLoading ? 'Đang xử lý…' : label),
+      label: Text(isLoading ? appStrings(context).processing : label),
       style: FilledButton.styleFrom(
         backgroundColor: AppColors.coral,
         foregroundColor: Colors.white,

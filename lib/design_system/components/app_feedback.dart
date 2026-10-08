@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_buttons.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 
 class LoadingIndicator extends StatelessWidget {
-  const LoadingIndicator({super.key, this.label = 'Đang tải dữ liệu…'});
+  const LoadingIndicator({super.key, this.label});
 
-  final String label;
+  final String? label;
 
   @override
   Widget build(BuildContext context) => Center(
@@ -17,7 +18,7 @@ class LoadingIndicator extends StatelessWidget {
         children: [
           const CircularProgressIndicator(color: AppColors.coral),
           const SizedBox(height: AppSpacing.md),
-          Text(label),
+          Text(label ?? appStrings(context).loading),
         ],
       ),
     ),
@@ -43,7 +44,10 @@ class EmptyState extends StatelessWidget {
     message: message,
     action: onAction == null
         ? null
-        : PrimaryButton(label: 'Khám phá ngay', onPressed: onAction),
+        : PrimaryButton(
+            label: appStrings(context).discoverNow,
+            onPressed: onAction,
+          ),
   );
 }
 
@@ -52,21 +56,21 @@ class ErrorState extends StatelessWidget {
     required this.message,
     super.key,
     this.onRetry,
-    this.title = 'Đã có lỗi xảy ra',
+    this.title,
   });
 
-  final String title;
+  final String? title;
   final String message;
   final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) => _MessageState(
     icon: Icons.error_outline_rounded,
-    title: title,
+    title: title ?? appStrings(context).errorOccurred,
     message: message,
     action: onRetry == null
         ? null
-        : SecondaryButton(label: 'Thử lại', onPressed: onRetry),
+        : SecondaryButton(label: appStrings(context).retry, onPressed: onRetry),
   );
 }
 
@@ -118,18 +122,18 @@ class ConfirmationDialog extends StatelessWidget {
     required this.title,
     required this.message,
     super.key,
-    this.confirmLabel = 'Xác nhận',
+    this.confirmLabel,
   });
 
   final String title;
   final String message;
-  final String confirmLabel;
+  final String? confirmLabel;
 
   static Future<bool> show(
     BuildContext context, {
     required String title,
     required String message,
-    String confirmLabel = 'Xác nhận',
+    String? confirmLabel,
   }) async {
     return await showDialog<bool>(
           context: context,
@@ -149,11 +153,11 @@ class ConfirmationDialog extends StatelessWidget {
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context, false),
-        child: const Text('Hủy'),
+        child: Text(appStrings(context).cancel),
       ),
       FilledButton(
         onPressed: () => Navigator.pop(context, true),
-        child: Text(confirmLabel),
+        child: Text(confirmLabel ?? appStrings(context).confirm),
       ),
     ],
   );

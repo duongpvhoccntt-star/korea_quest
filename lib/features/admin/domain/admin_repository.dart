@@ -35,6 +35,23 @@ abstract interface class AdminRepository {
 
   Future<void> publish(AdminLocationDraft draft);
 
+  Future<AdminContentTranslation> generateTranslation({
+    required AdminLocationDraft draft,
+    required ContentLocale locale,
+    String? section,
+  });
+
+  Future<AdminContentTranslation> saveTranslation({
+    required AdminLocationDraft draft,
+    required ContentLocale locale,
+    required Map<String, dynamic> content,
+  });
+
+  Future<AdminContentTranslation> approveTranslation({
+    required AdminLocationDraft draft,
+    required ContentLocale locale,
+  });
+
   Future<AdminUploadedImage> uploadContentImage({
     required String locationId,
     required String revisionId,

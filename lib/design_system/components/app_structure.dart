@@ -10,6 +10,8 @@ import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
 import 'package:korea_quest/features/auth/presentation/widgets/sign_out_action.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
+import 'package:korea_quest/l10n/locale_controller.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
 
 import 'package:korea_quest/shared/widgets/ai_command_box.dart';
@@ -63,34 +65,25 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
 
   static const _signOutAction = 'sign-out';
 
-  static const _guestDestinations = [
-    ('Trang chủ', '/'),
-    ('Khám phá', '/explore'),
-    ('Hộ chiếu', '/passport'),
-    ('Thành tích', '/achievements'),
-    ('Hồ sơ', '/profile'),
-  ];
-
-  static const _memberDestinations = [
-    ('Trang chủ', '/home'),
-    ('Khám phá', '/explore'),
-    ('Hộ chiếu', '/passport'),
-    ('Thành tích', '/achievements'),
-    ('Hồ sơ', '/profile'),
-  ];
-
   @override
   Size get preferredSize => const Size.fromHeight(78);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final strings = appStrings(context);
     final width = MediaQuery.sizeOf(context).width;
     final isDesktop = width >= ResponsiveBreakpoints.headerDesktop;
     final showXp = width >= ResponsiveBreakpoints.wide;
     final path = GoRouterState.of(context).uri.path;
     final authUser = ref.watch(authUserStreamProvider).value;
     final isGuest = authUser == null;
-    final destinations = isGuest ? _guestDestinations : _memberDestinations;
+    final destinations = [
+      (strings.home, isGuest ? '/' : '/home'),
+      (strings.explore, '/explore'),
+      (strings.passport, '/passport'),
+      (strings.achievements, '/achievements'),
+      (strings.profile, '/profile'),
+    ];
     final user = isGuest ? null : ref.watch(currentUserProvider).value;
     final progress = isGuest ? null : ref.watch(userProgressProvider).value;
 
@@ -108,6 +101,8 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
               children: [
                 _BrandLockup(onTap: () => context.go('/')),
                 const Spacer(),
+                const _LanguageMenu(),
+                const SizedBox(width: AppSpacing.xs),
                 if (isDesktop) ...[
                   for (final destination in destinations)
                     Padding(
@@ -124,11 +119,11 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                   if (isGuest) ...[
                     TextButton(
                       onPressed: () => context.go('/login'),
-                      child: const Text('Đăng nhập'),
+                      child: Text(strings.signIn),
                     ),
                     const SizedBox(width: AppSpacing.xs),
                     PrimaryButton(
-                      label: 'Bắt đầu',
+                      label: strings.start,
                       onPressed: () => context.go('/register'),
                     ),
                   ] else ...[
@@ -154,13 +149,13 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                         ),
                       ),
                     IconButton(
-                      tooltip: 'Cài đặt',
+                      tooltip: strings.settings,
                       onPressed: () => context.go('/settings'),
                       icon: const Icon(Icons.settings_outlined),
                     ),
                     const SizedBox(width: AppSpacing.xs),
                     PopupMenuButton<String>(
-                      tooltip: 'Mở menu tài khoản',
+                      tooltip: strings.openAccountMenu,
                       onSelected: (value) =>
                           _handleMenuSelection(context, ref, value),
                       itemBuilder: (_) => [
@@ -185,7 +180,10 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                               ),
                               if (progress != null)
                                 Text(
-                                  'Cấp ${progress.level} · ${progress.currentXp} XP',
+                                  strings.levelWithXp(
+                                    progress.level,
+                                    progress.currentXp,
+                                  ),
                                   style: const TextStyle(
                                     color: AppColors.coral,
                                     fontSize: 12,
@@ -196,26 +194,26 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                           ),
                         ),
                         const PopupMenuDivider(),
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: '/profile',
                           child: _AccountMenuItem(
                             icon: Icons.person_outline_rounded,
-                            label: 'Hồ sơ của tôi',
+                            label: strings.myProfile,
                           ),
                         ),
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: '/settings',
                           child: _AccountMenuItem(
                             icon: Icons.settings_outlined,
-                            label: 'Cài đặt',
+                            label: strings.settings,
                           ),
                         ),
                         const PopupMenuDivider(),
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: _signOutAction,
                           child: _AccountMenuItem(
                             icon: Icons.logout_rounded,
-                            label: 'Đăng xuất',
+                            label: strings.signOut,
                             color: AppColors.koreanRed,
                           ),
                         ),
@@ -229,7 +227,7 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                   ],
                 ] else
                   PopupMenuButton<String>(
-                    tooltip: 'Mở điều hướng',
+                    tooltip: strings.openNavigation,
                     icon: const Icon(Icons.menu_rounded),
                     onSelected: (value) =>
                         _handleMenuSelection(context, ref, value),
@@ -241,25 +239,25 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                         ),
                       if (isGuest) ...[
                         const PopupMenuDivider(),
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: '/login',
-                          child: Text('Đăng nhập'),
+                          child: Text(strings.signIn),
                         ),
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: '/register',
-                          child: Text('Bắt đầu hành trình'),
+                          child: Text(strings.startJourney),
                         ),
                       ] else ...[
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: '/settings',
-                          child: Text('Cài đặt'),
+                          child: Text(strings.settings),
                         ),
                         const PopupMenuDivider(),
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: _signOutAction,
                           child: _AccountMenuItem(
                             icon: Icons.logout_rounded,
-                            label: 'Đăng xuất',
+                            label: strings.signOut,
                             color: AppColors.koreanRed,
                           ),
                         ),
@@ -289,6 +287,40 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
       return;
     }
     context.go(value);
+  }
+}
+
+class _LanguageMenu extends ConsumerWidget {
+  const _LanguageMenu();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
+    return PopupMenuButton<String>(
+      tooltip: appStrings(context).language,
+      initialValue: locale.languageCode,
+      onSelected: (code) =>
+          ref.read(localeProvider.notifier).setLocale(Locale(code)),
+      itemBuilder: (context) => const [
+        PopupMenuItem(value: 'vi', child: Text('VI · Tiếng Việt')),
+        PopupMenuItem(value: 'en', child: Text('EN · English')),
+        PopupMenuItem(value: 'ko', child: Text('KO · 한국어')),
+      ],
+      child: Semantics(
+        button: true,
+        label: appStrings(context).language,
+        child: SizedBox(
+          width: 40,
+          height: 40,
+          child: Center(
+            child: Text(
+              locale.languageCode.toUpperCase(),
+              style: const TextStyle(fontWeight: FontWeight.w800),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -430,24 +462,27 @@ class AppFooter extends StatelessWidget {
           final mobile = constraints.maxWidth < ResponsiveBreakpoints.mobile;
           final columns = [
             _FooterColumn(
-              title: 'Khám phá',
-              links: const [
-                ('Địa điểm', '/explore'),
-                ('Hành trình', '/home'),
-                ('Huy hiệu', '/achievements'),
+              title: appStrings(context).explore,
+              links: [
+                (appStrings(context).locations, '/explore'),
+                (appStrings(context).journey, '/home'),
+                (appStrings(context).badges, '/achievements'),
               ],
             ),
             _FooterColumn(
-              title: 'Hỗ trợ',
-              links: const [
-                ('Cách hoạt động', '/'),
-                ('Câu hỏi thường gặp', '/'),
-                ('Liên hệ', '/'),
+              title: appStrings(context).support,
+              links: [
+                (appStrings(context).howItWorks, '/'),
+                (appStrings(context).faq, '/'),
+                (appStrings(context).contact, '/'),
               ],
             ),
             _FooterColumn(
-              title: 'Pháp lý',
-              links: const [('Quyền riêng tư', '/'), ('Điều khoản', '/')],
+              title: appStrings(context).legal,
+              links: [
+                (appStrings(context).privacy, '/'),
+                (appStrings(context).terms, '/'),
+              ],
             ),
           ];
           return Column(
@@ -467,7 +502,7 @@ class AppFooter extends StatelessWidget {
                         const _BrandLockup(light: true),
                         const SizedBox(height: AppSpacing.md),
                         Text(
-                          'Hành trình khám phá văn hóa Hàn Quốc qua thử thách, câu chuyện và những dấu mộc đáng nhớ.',
+                          appStrings(context).footerDescription,
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: .64),
                             height: 1.6,
@@ -489,7 +524,7 @@ class AppFooter extends StatelessWidget {
               Divider(color: Colors.white.withValues(alpha: .12)),
               const SizedBox(height: AppSpacing.md),
               Text(
-                '© 2026 KoreaQuest · Dự án khám phá văn hóa Hàn Quốc.',
+                appStrings(context).footerCopyright,
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: .52),
                   fontSize: 12,

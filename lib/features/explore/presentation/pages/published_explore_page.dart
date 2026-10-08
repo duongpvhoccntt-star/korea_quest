@@ -13,6 +13,10 @@ import 'package:korea_quest/design_system/shadows/app_shadows.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/explore/domain/published_location.dart';
 import 'package:korea_quest/features/explore/presentation/providers/location_content_providers.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
+
+const _allFilter = '__all__';
+const _comingSoonFilter = '__coming_soon__';
 
 class PublishedExplorePage extends ConsumerStatefulWidget {
   const PublishedExplorePage({super.key});
@@ -24,7 +28,7 @@ class PublishedExplorePage extends ConsumerStatefulWidget {
 
 class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
   String _query = '';
-  String _filter = 'Tất cả';
+  String _filter = _allFilter;
   String? _selectedSlug;
 
   @override
@@ -36,7 +40,7 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.xl),
           child: ErrorState(
-            message: 'Không thể tải bản đồ địa điểm: $error',
+            message: appStrings(context).loadMapError(error.toString()),
             onRetry: () => ref.invalidate(publishedLocationsProvider),
           ),
         ),
@@ -125,8 +129,8 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
 
   List<String> _filtersFor(List<PublishedLocationSummary> items) {
     final values = <String>{
-      'Tất cả',
-      'Sắp ra mắt',
+      _allFilter,
+      _comingSoonFilter,
       ...items
           .expand((item) => [item.city, ...item.categories])
           .where((item) => item.isNotEmpty),
@@ -150,8 +154,8 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
                 ...item.categories,
               ].join(' ').toLowerCase().contains(query);
           final matchesFilter = switch (_filter) {
-            'Tất cả' => true,
-            'Sắp ra mắt' => !item.isReleased,
+            _allFilter => true,
+            _comingSoonFilter => !item.isReleased,
             _ => item.city == _filter || item.categories.contains(_filter),
           };
           return matchesQuery && matchesFilter;
@@ -220,19 +224,19 @@ class _IntroPanel extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _Eyebrow('KHÁM PHÁ HÀN QUỐC'),
+        _Eyebrow(appStrings(context).exploreKorea),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          'Bạn muốn bắt đầu từ đâu?',
+          appStrings(context).whereStart,
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
             color: AppColors.stitchText,
             fontWeight: FontWeight.w800,
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
-        const Text(
-          'Chọn một điểm trên bản đồ để mở hành trình khám phá hình ảnh, lịch sử, văn hóa, ẩm thực và những thử thách thú vị.',
-          style: TextStyle(color: AppColors.stitchMuted, height: 1.6),
+        Text(
+          appStrings(context).exploreIntro,
+          style: const TextStyle(color: AppColors.stitchMuted, height: 1.6),
         ),
         const SizedBox(height: AppSpacing.lg),
         _ProgressBlock(total: total),
@@ -242,7 +246,7 @@ class _IntroPanel extends StatelessWidget {
           child: FilledButton.icon(
             onPressed: null,
             icon: const Icon(Icons.arrow_forward_rounded),
-            label: const Text('Tiếp tục hành trình gần nhất'),
+            label: Text(appStrings(context).continueLatestJourney),
           ),
         ),
       ],
@@ -289,15 +293,15 @@ class _MapExperience extends StatelessWidget {
                   Expanded(
                     child: TextField(
                       onChanged: onQueryChanged,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.search_rounded),
-                        hintText: 'Tìm địa điểm, thành phố hoặc trải nghiệm...',
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.search_rounded),
+                        hintText: appStrings(context).searchLocationsHint,
                       ),
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   IconButton.filledTonal(
-                    tooltip: 'Danh sách địa điểm',
+                    tooltip: appStrings(context).locationList,
                     onPressed: () {},
                     icon: const Icon(Icons.format_list_bulleted_rounded),
                   ),
@@ -310,7 +314,13 @@ class _MapExperience extends StatelessWidget {
                   children: [
                     for (final filter in filters) ...[
                       ChoiceChip(
-                        label: Text(filter),
+                        label: Text(
+                          filter == _allFilter
+                              ? appStrings(context).all
+                              : filter == _comingSoonFilter
+                              ? appStrings(context).comingSoon
+                              : filter,
+                        ),
                         selected: filter == selectedFilter,
                         onSelected: (_) => onFilterChanged(filter),
                       ),
@@ -323,12 +333,11 @@ class _MapExperience extends StatelessWidget {
           ),
         ),
         if (locations.isEmpty)
-          const Padding(
-            padding: EdgeInsets.all(AppSpacing.xl),
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.xl),
             child: EmptyState(
-              title: 'Không có địa điểm phù hợp',
-              message:
-                  'Thử đổi từ khóa tìm kiếm hoặc bộ lọc để xem thêm địa điểm trên bản đồ.',
+              title: appStrings(context).noMatchingLocations,
+              message: appStrings(context).changeSearchOrFilter,
             ),
           )
         else
@@ -434,7 +443,7 @@ class _MapMarker extends StatelessWidget {
         message: '${location.name} · ${location.city}',
         child: Semantics(
           button: true,
-          label: 'Chọn ${location.name}',
+          label: appStrings(context).chooseLocation(location.name),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(AppRadius.round),
@@ -527,8 +536,10 @@ class _DestinationPreviewCard extends StatelessWidget {
               _InfoPill(
                 icon: Icons.timelapse_rounded,
                 label: location.estimatedDurationMinutes == null
-                    ? 'Đang cập nhật thời lượng'
-                    : '${location.estimatedDurationMinutes} phút',
+                    ? appStrings(context).durationUpdating
+                    : appStrings(
+                        context,
+                      ).minutes(location.estimatedDurationMinutes!),
               ),
               for (final category in location.categories.take(2))
                 _InfoPill(label: category),
@@ -539,7 +550,7 @@ class _DestinationPreviewCard extends StatelessWidget {
       final action = FilledButton.icon(
         onPressed: location.isReleased ? onExplore : null,
         icon: const Icon(Icons.explore_rounded),
-        label: const Text('Khám phá'),
+        label: Text(appStrings(context).explore),
       );
 
       return _SurfaceCard(
@@ -587,11 +598,14 @@ class _RecommendationStrip extends StatelessWidget {
         Row(
           children: [
             Text(
-              'Gợi ý cho bạn',
+              appStrings(context).recommendedForYou,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const Spacer(),
-            TextButton(onPressed: () {}, child: const Text('Xem tất cả')),
+            TextButton(
+              onPressed: () {},
+              child: Text(appStrings(context).viewAll),
+            ),
           ],
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -645,7 +659,7 @@ class _SuggestionTile extends StatelessWidget {
           ),
         ),
         IconButton(
-          tooltip: 'Lưu vào hành trình',
+          tooltip: appStrings(context).saveToJourney,
           onPressed: () {},
           icon: const Icon(Icons.bookmark_add_outlined),
         ),
@@ -666,9 +680,9 @@ class _BadgeCollection extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Huy hiệu hành trình',
-          style: TextStyle(fontWeight: FontWeight.w800),
+        Text(
+          appStrings(context).journeyBadge,
+          style: const TextStyle(fontWeight: FontWeight.w800),
         ),
         const SizedBox(height: AppSpacing.md),
         Row(
@@ -695,7 +709,7 @@ class _BadgeCollection extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          '$total địa điểm đã xuất bản đang chờ bạn khám phá.',
+          appStrings(context).publishedLocationsWaiting(total),
           style: const TextStyle(color: AppColors.stitchMuted, fontSize: 12),
         ),
       ],
@@ -726,14 +740,17 @@ class _MiniJourneyCard extends StatelessWidget {
               color: AppColors.koreanBlue.withValues(alpha: .25),
             ),
           ),
-          child: const Column(
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Nội dung',
-                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800),
+                appStrings(context).content,
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
-              Text(
+              const Text(
                 '09',
                 style: TextStyle(
                   fontSize: 22,
@@ -753,15 +770,18 @@ class _MiniJourneyCard extends StatelessWidget {
                 location.name,
                 style: const TextStyle(fontWeight: FontWeight.w800),
               ),
-              const Text(
-                'Sẵn sàng để khám phá',
-                style: TextStyle(color: AppColors.stitchMuted, fontSize: 12),
+              Text(
+                appStrings(context).readyToExplore,
+                style: const TextStyle(
+                  color: AppColors.stitchMuted,
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
         ),
         IconButton.filled(
-          tooltip: 'Tiếp tục',
+          tooltip: appStrings(context).continueJourney,
           onPressed: location.isReleased ? () => onExplore(location) : null,
           icon: const Icon(Icons.play_arrow_rounded),
         ),
@@ -789,13 +809,13 @@ class _ProgressBlock extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text(
-                'Địa điểm đã xuất bản',
-                style: TextStyle(fontWeight: FontWeight.w800),
+              Text(
+                appStrings(context).publishedLocations,
+                style: const TextStyle(fontWeight: FontWeight.w800),
               ),
               const Spacer(),
               Text(
-                '$total địa điểm',
+                appStrings(context).locationCount(total),
                 style: const TextStyle(
                   color: AppColors.koreanRed,
                   fontWeight: FontWeight.w800,
@@ -943,17 +963,17 @@ class _MapControls extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
-          tooltip: 'Phóng to',
+          tooltip: appStrings(context).zoomIn,
           onPressed: () {},
           icon: const Icon(Icons.add_rounded),
         ),
         IconButton(
-          tooltip: 'Thu nhỏ',
+          tooltip: appStrings(context).zoomOut,
           onPressed: () {},
           icon: const Icon(Icons.remove_rounded),
         ),
         IconButton(
-          tooltip: 'Đặt lại bản đồ',
+          tooltip: appStrings(context).resetMap,
           onPressed: () {},
           icon: const Icon(Icons.my_location_rounded),
         ),

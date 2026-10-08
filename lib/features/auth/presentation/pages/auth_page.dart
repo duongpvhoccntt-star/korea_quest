@@ -15,6 +15,7 @@ import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/admin/presentation/providers/admin_providers.dart';
 import 'package:korea_quest/features/auth/domain/auth_models.dart';
 import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
 
 enum AuthPageMode { register, login, forgotPassword }
 
@@ -60,6 +61,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
   }
 
   Future<void> _submit() async {
+    final strings = appStrings(context);
     final identity = _identityController.text.trim();
     final password = _passwordController.text;
 
@@ -78,10 +80,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
       if (_mode == AuthPageMode.forgotPassword) {
         await repository.sendPasswordResetEmail(email: identity);
         if (mounted) {
-          AppToast.show(
-            context,
-            'Nếu email tồn tại, hướng dẫn khôi phục đã được gửi.',
-          );
+          AppToast.show(context, strings.resetEmailSent);
           setState(() => _mode = AuthPageMode.login);
         }
       } else if (_mode == AuthPageMode.register) {
@@ -95,13 +94,10 @@ class _AuthPageState extends ConsumerState<AuthPage> {
         );
         if (mounted) {
           if (repository.currentUser == null) {
-            AppToast.show(
-              context,
-              'Tài khoản đã được tạo. Hãy kiểm tra email để xác minh.',
-            );
+            AppToast.show(context, strings.accountCreatedVerify);
             setState(() => _mode = AuthPageMode.login);
           } else {
-            AppToast.show(context, 'Tạo tài khoản thành công!');
+            AppToast.show(context, strings.accountCreated);
             context.go('/home');
           }
         }
@@ -120,9 +116,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
         if (mounted) {
           AppToast.show(
             context,
-            user.isAdmin
-                ? 'Đăng nhập Quản trị viên thành công.'
-                : 'Đăng nhập thành công.',
+            user.isAdmin ? strings.adminSignedIn : strings.signedIn,
           );
           context.go(user.isAdmin ? '/admin' : '/home');
         }
@@ -137,22 +131,23 @@ class _AuthPageState extends ConsumerState<AuthPage> {
   }
 
   String? _validate({required String identity, required String password}) {
-    if (identity.isEmpty) return 'Vui lòng nhập email.';
+    final strings = appStrings(context);
+    if (identity.isEmpty) return strings.emailRequired;
     if (_mode != AuthPageMode.login || AppConfig.hasSupabaseConfiguration) {
       final at = identity.indexOf('@');
       if (at <= 0 || identity.indexOf('.', at) <= at + 1) {
-        return 'Email không đúng định dạng.';
+        return strings.invalidEmail;
       }
     }
     if (_mode == AuthPageMode.forgotPassword) return null;
-    if (password.isEmpty) return 'Vui lòng nhập mật khẩu.';
+    if (password.isEmpty) return strings.passwordRequired;
     if (_mode == AuthPageMode.register) {
       if (_fullNameController.text.trim().isEmpty) {
-        return 'Vui lòng nhập họ và tên.';
+        return strings.fullNameRequired;
       }
-      if (password.length < 8) return 'Mật khẩu phải có ít nhất 8 ký tự.';
+      if (password.length < 8) return strings.passwordAtLeast8;
       if (_confirmPasswordController.text != password) {
-        return 'Mật khẩu xác nhận không khớp.';
+        return strings.confirmationMismatch;
       }
     }
     return null;
@@ -169,6 +164,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
   }
 
   Future<void> _quickLoginAdmin() async {
+    final strings = appStrings(context);
     const identity = 'admin';
     const password = 'admin123';
     _identityController.text = identity;
@@ -180,13 +176,13 @@ class _AuthPageState extends ConsumerState<AuthPage> {
           .read(authRepositoryProvider)
           .signIn(identity: identity, password: password);
       if (!user.isAdmin) {
-        throw const AuthException('Tài khoản này không có quyền quản trị.');
+        throw AuthException(strings.adminNoAccess);
       }
       await _startDemoAdminSession(identity, password);
       ref.invalidate(adminAccessProvider);
       ref.invalidate(adminLocationsProvider);
       if (mounted) {
-        AppToast.show(context, 'Đăng nhập Quản trị viên thành công.');
+        AppToast.show(context, strings.adminSignedIn);
         context.go('/admin');
       }
     } catch (error) {
@@ -206,7 +202,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
           .read(authRepositoryProvider)
           .signIn(identity: 'duong@example.com', password: 'user123');
       if (mounted) {
-        AppToast.show(context, 'Đăng nhập nhanh Học viên thành công.');
+        AppToast.show(context, appStrings(context).studentQuickSignedIn);
         context.go('/home');
       }
     } catch (error) {
@@ -218,22 +214,20 @@ class _AuthPageState extends ConsumerState<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = appStrings(context);
     final isRegister = _mode == AuthPageMode.register;
     final isForgot = _mode == AuthPageMode.forgotPassword;
 
     final title = switch (_mode) {
-      AuthPageMode.register => 'Mở hộ chiếu KoreaQuest',
-      AuthPageMode.login => 'Đăng nhập',
-      AuthPageMode.forgotPassword => 'Khôi phục mật khẩu',
+      AuthPageMode.register => strings.openPassport,
+      AuthPageMode.login => strings.signIn,
+      AuthPageMode.forgotPassword => strings.recoverPassword,
     };
 
     final description = switch (_mode) {
-      AuthPageMode.register =>
-        'Tạo hồ sơ du hành để nhận XP, huy hiệu và dấu mộc sau mỗi địa điểm.',
-      AuthPageMode.login =>
-        'Chào mừng bạn quay lại với cuốn nhật ký khám phá văn hóa Hàn Quốc.',
-      AuthPageMode.forgotPassword =>
-        'Nhập email của bạn để nhận hướng dẫn khôi phục mật khẩu.',
+      AuthPageMode.register => strings.registerDescription,
+      AuthPageMode.login => strings.loginDescription,
+      AuthPageMode.forgotPassword => strings.forgotDescription,
     };
 
     return AppScaffold(
@@ -347,22 +341,25 @@ class _TravelVisualPanel extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const _PillLabel(label: '한국 여행 · Khám phá xứ Kim Chi'),
+            _PillLabel(label: appStrings(context).travelTagline),
             const SizedBox(height: AppSpacing.xxl),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Tiếp tục hành trình Hàn Quốc của bạn',
+                  appStrings(context).continueKoreaJourney,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     color: AppColors.stitchText,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
-                const Text(
-                  'Lưu từng bước chân qua các vùng đất kỳ thú, tích lũy tem du hành và chinh phục kho tàng văn hóa rực rỡ.',
-                  style: TextStyle(color: AppColors.stitchMuted, height: 1.6),
+                Text(
+                  appStrings(context).travelVisualDescription,
+                  style: const TextStyle(
+                    color: AppColors.stitchMuted,
+                    height: 1.6,
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 const _AchievementPreview(),
@@ -415,135 +412,144 @@ class _AuthFormPanel extends StatelessWidget {
   final VoidCallback onQuickLoginStudent;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.all(AppSpacing.xl),
-    child: Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 500),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const _PillLabel(label: 'KoreaQuest Passport'),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: AppColors.stitchText,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              description,
-              style: const TextStyle(color: AppColors.stitchMuted),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            if (!isForgot) ...[
-              SegmentedButton<AuthPageMode>(
-                segments: const [
-                  ButtonSegment(
-                    value: AuthPageMode.login,
-                    icon: Icon(Icons.login_rounded),
-                    label: Text('Đăng nhập'),
-                  ),
-                  ButtonSegment(
-                    value: AuthPageMode.register,
-                    icon: Icon(Icons.person_add_alt_1_rounded),
-                    label: Text('Đăng ký'),
-                  ),
-                ],
-                selected: {mode},
-                onSelectionChanged: isLoading
-                    ? null
-                    : (selection) => onModeChanged(selection.first),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-            ],
-            if (isRegister) ...[
-              AppTextField(
-                label: 'Họ và tên',
-                hint: 'Phạm Văn Dương',
-                controller: fullNameController,
-                prefixIcon: Icons.person_outline_rounded,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppTextField(
-                label: 'Tên hiển thị',
-                hint: 'Dương',
-                controller: displayNameController,
-                prefixIcon: Icons.badge_outlined,
-              ),
-              const SizedBox(height: AppSpacing.md),
-            ],
-            AppTextField(
-              label: 'Email',
-              hint: showDemoAccounts && !isRegister
-                  ? 'Email hoặc admin (chế độ demo)'
-                  : 'ban@example.com',
-              controller: identityController,
-              prefixIcon: Icons.email_outlined,
-            ),
-            if (!isForgot) ...[
-              const SizedBox(height: AppSpacing.md),
-              PasswordField(label: 'Mật khẩu', controller: passwordController),
-            ],
-            if (isRegister) ...[
-              const SizedBox(height: AppSpacing.md),
-              PasswordField(
-                label: 'Xác nhận mật khẩu',
-                controller: confirmPasswordController,
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              const Text(
-                'Dùng ít nhất 8 ký tự để bảo vệ tài khoản của bạn.',
-                style: TextStyle(color: AppColors.stitchMuted, fontSize: 12),
-              ),
-            ],
-            if (errorMessage != null) ...[
-              const SizedBox(height: AppSpacing.md),
-              _AuthErrorMessage(message: errorMessage!),
-            ],
-            const SizedBox(height: AppSpacing.lg),
-            PrimaryButton(
-              label: switch (mode) {
-                AuthPageMode.register => 'Tạo tài khoản',
-                AuthPageMode.login => 'Đăng nhập vào hành trình',
-                AuthPageMode.forgotPassword => 'Gửi hướng dẫn',
-              },
-              isLoading: isLoading,
-              onPressed: onSubmit,
-            ),
-            if (mode == AuthPageMode.login)
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: isLoading
-                      ? null
-                      : () => onModeChanged(AuthPageMode.forgotPassword),
-                  child: const Text('Quên mật khẩu?'),
+  Widget build(BuildContext context) {
+    final strings = appStrings(context);
+    return Padding(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 500),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const _PillLabel(label: 'KoreaQuest Passport'),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  color: AppColors.stitchText,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
-            if (isForgot)
-              TextButton(
-                onPressed: isLoading
-                    ? null
-                    : () => onModeChanged(AuthPageMode.login),
-                child: const Text('Quay lại đăng nhập'),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                description,
+                style: const TextStyle(color: AppColors.stitchMuted),
               ),
-            if (showDemoAccounts && mode == AuthPageMode.login) ...[
-              const SizedBox(height: AppSpacing.md),
-              _QuickDemoSection(
+              const SizedBox(height: AppSpacing.lg),
+              if (!isForgot) ...[
+                SegmentedButton<AuthPageMode>(
+                  segments: [
+                    ButtonSegment(
+                      value: AuthPageMode.login,
+                      icon: Icon(Icons.login_rounded),
+                      label: Text(strings.signIn),
+                    ),
+                    ButtonSegment(
+                      value: AuthPageMode.register,
+                      icon: Icon(Icons.person_add_alt_1_rounded),
+                      label: Text(strings.register),
+                    ),
+                  ],
+                  selected: {mode},
+                  onSelectionChanged: isLoading
+                      ? null
+                      : (selection) => onModeChanged(selection.first),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+              ],
+              if (isRegister) ...[
+                AppTextField(
+                  label: strings.fullName,
+                  hint: 'Phạm Văn Dương',
+                  controller: fullNameController,
+                  prefixIcon: Icons.person_outline_rounded,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  label: strings.displayName,
+                  hint: 'Dương',
+                  controller: displayNameController,
+                  prefixIcon: Icons.badge_outlined,
+                ),
+                const SizedBox(height: AppSpacing.md),
+              ],
+              AppTextField(
+                label: strings.email,
+                hint: showDemoAccounts && !isRegister
+                    ? strings.demoEmailHint
+                    : 'ban@example.com',
+                controller: identityController,
+                prefixIcon: Icons.email_outlined,
+              ),
+              if (!isForgot) ...[
+                const SizedBox(height: AppSpacing.md),
+                PasswordField(
+                  label: strings.password,
+                  controller: passwordController,
+                ),
+              ],
+              if (isRegister) ...[
+                const SizedBox(height: AppSpacing.md),
+                PasswordField(
+                  label: strings.confirmPassword,
+                  controller: confirmPasswordController,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  strings.passwordHelp,
+                  style: const TextStyle(
+                    color: AppColors.stitchMuted,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+              if (errorMessage != null) ...[
+                const SizedBox(height: AppSpacing.md),
+                _AuthErrorMessage(message: errorMessage!),
+              ],
+              const SizedBox(height: AppSpacing.lg),
+              PrimaryButton(
+                label: switch (mode) {
+                  AuthPageMode.register => strings.createAccount,
+                  AuthPageMode.login => strings.signInJourney,
+                  AuthPageMode.forgotPassword => strings.sendInstructions,
+                },
                 isLoading: isLoading,
-                onLoginAdmin: onQuickLoginAdmin,
-                onLoginStudent: onQuickLoginStudent,
+                onPressed: onSubmit,
               ),
+              if (mode == AuthPageMode.login)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: isLoading
+                        ? null
+                        : () => onModeChanged(AuthPageMode.forgotPassword),
+                    child: Text(strings.forgotPassword),
+                  ),
+                ),
+              if (isForgot)
+                TextButton(
+                  onPressed: isLoading
+                      ? null
+                      : () => onModeChanged(AuthPageMode.login),
+                  child: Text(strings.backToSignIn),
+                ),
+              if (showDemoAccounts && mode == AuthPageMode.login) ...[
+                const SizedBox(height: AppSpacing.md),
+                _QuickDemoSection(
+                  isLoading: isLoading,
+                  onLoginAdmin: onQuickLoginAdmin,
+                  onLoginStudent: onQuickLoginStudent,
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _AuthErrorMessage extends StatelessWidget {
@@ -606,7 +612,7 @@ class _QuickDemoSection extends StatelessWidget {
               ),
               const SizedBox(width: AppSpacing.xs),
               Text(
-                'Tài khoản thử nghiệm nhanh',
+                appStrings(context).quickDemoAccounts,
                 style: Theme.of(
                   context,
                 ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
@@ -614,9 +620,9 @@ class _QuickDemoSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.xs),
-          const Text(
-            'Chọn một vai trò để vào nhanh bản demo.',
-            style: TextStyle(color: AppColors.stitchMuted),
+          Text(
+            appStrings(context).quickDemoDescription,
+            style: const TextStyle(color: AppColors.stitchMuted),
           ),
           const SizedBox(height: AppSpacing.sm),
 
@@ -625,17 +631,17 @@ class _QuickDemoSection extends StatelessWidget {
             roleLabel: 'Admin',
             roleColor: AppColors.koreanRed,
             identity: 'admin / admin123',
-            description: 'Quản trị và duyệt địa điểm',
+            description: appStrings(context).adminDemoDescription,
             icon: Icons.admin_panel_settings_rounded,
             isLoading: isLoading,
             onTap: onLoginAdmin,
           ),
           const SizedBox(height: AppSpacing.xs),
           _DemoAccountTile(
-            roleLabel: 'Học viên',
+            roleLabel: appStrings(context).student,
             roleColor: AppColors.koreanBlue,
             identity: 'duong@example.com',
-            description: 'Trải nghiệm hành trình văn hóa',
+            description: appStrings(context).studentDemoDescription,
             icon: Icons.school_rounded,
             isLoading: isLoading,
             onTap: onLoginStudent,
@@ -718,29 +724,32 @@ class _AchievementPreview extends StatelessWidget {
       borderRadius: BorderRadius.circular(AppRadius.large),
       boxShadow: AppShadows.small,
     ),
-    child: const Padding(
-      padding: EdgeInsets.all(AppSpacing.md),
+    child: Padding(
+      padding: const EdgeInsets.all(AppSpacing.md),
       child: Row(
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             backgroundColor: AppColors.butter,
             child: Icon(
               Icons.military_tech_rounded,
               color: AppColors.stitchText,
             ),
           ),
-          SizedBox(width: AppSpacing.sm),
+          const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '3/12 huy hiệu đã mở',
-                  style: TextStyle(fontWeight: FontWeight.w900),
+                  appStrings(context).unlockedBadges,
+                  style: const TextStyle(fontWeight: FontWeight.w900),
                 ),
                 Text(
-                  '50+ câu đố văn hóa đang chờ bạn',
-                  style: TextStyle(color: AppColors.stitchMuted, fontSize: 12),
+                  appStrings(context).quizWaiting,
+                  style: const TextStyle(
+                    color: AppColors.stitchMuted,
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ),

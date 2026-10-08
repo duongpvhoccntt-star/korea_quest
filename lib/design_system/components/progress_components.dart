@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/shared/models/domain_models.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
 
 class UserAvatar extends StatelessWidget {
   const UserAvatar({
@@ -32,7 +33,7 @@ class UserAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     if (avatarBytes != null && avatarBytes!.isNotEmpty) {
       return Semantics(
-        label: 'Ảnh đại diện của $displayName',
+        label: appStrings(context).avatarOf(displayName),
         child: CircleAvatar(
           radius: radius,
           backgroundColor: AppColors.skyLight,
@@ -44,7 +45,7 @@ class UserAvatar extends StatelessWidget {
     if (avatarPreset != null && culturalPresets.containsKey(avatarPreset)) {
       final emoji = culturalPresets[avatarPreset]!;
       return Semantics(
-        label: 'Ảnh đại diện của $displayName',
+        label: appStrings(context).avatarOf(displayName),
         child: CircleAvatar(
           radius: radius,
           backgroundColor: AppColors.skyLight,
@@ -54,7 +55,7 @@ class UserAvatar extends StatelessWidget {
     }
 
     return Semantics(
-      label: 'Ảnh đại diện của $displayName',
+      label: appStrings(context).avatarOf(displayName),
       child: CircleAvatar(
         radius: radius,
         backgroundColor: AppColors.coral,
@@ -79,22 +80,22 @@ class StatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final (label, icon, color) = switch (status) {
       LocationStatus.completed => (
-        'Hoàn thành',
+        appStrings(context).completed,
         Icons.check_circle,
         AppColors.completedGreen,
       ),
       LocationStatus.inProgress => (
-        'Đang thực hiện',
+        appStrings(context).inProgress,
         Icons.directions_walk,
         AppColors.koreanRed,
       ),
       LocationStatus.available => (
-        'Có thể khám phá',
+        appStrings(context).availableToExplore,
         Icons.explore,
         AppColors.koreanBlue,
       ),
       LocationStatus.locked => (
-        'Chưa mở khóa',
+        appStrings(context).locked,
         Icons.lock,
         AppColors.lockedGray,
       ),
@@ -120,7 +121,9 @@ class XPProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-    label: '${progress.currentXp} trên ${progress.nextLevelXp} XP',
+    label: appStrings(
+      context,
+    ).xpProgress(progress.currentXp, progress.nextLevelXp),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -140,7 +143,9 @@ class XPProgressBar extends StatelessWidget {
                 const SizedBox(width: 8),
                 Flexible(
                   child: Text(
-                    '${progress.nextLevelXp} XP · Cấp ${progress.level + 1}',
+                    appStrings(
+                      context,
+                    ).nextLevel(progress.nextLevelXp, progress.level + 1),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.end,
@@ -171,7 +176,7 @@ class LevelBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Chip(
     avatar: const Icon(Icons.star_rounded, size: 17, color: AppColors.butter),
-    label: Text('LEVEL $level · NHÀ THÁM HIỂM'),
+    label: Text(appStrings(context).levelExplorer(level)),
     backgroundColor: AppColors.stitchText,
     labelStyle: const TextStyle(
       color: Colors.white,

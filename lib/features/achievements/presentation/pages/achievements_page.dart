@@ -1,7 +1,8 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:korea_quest/design_system/components/app_feedback.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
 import 'package:korea_quest/shared/widgets/module_page.dart';
 
@@ -10,15 +11,15 @@ class AchievementsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final strings = appStrings(context);
     final achievements = ref.watch(achievementsProvider);
     return ModulePage(
-      eyebrow: 'Cột mốc',
-      title: 'Thành tích của bạn',
-      description: 'Huy hiệu lấy từ repository dùng chung và sẵn sàng mở rộng.',
+      eyebrow: strings.milestones,
+      title: strings.yourAchievements,
+      description: strings.achievementsDescription,
       child: achievements.when(
         loading: LoadingIndicator.new,
-        error: (error, stack) =>
-            const ErrorState(message: 'Không thể tải huy hiệu.'),
+        error: (error, stack) => ErrorState(message: strings.loadBadgesError),
         data: (items) => GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
