@@ -16,6 +16,7 @@ import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
 import 'package:korea_quest/features/auth/presentation/widgets/sign_out_action.dart';
 import 'package:korea_quest/features/profile/presentation/widgets/avatar_selector_modal.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
 import 'package:korea_quest/shared/models/domain_models.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
 
@@ -26,6 +27,7 @@ class ProfilePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final strings = appStrings(context);
     final userAsync = ref.watch(currentUserProvider);
     final progressAsync = ref.watch(userProgressProvider);
     final locationsAsync = ref.watch(locationsProvider);
@@ -40,7 +42,7 @@ class ProfilePage extends ConsumerWidget {
         progressAsync.hasError ||
         locationsAsync.hasError) {
       return ErrorState(
-        message: 'Không thể tải hồ sơ mock.',
+        message: strings.loadProfileError,
         onRetry: () => ref.invalidate(koreaQuestRepositoryProvider),
       );
     }
@@ -69,7 +71,7 @@ class ProfilePage extends ConsumerWidget {
                   _EditProfileForm(
                     user: user,
                     onSave: () {
-                      AppToast.show(context, 'Đã lưu thay đổi bản mẫu.');
+                      AppToast.show(context, strings.changesSaved);
                       context.go('/profile');
                     },
                     onCancel: () => context.go('/profile'),
@@ -127,15 +129,15 @@ class _ProfileHero extends StatelessWidget {
                   const SizedBox(height: AppSpacing.xs),
                   Text(
                     isEditing
-                        ? 'Chỉnh sửa hồ sơ'
-                        : 'Hồ sơ của ${user.displayName}',
+                        ? appStrings(context).editProfile
+                        : appStrings(context).profileOf(user.displayName),
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       color: AppColors.stitchText,
                       fontWeight: FontWeight.w900,
                     ),
                   ),
                   Text(
-                    '@${user.handle} · Hà Nội, Việt Nam',
+                    '@${user.handle} · ${appStrings(context).hanoiVietnam}',
                     style: const TextStyle(color: AppColors.stitchMuted),
                   ),
                   if (user.bio?.isNotEmpty == true) ...[
@@ -152,7 +154,7 @@ class _ProfileHero extends StatelessWidget {
         );
         final actions = isEditing
             ? SecondaryButton(
-                label: 'Quay lại hồ sơ',
+                label: appStrings(context).backToProfile,
                 icon: Icons.arrow_back_rounded,
                 onPressed: () => context.go('/profile'),
               )
@@ -161,17 +163,17 @@ class _ProfileHero extends StatelessWidget {
                 runSpacing: AppSpacing.sm,
                 children: [
                   PrimaryButton(
-                    label: 'Chỉnh sửa hồ sơ',
+                    label: appStrings(context).editProfile,
                     icon: Icons.edit_rounded,
                     onPressed: () => context.go('/profile/edit'),
                   ),
                   SecondaryButton(
-                    label: 'Cài đặt',
+                    label: appStrings(context).settings,
                     icon: Icons.settings_outlined,
                     onPressed: () => context.go('/settings'),
                   ),
                   DangerButton(
-                    label: 'Đăng xuất',
+                    label: appStrings(context).signOut,
                     icon: Icons.logout_rounded,
                     onPressed: onSignOut,
                   ),
@@ -188,7 +190,7 @@ class _ProfileHero extends StatelessWidget {
               XPProgressBar(progress: progress),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                'Còn ${progress.xpRemaining} XP để lên cấp tiếp theo',
+                appStrings(context).xpToNextLevel(progress.xpRemaining),
                 style: const TextStyle(color: AppColors.stitchMuted),
               ),
             ],
@@ -253,8 +255,8 @@ class _ProfileDashboard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _SectionTitle(
-                title: 'Tổng quan hành trình',
+              _SectionTitle(
+                title: appStrings(context).journeyOverview,
                 icon: Icons.insights_rounded,
               ),
               const SizedBox(height: AppSpacing.md),
@@ -263,19 +265,19 @@ class _ProfileDashboard extends StatelessWidget {
                 runSpacing: AppSpacing.md,
                 children: [
                   _StatCard(
-                    label: 'Đã hoàn thành',
+                    label: appStrings(context).completed,
                     value: '$completed',
                     icon: Icons.check_circle_rounded,
                     color: AppColors.completedGreen,
                   ),
                   _StatCard(
-                    label: 'Có thể khám phá',
+                    label: appStrings(context).availableToExplore,
                     value: '$available',
                     icon: Icons.explore_rounded,
                     color: AppColors.koreanBlue,
                   ),
                   _StatCard(
-                    label: 'Chuỗi ngày học',
+                    label: appStrings(context).learningStreak,
                     value: '${progress.streakDays}',
                     icon: Icons.local_fire_department_rounded,
                     color: AppColors.koreanRed,
@@ -283,15 +285,15 @@ class _ProfileDashboard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),
-              const _SectionTitle(
-                title: 'Đang tiếp tục',
+              _SectionTitle(
+                title: appStrings(context).continuing,
                 icon: Icons.route_rounded,
               ),
               const SizedBox(height: AppSpacing.sm),
               if (active.isEmpty)
-                const Text(
-                  'Chưa có địa điểm đang thực hiện.',
-                  style: TextStyle(color: AppColors.stitchMuted),
+                Text(
+                  appStrings(context).noCurrentLocation,
+                  style: const TextStyle(color: AppColors.stitchMuted),
                 )
               else
                 for (final location in active) _JourneyTile(location: location),
@@ -304,46 +306,50 @@ class _ProfileDashboard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _SectionTitle(
-                title: 'Thông tin cá nhân',
+              _SectionTitle(
+                title: appStrings(context).personalInformation,
                 icon: Icons.person_rounded,
               ),
               const SizedBox(height: AppSpacing.md),
               _InfoRow(
                 icon: Icons.person_outline_rounded,
-                label: 'Họ và tên',
+                label: appStrings(context).fullName,
                 value: user.fullName,
               ),
               _InfoRow(
                 icon: Icons.badge_outlined,
-                label: 'Tên hiển thị',
+                label: appStrings(context).displayName,
                 value: user.displayName,
               ),
               if (user.bio != null && user.bio!.isNotEmpty)
                 _InfoRow(
                   icon: Icons.auto_stories_outlined,
-                  label: 'Giới thiệu',
+                  label: appStrings(context).bio,
                   value: user.bio!,
                 ),
               _InfoRow(
                 icon: Icons.email_outlined,
-                label: 'Email',
+                label: appStrings(context).email,
                 value: email,
               ),
               _InfoRow(
                 icon: Icons.language_rounded,
-                label: 'Ngôn ngữ',
-                value: 'Tiếng Việt',
+                label: appStrings(context).language,
+                value: switch (Localizations.localeOf(context).languageCode) {
+                  'en' => appStrings(context).english,
+                  'ko' => appStrings(context).korean,
+                  _ => appStrings(context).vietnamese,
+                },
               ),
               _InfoRow(
                 icon: Icons.calendar_month_rounded,
-                label: 'Tham gia',
+                label: appStrings(context).joined,
                 value:
                     '${user.joinedDate.day}/${user.joinedDate.month}/${user.joinedDate.year}',
               ),
               const SizedBox(height: AppSpacing.lg),
               SecondaryButton(
-                label: 'Mở hộ chiếu',
+                label: appStrings(context).passport,
                 icon: Icons.card_travel_rounded,
                 onPressed: () => context.go('/passport'),
               ),
@@ -431,7 +437,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     final fullName = _fullNameCtrl.text.trim();
     final displayName = _displayNameCtrl.text.trim();
     if (fullName.isEmpty || displayName.isEmpty) {
-      AppToast.show(context, 'Họ tên và tên hiển thị không được để trống.');
+      AppToast.show(context, appStrings(context).profileFieldsRequired);
       return;
     }
     setState(() => _saving = true);
@@ -447,7 +453,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
       ref.invalidate(currentUserProvider);
       if (mounted) widget.onSave();
     } catch (_) {
-      if (mounted) AppToast.show(context, 'Lưu thất bại, thử lại sau.');
+      if (mounted) AppToast.show(context, appStrings(context).saveFailed);
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -458,8 +464,8 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionTitle(
-          title: 'Thông tin hiển thị',
+        _SectionTitle(
+          title: appStrings(context).displayInformation,
           icon: Icons.edit_note_rounded,
         ),
         const SizedBox(height: AppSpacing.lg),
@@ -501,21 +507,21 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
         const SizedBox(height: AppSpacing.lg),
 
         AppTextField(
-          label: 'Họ và tên',
+          label: appStrings(context).fullName,
           controller: _fullNameCtrl,
           prefixIcon: Icons.person_outline_rounded,
         ),
         const SizedBox(height: AppSpacing.md),
         AppTextField(
-          label: 'Tên hiển thị',
+          label: appStrings(context).displayName,
           controller: _displayNameCtrl,
           prefixIcon: Icons.badge_outlined,
         ),
         const SizedBox(height: AppSpacing.md),
         AppTextField(
-          label: 'Giới thiệu',
+          label: appStrings(context).bio,
           controller: _bioCtrl,
-          hint: 'Câu chuyện khám phá của bạn…',
+          hint: appStrings(context).bioHint,
           prefixIcon: Icons.auto_stories_outlined,
           maxLines: 3,
         ),
@@ -525,12 +531,14 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
           runSpacing: AppSpacing.sm,
           children: [
             PrimaryButton(
-              label: _saving ? 'Đang lưu…' : 'Lưu thay đổi',
+              label: _saving
+                  ? appStrings(context).saving
+                  : appStrings(context).saveChanges,
               icon: Icons.save_rounded,
               onPressed: _saving ? null : _save,
             ),
             SecondaryButton(
-              label: 'Hủy',
+              label: appStrings(context).cancel,
               icon: Icons.close_rounded,
               onPressed: widget.onCancel,
             ),

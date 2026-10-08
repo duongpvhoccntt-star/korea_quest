@@ -1,8 +1,8 @@
 # KoreaQuest Database & Domain Model
 
 > Trạng thái: Tài liệu thảo luận kỹ thuật, chưa phải cam kết triển khai production.
-> Nguồn đối chiếu: migration `20260830151124_admin_content_schema.sql`, model/repository Admin, `CONTEXT.md`, ADR và `TEAM_OWNERSHIP.md` tại ngày 2026-09-06.
-> Trạng thái cloud: đã xác minh ngày 2026-09-06 bằng `supabase migration list --linked` trên project `KOREAQUEST` (org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`). Migration đã được áp dụng, 14 bảng tồn tại, chưa có dữ liệu.
+> Nguồn đối chiếu: migrations đến `20261007193000_multilingual_content.sql`, model/repository Admin và Explore, `CONTEXT.md`, ADR và `TEAM_OWNERSHIP.md` tại ngày 2026-10-08.
+> Trạng thái cloud: đã xác minh ngày 2026-10-08 trên project `KOREAQUEST` (org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`). Migration đến `20261007193000_multilingual_content.sql` đã áp dụng; Edge Function `translate-location` đang ACTIVE; các secret `GEMINI_API_KEY` và `GEMINI_TRANSLATION_MODEL=gemini-3.1-flash-lite` đã được cấu hình.
 
 ## 1. Mục tiêu và phạm vi
 
@@ -33,6 +33,8 @@ Phạm vi hiện tại là **Admin Content MVP**:
 | **Nguồn tham khảo (Source)** | Thông tin truy vết nguồn nội dung hoặc media; không tự chứng minh quyền sử dụng. | Giấy phép |
 | **Địa điểm tiên quyết (Prerequisite Location)** | Địa điểm phải hoàn thành trước khi Địa điểm phụ thuộc được mở khóa; mỗi Địa điểm có tối đa một tiên quyết trong MVP. | Trạng thái khóa |
 | **Quản trị viên (Admin User)** | Người dùng Supabase Auth có UUID trong `admin_users` và được phép biên tập/xuất bản. | Nhà thám hiểm |
+| **Bản dịch nội dung (Content Translation)** | Lớp chữ hiển thị theo `vi`, `en` hoặc `ko` gắn với một Phiên bản nội dung; không nhân bản media, XP, cấu trúc hay đáp án đúng. | Bản sao Địa điểm |
+| **Bản nguồn (Source Content)** | Nội dung tiếng Việt chuẩn để tạo và kiểm tra độ mới của các Bản dịch nội dung. | Bản dịch đã duyệt |
 
 ## 3. Tổng quan kiến trúc dữ liệu
 
@@ -60,6 +62,7 @@ erDiagram
     LOCATION_REVISIONS ||--o{ LOCATION_FOODS : has
     LOCATION_REVISIONS ||--o{ LOCATION_FUN_FACTS : has
     LOCATION_REVISIONS ||--o{ QUIZ_QUESTIONS : has
+    LOCATION_REVISIONS ||--|{ LOCATION_REVISION_TRANSLATIONS : localizes
     QUIZ_QUESTIONS ||--o{ QUIZ_OPTIONS : choice_answers
     QUIZ_QUESTIONS ||--o{ QUIZ_MATCHING_PAIRS : matching_answers
     QUIZ_QUESTIONS ||--o{ QUIZ_ORDERING_ITEMS : ordering_answers
@@ -286,6 +289,19 @@ Bốn field media phải cùng null hoặc cùng có giá trị. Validation publ
 | `item_text` | `text` | Không | rỗng | Nội dung mục cần sắp xếp |
 | `correct_position` | `integer` | Không | — | >= 0; unique trong question |
 
+### 5.15 `location_revision_translations`
+
+| Field | Type | Null | Default | Ý nghĩa / constraint |
+|---|---|---:|---|---|
+| `revision_id` | `uuid` | Không | — | FK tới Phiên bản nội dung; một phần của PK |
+| `locale` | `content_locale` | Không | — | `vi`, `en` hoặc `ko`; một phần của PK |
+| `status` | `translation_review_status` | Không | `draft` | Trạng thái kiểm duyệt độc lập từng locale |
+| `content` | `jsonb` object | Không | `{summary:{}, detail:{}}` | Lớp chữ phủ lên read model tiếng Việt; mảng merge theo vị trí để giữ ID và cấu trúc gốc |
+| `source_lock_version` | `integer` | Không | — | Lock version của bản tiếng Việt khi bản dịch được tạo/lưu |
+| `created_at`, `updated_at` | `timestamptz` | Không | `now()` | Audit thời gian |
+| `created_by`, `updated_by` | `uuid` | Có | — | FK `auth.users`; xóa thì set null |
+| `approved_at`, `approved_by` | timestamp/UUID | Có | — | Bắt buộc có thời điểm khi trạng thái là `approved` |
+
 ## 6. Enum
 
 | Enum | Giá trị | Ý nghĩa |
@@ -294,6 +310,8 @@ Bốn field media phải cùng null hoặc cùng có giá trị. Validation publ
 | `content_media_kind` | `image`, `youtube` | Hai loại media URL được Admin hỗ trợ |
 | `quiz_stage` | `check_in`, `culture`, `final_quiz` | Nhóm Câu hỏi; `final_quiz` là quiz tổng kết riêng |
 | `quiz_question_kind` | `single_choice`, `true_false`, `matching`, `ordering` | Cách lưu và chấm đáp án |
+| `content_locale` | `vi`, `en`, `ko` | Locale nội dung được hỗ trợ trong MVP |
+| `translation_review_status` | `draft`, `needs_review`, `approved` | Vòng duyệt Bản dịch nội dung; chỉ `approved` được đọc công khai |
 
 ## 7. Cấu trúc nội dung Địa điểm
 
@@ -362,6 +380,8 @@ Khi sửa Location đã Published, `create_location_draft_from_current` sao ché
 
 Archive một Location bị từ chối nếu Location còn Draft hoặc đang là prerequisite của một Location Published khác.
 
+Admin biên tập theo ba tab ngôn ngữ. Tiếng Việt là Bản nguồn. Nút dịch gọi Edge Function `translate-location`; function xác thực Admin, đọc `GEMINI_API_KEY` phía server và trả JSON cùng cấu trúc. Khi `lock_version` bản nguồn thay đổi, trigger chuyển bản Anh/Hàn sang `needs_review`. Chỉ bản dịch có trạng thái `approved` mới được phủ lên read model công khai.
+
 ## 11. RPC và helper công khai
 
 | Function | Input | Output | Mục đích và tác động |
@@ -378,6 +398,12 @@ Archive một Location bị từ chối nếu Location còn Draft hoặc đang l
 | `archive_location` | `location_id` | `void` | Lưu trữ Location sau khi kiểm tra dependency |
 | `admin_list_locations` | — | Bảng summary | Danh sách revision ưu tiên Draft rồi Published |
 | `get_admin_location` | `location_id` | JSON document | Nạp Draft cùng toàn bộ section cho editor |
+| `list_published_locations` | `requested_locale` | JSON summaries | Phủ bản dịch đã duyệt; fallback tiếng Việt khi thiếu |
+| `get_published_location` | slug, `requested_locale` | JSON document | Trả nội dung theo locale và metadata `resolved_locale`/`is_fallback` |
+| `submit_quiz_answer` | question, answer, `requested_locale` | JSON result | Chấm bằng dữ liệu gốc và chỉ bản địa hóa phần giải thích |
+| `admin_list_location_translations` | revision | JSON list | Nạp các bản dịch và trạng thái duyệt cho Admin |
+| `admin_save_location_translation` | revision, locale, content | JSON translation | Lưu bản Anh/Hàn thành `needs_review` |
+| `admin_approve_location_translation` | revision, locale | JSON translation | Duyệt nếu `source_lock_version` vẫn khớp |
 
 Các RPC ghi dữ liệu là `security definer`, đặt `search_path` rỗng và gọi kiểm tra Admin. Quyền execute chỉ được cấp cho role `authenticated`.
 
@@ -390,6 +416,7 @@ Supabase Auth xác thực người dùng. Đăng nhập thành công chưa đủ
 | `locations` và `location_revisions` | Chỉ đọc Location chưa archived và revision Published | Đọc toàn bộ qua policy/RPC |
 | Các bảng nội dung và quiz | Chỉ đọc row thuộc revision Published | Đọc toàn bộ qua policy/RPC |
 | `location_sources` | Không đọc | Đọc qua policy/RPC |
+| `location_revision_translations` | Chỉ đọc bản `approved` thuộc revision Published | Đọc mọi trạng thái; ghi qua RPC |
 | `admin_users` | Không đọc | Đọc qua policy |
 | DML trực tiếp | Không được grant | Không được grant; ghi qua RPC |
 
@@ -397,18 +424,20 @@ Fixture trong `supabase/seed.sql` tạo tài khoản thử nghiệm và chỉ d�
 
 ## 13. Trạng thái hiện tại
 
-Kiểm tra ngày 2026-09-06 bằng Supabase CLI (`supabase link` + `supabase migration list --linked` + `supabase inspect db table-stats --linked`).
+Kiểm tra ngày 2026-10-08 bằng Supabase CLI (`supabase migration list --linked`, `supabase inspect db table-stats --linked`, `supabase functions list` và `supabase secrets list`).
 
 | Hạng mục | Trạng thái quan sát được |
 |---|---|
 | Supabase Cloud project | Project `KOREAQUEST`, org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`, region Northeast Asia (Tokyo) |
-| Migration trên cloud | **Đã áp dụng** `20260830151124` (2026-08-30 15:11:24 UTC), xuất hiện ở cột Remote của `supabase migration list` |
-| Bảng trên cloud | Đủ 14 bảng: `admin_users`, `locations`, `location_revisions`, `location_quick_facts`, `location_sources`, `location_history`, `location_highlights`, `location_experiences`, `location_foods`, `location_fun_facts`, `quiz_questions`, `quiz_options`, `quiz_matching_pairs`, `quiz_ordering_items` |
-| Dữ liệu trên cloud | Tất cả bảng 0 row; chưa có Admin nào trong `admin_users` |
-| Migration schema trong repo | **Chưa có.** Không tồn tại thư mục `supabase/` trên nhánh `main`; cột Local của `supabase migration list` trống. Cần commit file `supabase/migrations/20260830151124_admin_content_schema.sql` để repo khớp với cloud |
-| pgTAP | Có 13 assertion về type, table, RPC, final quiz, word count, Admin và RLS draft (trong working tree local của owner, chưa commit) |
+| Migration trên cloud | **Đã áp dụng đến** `20261007193000_multilingual_content.sql`; cột Local và Remote đã khớp |
+| Bảng trên cloud | Có đầy đủ các bảng Content, Gameplay và bảng mới `location_revision_translations` |
+| Dữ liệu trên cloud | Có 4 Location, 18 Location Revision, 2 Admin; migration đã backfill 18 bản nguồn tiếng Việt trong `location_revision_translations` |
+| Migration schema trong repo | Đã đồng bộ thêm migration cloud `20261004110000_diversify_namsan_media.sql`; migration đa ngôn ngữ `20261007193000` đã áp dụng cloud |
+| Edge Function | `translate-location` ACTIVE, version 3; endpoint yêu cầu JWT và trả HTTP 401 khi gọi không xác thực; smoke test `gemini-3.1-flash-lite` đã dịch thành công ngày 2026-10-08 |
+| Secret dịch AI | Đã cấu hình `GEMINI_API_KEY` và `GEMINI_TRANSLATION_MODEL=gemini-3.1-flash-lite` trên Supabase; giá trị khóa không lưu trong repository |
+| pgTAP | Có 38 assertion, gồm kiểm tra type/table/RPC đa ngôn ngữ; chưa chạy local vì Docker engine chưa hoạt động |
 | Flutter Admin | Có model/repository và UI editor trong working tree local của owner, chưa commit |
-| Explore/Journey runtime | Vẫn dùng `MockKoreaQuestRepository` |
+| Explore/Journey runtime | Explore đọc Supabase read model khi có cấu hình và gửi locale `vi`/`en`/`ko`; thiếu bản dịch sẽ fallback tiếng Việt |
 | Docker/local DB | Chưa chạy migration và pgTAP local |
 
 ### Điểm chưa thống nhất giữa tài liệu và implementation
@@ -425,6 +454,10 @@ Kiểm tra ngày 2026-09-06 bằng Supabase CLI (`supabase link` + `supabase mig
 3. Nội dung Published không sửa trực tiếp; chỉnh sửa qua một Draft versioned.
 4. Trạng thái gameplay thuộc từng Nhà thám hiểm, không lưu toàn cục trên Location.
 5. Publish được validate và thực hiện trong PostgreSQL RPC transaction, không do Flutter tự đổi trạng thái.
+6. Tiếng Việt là Bản nguồn; Anh/Hàn là lớp dịch theo revision. Dữ liệu dùng chung không bị nhân ba.
+7. Bản dịch AI luôn là `needs_review`; chỉ bản được Admin duyệt mới hiển thị công khai.
+8. Thiếu bản dịch không ẩn nội dung: read model fallback tiếng Việt và trả cờ `is_fallback` để UI thông báo.
+9. API key Gemini chỉ đặt trong secret của Edge Function, không đưa vào Flutter Web.
 
 ## 15. Các điểm cần nhóm thảo luận
 

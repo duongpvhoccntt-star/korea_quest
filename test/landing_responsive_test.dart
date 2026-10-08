@@ -16,6 +16,8 @@ void main() {
       tester.view.devicePixelRatio = 1;
       tester.view.physicalSize = viewport.value;
       addTearDown(tester.view.reset);
+      tester.binding.platformDispatcher.localeTestValue = const Locale('vi');
+      addTearDown(tester.binding.platformDispatcher.clearLocaleTestValue);
 
       await tester.pumpWidget(const ProviderScope(child: KoreaQuestApp()));
       await tester.pumpAndSettle();

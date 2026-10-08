@@ -8,6 +8,7 @@ import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/explore/presentation/providers/location_content_providers.dart';
 import 'package:korea_quest/features/explore/presentation/widgets/location_content_view.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
 
 class PublishedLocationPage extends ConsumerStatefulWidget {
   const PublishedLocationPage({
@@ -68,14 +69,14 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
     return location.when(
       loading: LoadingIndicator.new,
       error: (error, stack) => ErrorState(
-        message: 'Không thể tải nội dung địa điểm: $error',
+        message: appStrings(context).loadLocationContentError(error.toString()),
         onRetry: () => ref.invalidate(publishedLocationProvider(widget.slug)),
       ),
       data: (item) {
         if (item == null) {
           return EmptyState(
-            title: 'Không tìm thấy địa điểm',
-            message: 'Địa điểm này chưa được xuất bản hoặc đang được cập nhật.',
+            title: appStrings(context).locationNotFound,
+            message: appStrings(context).locationNotPublished,
             onAction: () => context.go('/explore'),
           );
         }
@@ -86,6 +87,26 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
             child: CustomScrollView(
               controller: _scrollController,
               slivers: [
+                if (item.isFallback)
+                  SliverToBoxAdapter(
+                    child: ResponsiveContent(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: AppSpacing.md),
+                        child: MaterialBanner(
+                          content: Text(
+                            appStrings(context).translationUnavailable,
+                          ),
+                          leading: const Icon(Icons.translate_rounded),
+                          actions: [
+                            TextButton(
+                              onPressed: () {},
+                              child: Text(appStrings(context).fallbackBadge),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 SliverToBoxAdapter(
                   child: ResponsiveContent(
                     child: Padding(
@@ -99,6 +120,9 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
                             .submitQuizAnswer(
                               questionId: questionId,
                               answer: answer,
+                              locale: Localizations.localeOf(
+                                context,
+                              ).languageCode,
                             ),
                         showJourneyStepper: false,
                         showStageBody: false,
@@ -130,6 +154,9 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
                             .submitQuizAnswer(
                               questionId: questionId,
                               answer: answer,
+                              locale: Localizations.localeOf(
+                                context,
+                              ).languageCode,
                             ),
                         showLocationHeader: false,
                         showJourneyStepper: false,

@@ -9,6 +9,8 @@ import 'package:korea_quest/features/auth/domain/auth_models.dart';
 import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
 import 'package:korea_quest/features/auth/presentation/widgets/sign_out_action.dart';
 import 'package:korea_quest/features/settings/presentation/widgets/change_password_dialog.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
+import 'package:korea_quest/l10n/locale_controller.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
 import 'package:korea_quest/shared/widgets/module_page.dart';
 
@@ -24,12 +26,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   bool _reducedMotion = false;
 
   Future<void> _handleResetProgress() async {
+    final strings = appStrings(context);
     final confirmed = await ConfirmationDialog.show(
       context,
-      title: 'Đặt lại tiến trình học tập?',
-      message:
-          'Hành động này sẽ đưa cấp độ về 1, 0 XP và khóa lại các địa điểm đã hoàn thành.',
-      confirmLabel: 'Đặt lại',
+      title: strings.resetProgressQuestion,
+      message: strings.resetProgressMessage,
+      confirmLabel: strings.reset,
     );
     if (!confirmed || !mounted) return;
 
@@ -41,14 +43,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       ref.invalidate(passportStampsProvider);
 
       if (mounted) {
-        AppToast.show(context, 'Đã đặt lại tiến trình học tập về ban đầu.');
+        AppToast.show(context, strings.resetProgressSuccess);
       }
     } catch (_) {
       if (mounted) {
-        AppToast.show(
-          context,
-          'Không thể đặt lại tiến trình. Vui lòng thử lại.',
-        );
+        AppToast.show(context, strings.resetProgressError);
       }
     }
   }
@@ -57,23 +56,48 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = appStrings(context);
+    final locale = ref.watch(localeProvider);
     final authUser = ref.watch(authUserStreamProvider).value;
     final email = authUser?.usernameOrEmail ?? 'duong@example.com';
     final role = authUser?.role == UserRole.admin
-        ? 'Quản trị viên'
-        : 'Học viên';
+        ? strings.administrator
+        : strings.student;
 
     return ModulePage(
-      eyebrow: 'Tùy chỉnh hệ thống',
-      title: 'Cài đặt',
-      description:
-          'Quản lý tài khoản, bảo mật, thông báo và dữ liệu khám phá của bạn.',
+      eyebrow: strings.customizeSystem,
+      title: strings.settings,
+      description: strings.settingsDescription,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          _SettingsGroupCard(
+            title: strings.language,
+            icon: Icons.language_rounded,
+            iconColor: AppColors.teal,
+            children: [
+              Text(
+                strings.languageDescription,
+                style: const TextStyle(color: AppColors.stitchMuted),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              SegmentedButton<String>(
+                segments: [
+                  ButtonSegment(value: 'vi', label: Text(strings.vietnamese)),
+                  ButtonSegment(value: 'en', label: Text(strings.english)),
+                  ButtonSegment(value: 'ko', label: Text(strings.korean)),
+                ],
+                selected: {locale.languageCode},
+                onSelectionChanged: (selected) => ref
+                    .read(localeProvider.notifier)
+                    .setLocale(Locale(selected.first)),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
           // ── Card 1: Tài khoản & Bảo mật ────────────────────────────
           _SettingsGroupCard(
-            title: 'Tài khoản & Bảo mật',
+            title: strings.accountSecurity,
             icon: Icons.security_rounded,
             iconColor: AppColors.koreanBlue,
             children: [
@@ -96,7 +120,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
                         Text(
-                          '${authUser?.displayName ?? '[CẦN XÁC NHẬN]'} · Vai trò: $role',
+                          strings.roleLine(
+                            authUser?.displayName ?? '[CẦN XÁC NHẬN]',
+                            role,
+                          ),
                           style: const TextStyle(
                             color: AppColors.stitchMuted,
                             fontSize: 13,
@@ -130,10 +157,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 icon: Icons.lock_outline_rounded,
                 iconBg: AppColors.cream,
                 iconColor: AppColors.stitchText,
-                title: 'Mật khẩu tài khoản',
+                title: strings.accountPassword,
                 subtitle: '••••••••••••',
                 action: SecondaryButton(
-                  label: 'Đổi mật khẩu',
+                  label: strings.changePassword,
                   icon: Icons.lock_reset_rounded,
                   onPressed: () => ChangePasswordDialog.show(context),
                 ),
@@ -144,7 +171,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
           // ── Card 2: Tùy chọn trải nghiệm ───────────────────────────
           _SettingsGroupCard(
-            title: 'Tùy chọn trải nghiệm',
+            title: strings.experienceOptions,
             icon: Icons.tune_rounded,
             iconColor: AppColors.stitchMuted,
             children: [
@@ -153,13 +180,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 value: _notifications,
                 activeThumbColor: AppColors.coral,
                 onChanged: (val) => setState(() => _notifications = val),
-                title: const Text(
-                  'Thông báo hành trình',
-                  style: TextStyle(fontWeight: FontWeight.w700),
+                title: Text(
+                  strings.notifications,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
-                subtitle: const Text(
-                  'Nhắc khi có nhiệm vụ, cấp độ và phần thưởng mới',
-                ),
+                subtitle: Text(strings.notificationsDescription),
               ),
               const Divider(height: AppSpacing.md),
               SwitchListTile(
@@ -167,13 +192,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 value: _reducedMotion,
                 activeThumbColor: AppColors.coral,
                 onChanged: (val) => setState(() => _reducedMotion = val),
-                title: const Text(
-                  'Giảm hiệu ứng chuyển động',
-                  style: TextStyle(fontWeight: FontWeight.w700),
+                title: Text(
+                  strings.reducedMotion,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
-                subtitle: const Text(
-                  'Hỗ trợ trải nghiệm mượt mà, dễ tiếp cận hơn',
-                ),
+                subtitle: Text(strings.reducedMotionDescription),
               ),
             ],
           ),
@@ -181,7 +204,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
           // ── Card 3: Quản lý dữ liệu & Lưu trữ ──────────────────────
           _SettingsGroupCard(
-            title: 'Quản lý dữ liệu & Lưu trữ',
+            title: strings.dataStorage,
             icon: Icons.storage_rounded,
             iconColor: AppColors.gold,
             children: [
@@ -189,13 +212,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 icon: Icons.cleaning_services_rounded,
                 iconBg: AppColors.skyLight,
                 iconColor: AppColors.koreanBlue,
-                title: 'Xóa bộ nhớ đệm',
-                subtitle: 'Giải phóng các tài nguyên tạm thời được lưu cục bộ',
+                title: strings.clearCache,
+                subtitle: strings.clearCacheDescription,
                 action: SecondaryButton(
-                  label: 'Dọn dẹp',
+                  label: strings.cleanUp,
                   icon: Icons.refresh_rounded,
-                  onPressed: () =>
-                      AppToast.show(context, 'Đã dọn dẹp bộ nhớ đệm mô phỏng.'),
+                  onPressed: () => AppToast.show(context, strings.cacheCleaned),
                 ),
               ),
               const Divider(height: AppSpacing.xl),
@@ -203,15 +225,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 icon: Icons.history_rounded,
                 iconBg: AppColors.palePink,
                 iconColor: AppColors.koreanRed,
-                title: 'Đặt lại tiến trình học tập',
-                subtitle: 'Đưa cấp độ về 1, 0 XP để trải nghiệm lại hành trình',
+                title: strings.resetProgress,
+                subtitle: strings.resetProgressDescription,
                 action: FilledButton.tonal(
                   onPressed: _handleResetProgress,
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.koreanRed.withValues(alpha: 0.1),
                     foregroundColor: AppColors.koreanRed,
                   ),
-                  child: const Text('Đặt lại tiến trình học tập'),
+                  child: Text(strings.resetProgress),
                 ),
               ),
             ],
@@ -220,19 +242,19 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
           // ── Card 4: Đăng xuất tài khoản ────────────────────────────
           _SettingsGroupCard(
-            title: 'Phiên đăng nhập',
+            title: strings.session,
             icon: Icons.logout_rounded,
             iconColor: AppColors.koreanRed,
             children: [
-              const Text(
-                'Đăng xuất sẽ kết thúc phiên làm việc hiện tại trên thiết bị này.',
-                style: TextStyle(color: AppColors.stitchMuted),
+              Text(
+                strings.sessionDescription,
+                style: const TextStyle(color: AppColors.stitchMuted),
               ),
               const SizedBox(height: AppSpacing.md),
               Align(
                 alignment: Alignment.centerLeft,
                 child: DangerButton(
-                  label: 'Đăng xuất tài khoản',
+                  label: strings.signOutAccount,
                   icon: Icons.logout_rounded,
                   onPressed: _handleSignOut,
                 ),

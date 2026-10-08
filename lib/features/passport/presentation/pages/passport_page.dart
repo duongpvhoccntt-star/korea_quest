@@ -6,6 +6,7 @@ import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_feedback.dart';
 import 'package:korea_quest/design_system/components/progress_components.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
 import 'package:korea_quest/shared/widgets/module_page.dart';
 
@@ -14,6 +15,7 @@ class PassportPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final strings = appStrings(context);
     final user = ref.watch(currentUserProvider);
     final progress = ref.watch(userProgressProvider);
     final stamps = ref.watch(passportStampsProvider);
@@ -21,16 +23,16 @@ class PassportPage extends ConsumerWidget {
       return const LoadingIndicator();
     }
     if (user.hasError || progress.hasError || stamps.hasError) {
-      return const ErrorState(message: 'Không thể tải hộ chiếu mock.');
+      return ErrorState(message: strings.loadPassportError);
     }
     final profile = user.requireValue;
     final xp = progress.requireValue;
     final items = stamps.requireValue;
     return ModulePage(
-      eyebrow: 'Bộ sưu tập',
-      title: 'Hộ chiếu khám phá',
-      description: 'Mỗi dấu mộc là một câu chuyện bạn đã thực sự đi qua.',
-      actionLabel: 'Tiếp tục hành trình',
+      eyebrow: strings.collection,
+      title: strings.passportTitle,
+      description: strings.passportDescription,
+      actionLabel: strings.continueJourney,
       onAction: () => context.go('/explore'),
       child: Column(
         children: [
@@ -123,9 +125,12 @@ class PassportPage extends ConsumerWidget {
                         ),
                         Text(
                           stamp.earnedDate == null
-                              ? 'Chưa mở khóa'
+                              ? strings.locked
                               : DateFormat(
                                   'dd/MM/yyyy',
+                                  Localizations.localeOf(
+                                    context,
+                                  ).toLanguageTag(),
                                 ).format(stamp.earnedDate!),
                         ),
                       ],

@@ -44,6 +44,14 @@ _Avoid_: Địa điểm chưa mở khóa
 Một bản nhất quán của toàn bộ nội dung biên tập thuộc một Địa điểm; Quản trị viên chỉnh sửa Bản nháp trong khi Nhà thám hiểm tiếp tục xem phiên bản đã Xuất bản.
 _Avoid_: Địa điểm, bản sao
 
+**Bản dịch nội dung**:
+Lớp chữ hiển thị tiếng Việt, tiếng Anh hoặc tiếng Hàn gắn với một Phiên bản nội dung; Bản dịch không sở hữu media, XP, cấu trúc Câu hỏi hay đáp án đúng riêng.
+_Avoid_: Bản sao Địa điểm, Phiên bản nội dung theo ngôn ngữ
+
+**Bản nguồn**:
+Nội dung tiếng Việt chuẩn dùng để tạo Bản dịch nội dung; khi Bản nguồn đổi, bản Anh/Hàn phải được kiểm tra lại trước khi duyệt.
+_Avoid_: Ngôn ngữ mặc định, bản dịch tự động
+
 **Xuất bản**:
 Việc đưa nội dung Địa điểm đã hoàn chỉnh vào danh mục mà Nhà thám hiểm có thể khám phá.
 _Avoid_: Mở khóa

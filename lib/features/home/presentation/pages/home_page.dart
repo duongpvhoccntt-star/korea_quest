@@ -9,6 +9,7 @@ import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/shadows/app_shadows.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
 import 'package:korea_quest/shared/models/domain_models.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
 
@@ -17,6 +18,7 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final strings = appStrings(context);
     final userAsync = ref.watch(currentUserProvider);
     final progressAsync = ref.watch(userProgressProvider);
     final locationsAsync = ref.watch(locationsProvider);
@@ -30,7 +32,7 @@ class HomePage extends ConsumerWidget {
         progressAsync.hasError ||
         locationsAsync.hasError) {
       return ErrorState(
-        message: 'Không thể đọc dữ liệu hành trình.',
+        message: strings.loadJourneyError,
         onRetry: () => ref.invalidate(koreaQuestRepositoryProvider),
       );
     }
@@ -38,7 +40,11 @@ class HomePage extends ConsumerWidget {
     final user = userAsync.requireValue;
     final progress = progressAsync.requireValue;
     final locations = locationsAsync.requireValue;
-    final active = _activeLocation(locations);
+    final active = _activeLocation(
+      locations,
+      strings.koreaMap,
+      strings.chooseFirstLocation,
+    );
 
     return ColoredBox(
       color: AppColors.pageBg,
@@ -84,17 +90,21 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  Location _activeLocation(List<Location> locations) {
+  Location _activeLocation(
+    List<Location> locations,
+    String fallbackName,
+    String fallbackDescription,
+  ) {
     for (final location in locations) {
       if (location.status == LocationStatus.inProgress) return location;
     }
     return locations.isEmpty
-        ? const Location(
+        ? Location(
             id: 'gyeongbokgung',
-            name: 'Bản đồ Hàn Quốc',
+            name: fallbackName,
             koreanName: '한국 지도',
             city: 'KoreaQuest',
-            description: 'Chọn địa điểm đầu tiên để bắt đầu hành trình.',
+            description: fallbackDescription,
             status: LocationStatus.available,
             rewardXp: 240,
           )
@@ -140,7 +150,7 @@ class _JourneySidePanel extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Bạn muốn bắt đầu từ đâu?',
+                    appStrings(context).whereStart,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       color: AppColors.stitchText,
                       fontWeight: FontWeight.w900,
@@ -149,7 +159,7 @@ class _JourneySidePanel extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   Text(
-                    'Khám phá văn hóa Hàn Quốc qua từng địa danh. ${user.displayName}, hành trình của bạn đang chờ đón!',
+                    appStrings(context).homeHeroDescription(user.displayName),
                     style: const TextStyle(
                       color: AppColors.stitchMuted,
                       height: 1.6,
@@ -163,7 +173,7 @@ class _JourneySidePanel extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   _RoundActionButton(
-                    label: 'Tiếp tục hành trình',
+                    label: appStrings(context).continueJourney,
                     icon: Icons.arrow_forward_rounded,
                     onPressed: () => context.go('/journey/${active.id}'),
                   ),
@@ -173,7 +183,10 @@ class _JourneySidePanel extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
-        _SectionHeader(title: 'Gợi ý cho bạn', action: 'Xem tất cả'),
+        _SectionHeader(
+          title: appStrings(context).recommendedForYou,
+          action: appStrings(context).viewAll,
+        ),
         const SizedBox(height: AppSpacing.sm),
         for (final location in locations.take(2)) ...[
           _SuggestionCard(location: location),
@@ -209,18 +222,18 @@ class _ProgressPostcard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'Tiến độ khám phá',
+                  appStrings(context).explorationProgress,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontWeight: FontWeight.w900),
+                  style: const TextStyle(fontWeight: FontWeight.w900),
                 ),
               ),
               const SizedBox(width: AppSpacing.xs),
               Flexible(
                 child: Text(
-                  '$completed/$total Huy hiệu',
+                  appStrings(context).badgesProgress(completed, total),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.end,
@@ -356,9 +369,9 @@ class _BadgeCollection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Bộ sưu tập huy hiệu',
-            style: TextStyle(fontWeight: FontWeight.w900),
+          Text(
+            appStrings(context).badgeCollection,
+            style: const TextStyle(fontWeight: FontWeight.w900),
           ),
           const SizedBox(height: AppSpacing.md),
           Row(
@@ -411,8 +424,8 @@ class _StitchMapCanvas extends StatelessWidget {
         ),
         _MapMarker(
           alignment: const Alignment(-.42, -.55),
-          label: 'Thủ đô Seoul',
-          subtitle: 'Đã hoàn thành',
+          label: appStrings(context).seoulCapital,
+          subtitle: appStrings(context).completed,
           status: LocationStatus.completed,
           icon: Icons.location_city_rounded,
           onTap: () => context.go(
@@ -422,16 +435,16 @@ class _StitchMapCanvas extends StatelessWidget {
         _MapMarker(
           alignment: const Alignment(-.52, .72),
           label: active.name,
-          subtitle: 'Đang khám phá',
+          subtitle: appStrings(context).exploring,
           status: LocationStatus.inProgress,
           icon: Icons.spa_rounded,
           emphasized: true,
           onTap: () => context.go('/journey/${active.id}'),
         ),
-        const _MapMarker(
+        _MapMarker(
           alignment: Alignment(.58, .32),
-          label: 'Thành phố Busan',
-          subtitle: 'Chưa mở khóa',
+          label: appStrings(context).busanCity,
+          subtitle: appStrings(context).locked,
           status: LocationStatus.locked,
           icon: Icons.lock_rounded,
         ),
@@ -551,10 +564,10 @@ class _FilterPills extends StatelessWidget {
   Widget build(BuildContext context) => _FloatingSurface(
     child: Row(
       mainAxisSize: MainAxisSize.min,
-      children: const [
-        _MapFilter(label: 'Tất cả', selected: true),
-        _MapFilter(label: 'Đã xong'),
-        _MapFilter(label: 'Chưa mở'),
+      children: [
+        _MapFilter(label: appStrings(context).all, selected: true),
+        _MapFilter(label: appStrings(context).done),
+        _MapFilter(label: appStrings(context).notOpened),
       ],
     ),
   );
@@ -709,18 +722,18 @@ class _CurrentStageCard extends StatelessWidget {
                   style: BorderStyle.solid,
                 ),
               ),
-              child: const Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Chặng',
-                    style: TextStyle(
+                    appStrings(context).stage,
+                    style: const TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1,
                     ),
                   ),
-                  Text(
+                  const Text(
                     '04',
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
                   ),

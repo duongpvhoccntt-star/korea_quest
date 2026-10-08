@@ -175,6 +175,56 @@ class DemoAdminRepository
   }
 
   @override
+  Future<AdminContentTranslation> generateTranslation({
+    required AdminLocationDraft draft,
+    required ContentLocale locale,
+    String? section,
+  }) async {
+    final content =
+        jsonDecode(jsonEncode(draft.toTranslationSource()))
+            as Map<String, dynamic>;
+    return saveTranslation(draft: draft, locale: locale, content: content);
+  }
+
+  @override
+  Future<AdminContentTranslation> saveTranslation({
+    required AdminLocationDraft draft,
+    required ContentLocale locale,
+    required Map<String, dynamic> content,
+  }) async {
+    final translation = AdminContentTranslation(
+      locale: locale,
+      status: TranslationReviewStatus.needsReview,
+      content: content,
+      sourceLockVersion: draft.lockVersion,
+      updatedAt: DateTime.now(),
+    );
+    draft.translations[locale] = translation;
+    return translation;
+  }
+
+  @override
+  Future<AdminContentTranslation> approveTranslation({
+    required AdminLocationDraft draft,
+    required ContentLocale locale,
+  }) async {
+    final current = draft.translations[locale];
+    if (current == null || current.sourceLockVersion != draft.lockVersion) {
+      throw const FormatException('Bản dịch chưa tồn tại hoặc cần dịch lại.');
+    }
+    final approved = AdminContentTranslation(
+      locale: locale,
+      status: TranslationReviewStatus.approved,
+      content: current.content,
+      sourceLockVersion: current.sourceLockVersion,
+      updatedAt: DateTime.now(),
+      approvedAt: DateTime.now(),
+    );
+    draft.translations[locale] = approved;
+    return approved;
+  }
+
+  @override
   Future<AdminUploadedImage> uploadContentImage({
     required String locationId,
     required String revisionId,
@@ -289,6 +339,7 @@ class DemoAdminRepository
       quiz: list(source.quiz),
       travel: map(source.travel),
       sources: list(source.sources),
+      translations: Map.of(source.translations),
     );
   }
 }

@@ -15,6 +15,7 @@ import 'package:korea_quest/design_system/shadows/app_shadows.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/shared/models/domain_models.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
 
 class LandingPage extends ConsumerStatefulWidget {
   const LandingPage({super.key});
@@ -44,14 +45,12 @@ class _LandingPageState extends ConsumerState<LandingPage> {
       body: locationsAsync.when(
         loading: () => const LoadingIndicator(),
         error: (_, _) => ErrorState(
-          message: 'Không thể tải dữ liệu địa điểm cho trang giới thiệu.',
+          message: appStrings(context).landingLoadError,
           onRetry: () => ref.invalidate(locationsProvider),
         ),
         data: (locations) {
           if (locations.isEmpty) {
-            return const ErrorState(
-              message: 'Chưa có địa điểm để bắt đầu hành trình.',
-            );
+            return ErrorState(message: appStrings(context).noLocations);
           }
           return _LandingContent(
             locations: locations,
@@ -183,15 +182,15 @@ class _HeroCopy extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      const _Eyebrow(label: 'Khám phá Hàn Quốc theo cách của bạn'),
+      _Eyebrow(label: appStrings(context).discoverYourWay),
       const SizedBox(height: AppSpacing.md),
       Text.rich(
-        const TextSpan(
+        TextSpan(
           children: [
-            TextSpan(text: 'Mỗi điểm đến,\n'),
+            TextSpan(text: appStrings(context).heroLineOne),
             TextSpan(
-              text: 'một chương phiêu lưu.',
-              style: TextStyle(color: AppColors.coral),
+              text: appStrings(context).heroLineTwo,
+              style: const TextStyle(color: AppColors.coral),
             ),
           ],
         ),
@@ -203,7 +202,7 @@ class _HeroCopy extends StatelessWidget {
       ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 630),
         child: Text(
-          'Đọc chuyện xưa, giải thử thách nhỏ và sưu tầm dấu mộc độc đáo qua từng địa danh nổi tiếng của Hàn Quốc.',
+          appStrings(context).heroDescription,
           style: Theme.of(
             context,
           ).textTheme.bodyLarge?.copyWith(color: AppColors.muted),
@@ -215,11 +214,11 @@ class _HeroCopy extends StatelessWidget {
         runSpacing: AppSpacing.sm,
         children: [
           PrimaryButton(
-            label: 'Bắt đầu hành trình',
+            label: appStrings(context).startJourney,
             onPressed: () => context.go('/register'),
           ),
           SecondaryButton(
-            label: 'Xem cách hoạt động',
+            label: appStrings(context).howItWorks,
             icon: Icons.play_circle_outline_rounded,
             onPressed: onShowHowItWorks,
           ),
@@ -261,13 +260,13 @@ class _TrustRow extends StatelessWidget {
           TextSpan(
             children: [
               TextSpan(
-                text: 'Học qua trải nghiệm\n',
+                text: appStrings(context).learnByExperience,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: AppColors.navy,
                   fontWeight: FontWeight.w800,
                 ),
               ),
-              const TextSpan(text: 'Không áp lực, luôn có phần thưởng'),
+              TextSpan(text: appStrings(context).rewardingNoPressure),
             ],
           ),
           style: Theme.of(
@@ -366,7 +365,7 @@ class _QuestMap extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Bản đồ phiêu lưu',
+                      appStrings(context).adventureMap,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     Text(
@@ -484,7 +483,7 @@ class _QuestTicket extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Hành trình hiện tại',
+          appStrings(context).currentJourney,
           style: TextStyle(
             color: Colors.white.withValues(alpha: .66),
             fontSize: 10,
@@ -513,7 +512,7 @@ class _QuestTicket extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.xxs),
         Text(
-          '${(progress * 100).round()}% hoàn thành',
+          appStrings(context).percentComplete((progress * 100).round()),
           style: TextStyle(
             color: Colors.white.withValues(alpha: .66),
             fontSize: 9,
@@ -613,55 +612,54 @@ class _MapPainter extends CustomPainter {
 class _FeatureStrip extends StatelessWidget {
   const _FeatureStrip();
 
-  static const _features = [
-    (
-      Icons.explore_outlined,
-      'Khám phá theo hành trình',
-      'Không học rời rạc, luôn có mục tiêu tiếp theo',
-    ),
-    (
-      Icons.auto_awesome_rounded,
-      'Tích XP & lên cấp',
-      'Mỗi câu trả lời đều giúp bạn tiến lên',
-    ),
-    (
-      Icons.approval_outlined,
-      'Sưu tầm dấu mộc',
-      'Lưu giữ ký ức tại từng điểm đến',
-    ),
-  ];
-
   @override
-  Widget build(BuildContext context) => ColoredBox(
-    color: AppColors.navy,
-    child: ResponsiveContent(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final compact = constraints.maxWidth < ResponsiveBreakpoints.desktop;
-          final children = [
-            for (var index = 0; index < _features.length; index++)
-              _FeatureItem(
-                icon: _features[index].$1,
-                title: _features[index].$2,
-                description: _features[index].$3,
-                showDivider: index != _features.length - 1,
-                verticalDivider: !compact,
-              ),
-          ];
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-            child: compact
-                ? Column(children: children)
-                : Row(
-                    children: [
-                      for (final child in children) Expanded(child: child),
-                    ],
-                  ),
-          );
-        },
+  Widget build(BuildContext context) {
+    final strings = appStrings(context);
+    final features = [
+      (
+        Icons.explore_outlined,
+        strings.journeyLearning,
+        strings.journeyLearningDesc,
       ),
-    ),
-  );
+      (Icons.auto_awesome_rounded, strings.earnXp, strings.earnXpDesc),
+      (
+        Icons.approval_outlined,
+        strings.collectStamps,
+        strings.collectStampsDesc,
+      ),
+    ];
+    return ColoredBox(
+      color: AppColors.navy,
+      child: ResponsiveContent(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final compact =
+                constraints.maxWidth < ResponsiveBreakpoints.desktop;
+            final children = [
+              for (var index = 0; index < features.length; index++)
+                _FeatureItem(
+                  icon: features[index].$1,
+                  title: features[index].$2,
+                  description: features[index].$3,
+                  showDivider: index != features.length - 1,
+                  verticalDivider: !compact,
+                ),
+            ];
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+              child: compact
+                  ? Column(children: children)
+                  : Row(
+                      children: [
+                        for (final child in children) Expanded(child: child),
+                      ],
+                    ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 }
 
 class _FeatureItem extends StatelessWidget {
@@ -744,11 +742,10 @@ class _HowItWorksSection extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.section),
       child: Column(
         children: [
-          const _SectionHeading(
-            eyebrow: 'Ba chặng khám phá',
-            title: 'Văn hóa không chỉ để đọc.\nNó là một cuộc chơi.',
-            description:
-                'Mỗi địa điểm là một câu chuyện gồm ba chặng ngắn, trực quan và có phần thưởng rõ ràng.',
+          _SectionHeading(
+            eyebrow: appStrings(context).threeStages,
+            title: appStrings(context).cultureIsAGame,
+            description: appStrings(context).threeStagesDesc,
           ),
           const SizedBox(height: AppSpacing.xl),
           if (missions.isEmpty)
@@ -798,22 +795,22 @@ class _StageCard extends StatelessWidget {
       JourneyStage.checkIn => (
         Icons.location_searching_rounded,
         AppColors.coral,
-        'Xem hình ảnh, video và những lát cắt lịch sử quan trọng trước khi trả lời câu hỏi mở màn.',
+        appStrings(context).checkInStageDescription,
       ),
       JourneyStage.culture => (
         Icons.temple_buddhist_outlined,
         AppColors.teal,
-        'Hiểu nghi lễ, kiến trúc và câu chuyện đời sống qua nhiệm vụ tương tác ngắn.',
+        appStrings(context).cultureStageDescription,
       ),
       JourneyStage.vocabulary => (
         Icons.translate_rounded,
         AppColors.gold,
-        'Ghi nhớ từ mới theo đúng bối cảnh và hoàn tất thử thách cuối để nhận dấu mộc.',
+        appStrings(context).vocabularyStageDescription,
       ),
       JourneyStage.summary => (
         Icons.emoji_events_outlined,
         AppColors.green,
-        'Tổng kết hành trình và ghi nhận những phần thưởng bạn đã chinh phục.',
+        appStrings(context).summaryStageDescription,
       ),
     };
     return Container(
@@ -906,11 +903,10 @@ class _FeaturedLocations extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.section),
           child: Column(
             children: [
-              const _SectionHeading(
-                eyebrow: 'Điểm đến nổi bật',
-                title: 'Chọn nơi câu chuyện bắt đầu',
-                description:
-                    'Tiếp tục hành trình hiện tại hoặc mở một câu chuyện văn hóa mới.',
+              _SectionHeading(
+                eyebrow: appStrings(context).featuredDestinations,
+                title: appStrings(context).chooseStoryStart,
+                description: appStrings(context).featuredLocationsDesc,
               ),
               const SizedBox(height: AppSpacing.xl),
               LayoutBuilder(
@@ -1016,10 +1012,10 @@ class _LocationCard extends StatelessWidget {
     };
     final locked = location.status == LocationStatus.locked;
     final status = switch (location.status) {
-      LocationStatus.completed => 'Đã hoàn thành',
-      LocationStatus.inProgress => 'Đang thực hiện',
-      LocationStatus.available => 'Có thể khám phá',
-      LocationStatus.locked => 'Chưa mở khóa',
+      LocationStatus.completed => appStrings(context).completed,
+      LocationStatus.inProgress => appStrings(context).inProgress,
+      LocationStatus.available => appStrings(context).availableToExplore,
+      LocationStatus.locked => appStrings(context).locked,
     };
     return Container(
       height: featured ? 410 : 330,
@@ -1063,24 +1059,32 @@ class _LocationCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.sm,
-                    vertical: AppSpacing.xs,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: .9),
-                    borderRadius: BorderRadius.circular(AppRadius.round),
-                  ),
-                  child: Text(
-                    status,
-                    style: const TextStyle(
-                      color: AppColors.navy,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w800,
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.sm,
+                        vertical: AppSpacing.xs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: .9),
+                        borderRadius: BorderRadius.circular(AppRadius.round),
+                      ),
+                      child: Text(
+                        status,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: AppColors.navy,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
                     ),
                   ),
                 ),
+                const SizedBox(width: AppSpacing.xs),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.sm,
@@ -1129,7 +1133,7 @@ class _LocationCard extends StatelessWidget {
                 if (featured) ...[
                   const SizedBox(height: AppSpacing.md),
                   PrimaryButton(
-                    label: 'Tiếp tục hành trình',
+                    label: appStrings(context).continueJourney,
                     onPressed: locked
                         ? null
                         : () => context.go('/journey/${location.id}'),

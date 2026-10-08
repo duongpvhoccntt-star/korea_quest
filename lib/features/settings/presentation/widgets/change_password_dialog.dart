@@ -8,6 +8,7 @@ import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/auth/domain/auth_models.dart';
 import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
 
 class ChangePasswordDialog extends ConsumerStatefulWidget {
   const ChangePasswordDialog({super.key});
@@ -39,22 +40,23 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
   }
 
   Future<void> _submit() async {
+    final strings = appStrings(context);
     final current = _currentPasswordController.text;
     final next = _newPasswordController.text;
     final confirm = _confirmPasswordController.text;
 
     if (current.isEmpty || next.isEmpty || confirm.isEmpty) {
-      setState(() => _error = 'Vui lòng điền đầy đủ các thông tin.');
+      setState(() => _error = strings.fillAllFields);
       return;
     }
 
     if (next.length < 8) {
-      setState(() => _error = 'Mật khẩu mới phải có ít nhất 8 ký tự.');
+      setState(() => _error = strings.passwordMin8);
       return;
     }
 
     if (next != confirm) {
-      setState(() => _error = 'Mật khẩu xác nhận không khớp.');
+      setState(() => _error = strings.passwordMismatch);
       return;
     }
 
@@ -69,7 +71,7 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
           .changePassword(currentPassword: current, newPassword: next);
       if (mounted) {
         Navigator.pop(context, true);
-        AppToast.show(context, 'Đổi mật khẩu thành công!');
+        AppToast.show(context, strings.changePasswordSuccess);
       }
     } on AuthException catch (e) {
       if (mounted) {
@@ -81,7 +83,7 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
     } catch (_) {
       if (mounted) {
         setState(() {
-          _error = 'Đã có lỗi xảy ra. Vui lòng thử lại sau.';
+          _error = strings.genericError;
           _isLoading = false;
         });
       }
@@ -90,6 +92,7 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = appStrings(context);
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.large),
@@ -113,7 +116,7 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   Text(
-                    'Đổi mật khẩu',
+                    strings.changePassword,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w800,
                     ),
@@ -122,17 +125,17 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
               ),
               const SizedBox(height: AppSpacing.lg),
               PasswordField(
-                label: 'Mật khẩu hiện tại',
+                label: strings.currentPassword,
                 controller: _currentPasswordController,
               ),
               const SizedBox(height: AppSpacing.md),
               PasswordField(
-                label: 'Mật khẩu mới (tối thiểu 8 ký tự)',
+                label: strings.newPassword,
                 controller: _newPasswordController,
               ),
               const SizedBox(height: AppSpacing.md),
               PasswordField(
-                label: 'Xác nhận mật khẩu mới',
+                label: strings.confirmNewPassword,
                 controller: _confirmPasswordController,
               ),
               if (_error != null) ...[
@@ -153,11 +156,11 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
                 runSpacing: AppSpacing.sm,
                 children: [
                   SecondaryButton(
-                    label: 'Hủy',
+                    label: strings.cancel,
                     onPressed: _isLoading ? null : () => Navigator.pop(context),
                   ),
                   PrimaryButton(
-                    label: 'Cập nhật mật khẩu',
+                    label: strings.updatePassword,
                     isLoading: _isLoading,
                     onPressed: _isLoading ? null : _submit,
                   ),

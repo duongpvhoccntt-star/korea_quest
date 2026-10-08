@@ -4,6 +4,7 @@ import 'package:korea_quest/design_system/components/app_buttons.dart';
 import 'package:korea_quest/design_system/components/app_structure.dart';
 import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
 
 enum SystemStateKind { forbidden, offline, error, notFound }
 
@@ -14,29 +15,30 @@ class SystemStatePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = appStrings(context);
     final (code, title, message, icon) = switch (kind) {
       SystemStateKind.forbidden => (
         '403',
-        'Bạn chưa có quyền truy cập',
-        'Hãy quay lại khu vực hành trình của bạn.',
+        strings.forbiddenTitle,
+        strings.forbiddenMessage,
         Icons.lock_outline_rounded,
       ),
       SystemStateKind.offline => (
         'OFFLINE',
-        'Bạn đang ngoại tuyến',
-        'Kiểm tra kết nối và thử lại khi mạng ổn định.',
+        strings.offlineTitle,
+        strings.offlineMessage,
         Icons.cloud_off_outlined,
       ),
       SystemStateKind.error => (
         '500',
-        'Có điều gì đó chưa đúng',
-        'Trạng thái lỗi khung đã sẵn sàng cho các feature dùng chung.',
+        strings.errorTitle,
+        strings.errorMessage,
         Icons.error_outline_rounded,
       ),
       SystemStateKind.notFound => (
         '404',
-        'Không tìm thấy trang',
-        'Đường dẫn này không thuộc bản đồ KoreaQuest.',
+        strings.notFoundTitle,
+        strings.notFoundMessage,
         Icons.explore_off_outlined,
       ),
     };
@@ -56,7 +58,7 @@ class SystemStatePage extends StatelessWidget {
                 Text(message, textAlign: TextAlign.center),
                 const SizedBox(height: AppSpacing.lg),
                 PrimaryButton(
-                  label: 'Về trang chủ',
+                  label: strings.backHome,
                   icon: Icons.home_outlined,
                   onPressed: () => context.go('/home'),
                 ),

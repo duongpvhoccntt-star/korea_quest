@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
 import 'package:url_launcher/link.dart';
 import 'package:korea_quest/core/utils/youtube_video.dart';
 
@@ -23,7 +24,7 @@ class YoutubePlayer extends StatelessWidget {
           builder: (context, followLink) => TextButton.icon(
             onPressed: followLink,
             icon: const Icon(Icons.open_in_new_rounded),
-            label: Text('Mở video $label trên YouTube'),
+            label: Text(appStrings(context).openVideoOnYoutube(label)),
           ),
         ),
       ),
@@ -35,10 +36,10 @@ class _InvalidYoutubeVideo extends StatelessWidget {
   const _InvalidYoutubeVideo();
 
   @override
-  Widget build(BuildContext context) => const Card(
+  Widget build(BuildContext context) => Card(
     child: Padding(
-      padding: EdgeInsets.all(16),
-      child: Text('Liên kết YouTube không hợp lệ.'),
+      padding: const EdgeInsets.all(16),
+      child: Text(appStrings(context).invalidYoutube),
     ),
   );
 }

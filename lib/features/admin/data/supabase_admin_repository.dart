@@ -68,7 +68,16 @@ class SupabaseAdminRepository implements AdminRepository {
       'get_admin_location',
       params: {'location_id': locationId},
     );
-    return AdminLocationDraft.fromJson(_jsonMap(result));
+    final draft = AdminLocationDraft.fromJson(_jsonMap(result));
+    final translations = await _client.rpc(
+      'admin_list_location_translations',
+      params: {'target_revision_id': draft.revisionId},
+    );
+    for (final json in _jsonList(translations)) {
+      final translation = AdminContentTranslation.fromJson(json);
+      draft.translations[translation.locale] = translation;
+    }
+    return draft;
   }
 
   @override
@@ -147,6 +156,69 @@ class SupabaseAdminRepository implements AdminRepository {
         'expected_lock_version': draft.lockVersion,
       },
     );
+  }
+
+  @override
+  Future<AdminContentTranslation> generateTranslation({
+    required AdminLocationDraft draft,
+    required ContentLocale locale,
+    String? section,
+  }) async {
+    if (locale == ContentLocale.vi) {
+      throw const FormatException(
+        'Tiếng Việt là nội dung nguồn, không cần dịch.',
+      );
+    }
+    final source = draft.toTranslationSource();
+    final requestedContent = section == null
+        ? source
+        : <String, dynamic>{
+            if (section == 'summary') 'summary': source['summary'],
+            'detail': {section: (_jsonMap(source['detail']))[section]},
+          };
+    final response = await _client.functions.invoke(
+      'translate-location',
+      body: {'target_locale': locale.name, 'content': requestedContent},
+    );
+    if (response.status < 200 || response.status >= 300) {
+      throw FormatException('Không thể tạo bản dịch: ${response.data}');
+    }
+    final translated = _jsonMap(_jsonMap(response.data)['content']);
+    final current = draft.translations[locale]?.content ?? const {};
+    final merged = _deepMerge(current, translated);
+    return saveTranslation(draft: draft, locale: locale, content: merged);
+  }
+
+  @override
+  Future<AdminContentTranslation> saveTranslation({
+    required AdminLocationDraft draft,
+    required ContentLocale locale,
+    required Map<String, dynamic> content,
+  }) async {
+    final result = await _client.rpc(
+      'admin_save_location_translation',
+      params: {
+        'target_revision_id': draft.revisionId,
+        'target_locale': locale.name,
+        'translated_content': content,
+      },
+    );
+    return AdminContentTranslation.fromJson(_jsonMap(result));
+  }
+
+  @override
+  Future<AdminContentTranslation> approveTranslation({
+    required AdminLocationDraft draft,
+    required ContentLocale locale,
+  }) async {
+    final result = await _client.rpc(
+      'admin_approve_location_translation',
+      params: {
+        'target_revision_id': draft.revisionId,
+        'target_locale': locale.name,
+      },
+    );
+    return AdminContentTranslation.fromJson(_jsonMap(result));
   }
 
   @override
@@ -238,5 +310,26 @@ class SupabaseAdminRepository implements AdminRepository {
       throw const FormatException('RPC không trả về lock_version hợp lệ.');
     }
     return lockVersion;
+  }
+
+  static Map<String, dynamic> _deepMerge(
+    Map<String, dynamic> base,
+    Map<String, dynamic> overlay,
+  ) {
+    final result = Map<String, dynamic>.from(base);
+    for (final entry in overlay.entries) {
+      final current = result[entry.key];
+      if (current is Map && entry.value is Map) {
+        result[entry.key] = _deepMerge(
+          current.map((key, value) => MapEntry(key.toString(), value)),
+          (entry.value as Map).map(
+            (key, value) => MapEntry(key.toString(), value),
+          ),
+        );
+      } else {
+        result[entry.key] = entry.value;
+      }
+    }
+    return result;
   }
 }

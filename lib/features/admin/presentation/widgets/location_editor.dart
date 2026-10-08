@@ -12,6 +12,7 @@ import 'package:korea_quest/features/admin/presentation/providers/admin_provider
 import 'package:korea_quest/features/admin/presentation/widgets/location_editor_content.dart';
 import 'package:korea_quest/features/admin/presentation/widgets/location_editor_overview.dart';
 import 'package:korea_quest/features/admin/presentation/widgets/location_editor_quiz.dart';
+import 'package:korea_quest/features/admin/presentation/widgets/location_translation_editor.dart';
 
 class LocationEditor extends ConsumerStatefulWidget {
   const LocationEditor({required this.draft, required this.onClose, super.key});
@@ -42,6 +43,8 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
   final _dirtySteps = <int>{};
   var _saving = false;
   var _validationErrors = <String>[];
+  var _activeLocale = ContentLocale.vi;
+  var _translationDirty = false;
 
   bool get _dirty => _dirtySteps.isNotEmpty;
 
@@ -271,6 +274,87 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
     }
   }
 
+  String? get _translationSection => switch (_currentStep) {
+    2 => 'history',
+    3 => 'highlights',
+    4 => 'experiences',
+    5 => 'foods',
+    6 => 'fun_facts',
+    7 => 'quiz',
+    8 => 'travel',
+    _ => null,
+  };
+
+  Future<void> _translate({required bool all}) async {
+    if (_saving || _activeLocale == ContentLocale.vi) return;
+    if (_dirty && !await _saveAllDirty()) return;
+    setState(() => _saving = true);
+    try {
+      final repository = ref.read(adminRepositoryProvider);
+      await _ensurePersisted(repository);
+      final translation = await repository.generateTranslation(
+        draft: _draft,
+        locale: _activeLocale,
+        section: all ? null : _translationSection,
+      );
+      if (!mounted) return;
+      setState(() {
+        _draft.translations[_activeLocale] = translation;
+        _translationDirty = false;
+      });
+      AppToast.show(context, 'Đã tạo bản dịch nháp ${_activeLocale.label}.');
+    } catch (error) {
+      if (mounted) AppToast.show(context, error.toString());
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  Future<bool> _saveActiveTranslation() async {
+    final current = _draft.translations[_activeLocale];
+    if (_saving || current == null) return false;
+    setState(() => _saving = true);
+    try {
+      final saved = await ref
+          .read(adminRepositoryProvider)
+          .saveTranslation(
+            draft: _draft,
+            locale: _activeLocale,
+            content: current.content,
+          );
+      if (!mounted) return true;
+      setState(() {
+        _draft.translations[_activeLocale] = saved;
+        _translationDirty = false;
+      });
+      AppToast.show(context, 'Đã lưu bản dịch ${_activeLocale.label}.');
+      return true;
+    } catch (error) {
+      if (mounted) AppToast.show(context, error.toString());
+      return false;
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  Future<void> _approveActiveTranslation() async {
+    if (_translationDirty && !await _saveActiveTranslation()) return;
+    if (_saving) return;
+    setState(() => _saving = true);
+    try {
+      final approved = await ref
+          .read(adminRepositoryProvider)
+          .approveTranslation(draft: _draft, locale: _activeLocale);
+      if (!mounted) return;
+      setState(() => _draft.translations[_activeLocale] = approved);
+      AppToast.show(context, 'Đã duyệt bản dịch ${_activeLocale.label}.');
+    } catch (error) {
+      if (mounted) AppToast.show(context, error.toString());
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final availableLocations =
@@ -292,32 +376,66 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
                 onClose: _saving ? null : _requestClose,
               ),
               const SizedBox(height: AppSpacing.md),
-              _StepNavigation(
-                steps: _steps,
-                currentStep: _currentStep,
-                onSelected: _selectStep,
-                errorCounts: _errorCountsByStep,
-                warningCounts: _warningCountsByStep,
+              SegmentedButton<ContentLocale>(
+                segments: [
+                  for (final locale in ContentLocale.values)
+                    ButtonSegment(value: locale, label: Text(locale.label)),
+                ],
+                selected: {_activeLocale},
+                onSelectionChanged: _saving
+                    ? null
+                    : (selected) => setState(() {
+                        _activeLocale = selected.first;
+                        _translationDirty = false;
+                      }),
               ),
-              const SizedBox(height: AppSpacing.lg),
-              if (_dirty)
-                const Padding(
-                  padding: EdgeInsets.only(bottom: AppSpacing.md),
-                  child: _UnsavedNotice(),
+              const SizedBox(height: AppSpacing.md),
+              if (_activeLocale != ContentLocale.vi) ...[
+                _StepNavigation(
+                  steps: _steps,
+                  currentStep: _currentStep,
+                  onSelected: _selectStep,
                 ),
-              _buildStep(availableLocations),
-              const SizedBox(height: AppSpacing.xl),
-              _EditorActions(
-                currentStep: _currentStep,
-                lastStep: _steps.length - 1,
-                saving: _saving,
-                canGoBack: _currentStep > 0,
-                onBack: () => _selectStep(_currentStep - 1),
-                onSave: () => _saveCurrent(advance: true),
-                onValidate: _validate,
-                onPublish: _publish,
-              ),
-              const SizedBox(height: AppSpacing.xl),
+                const SizedBox(height: AppSpacing.lg),
+                LocationTranslationEditor(
+                  locale: _activeLocale,
+                  translation: _draft.translations[_activeLocale],
+                  busy: _saving,
+                  onTranslateSection: () => _translate(all: false),
+                  onTranslateAll: () => _translate(all: true),
+                  onChanged: () => setState(() => _translationDirty = true),
+                  onSave: () => _saveActiveTranslation(),
+                  onApprove: () => _approveActiveTranslation(),
+                ),
+                const SizedBox(height: AppSpacing.xl),
+              ] else ...[
+                _StepNavigation(
+                  steps: _steps,
+                  currentStep: _currentStep,
+                  onSelected: _selectStep,
+                  errorCounts: _errorCountsByStep,
+                  warningCounts: _warningCountsByStep,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                if (_dirty)
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: AppSpacing.md),
+                    child: _UnsavedNotice(),
+                  ),
+                _buildStep(availableLocations),
+                const SizedBox(height: AppSpacing.xl),
+                _EditorActions(
+                  currentStep: _currentStep,
+                  lastStep: _steps.length - 1,
+                  saving: _saving,
+                  canGoBack: _currentStep > 0,
+                  onBack: () => _selectStep(_currentStep - 1),
+                  onSave: () => _saveCurrent(advance: true),
+                  onValidate: _validate,
+                  onPublish: _publish,
+                ),
+                const SizedBox(height: AppSpacing.xl),
+              ],
             ],
           ),
         ),

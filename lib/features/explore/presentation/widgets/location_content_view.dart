@@ -7,6 +7,7 @@ import 'package:korea_quest/design_system/shadows/app_shadows.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/shared/widgets/youtube_player.dart';
 import 'package:korea_quest/features/explore/domain/published_location.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
 import 'package:url_launcher/link.dart';
 
 class LocationContentView extends StatelessWidget {
@@ -46,7 +47,7 @@ class LocationContentView extends StatelessWidget {
           JourneyStepper(currentStage: stage, onStageSelected: onStageSelected),
         if (showJourneyStepper && showStageBody)
           const SizedBox(height: AppSpacing.xl),
-        if (showStageBody) _stageBody(stage),
+        if (showStageBody) _stageBody(context, stage),
         if (showStageNavigation &&
             showStageBody &&
             onStageSelected != null) ...[
@@ -60,7 +61,7 @@ class LocationContentView extends StatelessWidget {
     );
   }
 
-  Widget _stageBody(int stage) => switch (stage) {
+  Widget _stageBody(BuildContext context, int stage) => switch (stage) {
     1 => _HeroStage(
       location: location,
       onStart: onStageSelected == null ? null : () => onStageSelected!(2),
@@ -73,13 +74,15 @@ class LocationContentView extends StatelessWidget {
     4 => _ListStage(
       stage: 4,
       icon: Icons.pin_drop_rounded,
-      title: 'Điểm đến nổi bật',
-      subtitle:
-          'Các postcard nhỏ cho từng điểm đáng chú ý trong địa điểm đang xem.',
-      emptyMessage: 'Chưa có điểm đến nổi bật để hiển thị.',
+      title: appStrings(context).featuredDestinations,
+      subtitle: appStrings(context).featuredDescription,
+      emptyMessage: appStrings(context).noFeatured,
       items: location.highlights,
       builder: (item, index) => _ContentCard(
-        title: _fallback(item.string('name'), 'Điểm đến ${index + 1}'),
+        title: _fallback(
+          item.string('name'),
+          appStrings(context).destinationNumber(index + 1),
+        ),
         eyebrow: _inline([item.string('korean_name'), item.string('tagline')]),
         description: _paragraphs([
           item.string('short_description'),
@@ -87,10 +90,16 @@ class LocationContentView extends StatelessWidget {
         ]),
         media: item.jsonObject('media'),
         details: [
-          ('Địa chỉ', item.string('address')),
-          ('Hoạt động', item.stringList('activities').join(' · ')),
-          ('Danh mục', item.stringList('categories').join(' · ')),
-          ('Bạn có biết?', item.string('fun_fact')),
+          (appStrings(context).address, item.string('address')),
+          (
+            appStrings(context).activities,
+            item.stringList('activities').join(' · '),
+          ),
+          (
+            appStrings(context).categories,
+            item.stringList('categories').join(' · '),
+          ),
+          (appStrings(context).didYouKnow, item.string('fun_fact')),
         ],
       ),
     ),
@@ -99,13 +108,15 @@ class LocationContentView extends StatelessWidget {
         _ListStage(
           stage: 5,
           icon: Icons.celebration_rounded,
-          title: 'Trải nghiệm văn hóa',
-          subtitle:
-              'Story card có nguồn gốc, dấu hiệu nhận biết và gợi ý ứng xử.',
-          emptyMessage: 'Chưa có trải nghiệm văn hóa để hiển thị.',
+          title: appStrings(context).cultureExperiences,
+          subtitle: appStrings(context).cultureDescription,
+          emptyMessage: appStrings(context).noCulture,
           items: location.experiences,
           builder: (item, index) => _ContentCard(
-            title: _fallback(item.string('name'), 'Trải nghiệm ${index + 1}'),
+            title: _fallback(
+              item.string('name'),
+              appStrings(context).experienceNumber(index + 1),
+            ),
             eyebrow: item.string('korean_name'),
             description: _paragraphs([
               item.string('short_description'),
@@ -114,14 +125,26 @@ class LocationContentView extends StatelessWidget {
             media: item.jsonObject('media'),
             wideMedia: true,
             details: [
-              ('Nguồn gốc & ý nghĩa', item.string('origin_meaning')),
               (
-                'Dấu hiệu nhận biết',
+                appStrings(context).originMeaning,
+                item.string('origin_meaning'),
+              ),
+              (
+                appStrings(context).recognizableFeatures,
                 item.stringList('recognizable_features').join(' · '),
               ),
-              ('Nên làm', item.stringList('dos').join(' · ')),
-              ('Không nên làm', item.stringList('donts').join(' · ')),
-              ('Trải nghiệm liên quan', item.string('related_experience')),
+              (
+                appStrings(context).shouldDo,
+                item.stringList('dos').join(' · '),
+              ),
+              (
+                appStrings(context).shouldNotDo,
+                item.stringList('donts').join(' · '),
+              ),
+              (
+                appStrings(context).relatedExperience,
+                item.string('related_experience'),
+              ),
             ],
           ),
         ),
@@ -134,14 +157,16 @@ class LocationContentView extends StatelessWidget {
     6 => _ListStage(
       stage: 6,
       icon: Icons.restaurant_rounded,
-      title: 'Ẩm thực',
-      subtitle:
-          'Grid món ăn dùng ảnh lớn, chip nguyên liệu/hương vị và nơi trải nghiệm.',
-      emptyMessage: 'Chưa có nội dung ẩm thực để hiển thị.',
+      title: appStrings(context).cuisine,
+      subtitle: appStrings(context).cuisineDescription,
+      emptyMessage: appStrings(context).noCuisine,
       items: location.foods,
       asGrid: true,
       builder: (item, index) => _FoodCard(
-        title: _fallback(item.string('name'), 'Món ăn ${index + 1}'),
+        title: _fallback(
+          item.string('name'),
+          appStrings(context).foodNumber(index + 1),
+        ),
         eyebrow: item.string('korean_name'),
         description: _paragraphs([
           item.string('short_description'),
@@ -153,8 +178,11 @@ class LocationContentView extends StatelessWidget {
           ...item.stringList('flavors').take(2),
         ],
         details: [
-          ('Điểm đặc biệt', item.string('special_feature')),
-          ('Nơi trải nghiệm', item.stringList('experience_places').join(' · ')),
+          (appStrings(context).specialFeature, item.string('special_feature')),
+          (
+            appStrings(context).experiencePlaces,
+            item.stringList('experience_places').join(' · '),
+          ),
         ],
       ),
     ),
@@ -181,7 +209,7 @@ class _LocationHeader extends StatelessWidget {
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         IconButton.filledTonal(
-          tooltip: 'Trở về bản đồ Hàn Quốc',
+          tooltip: appStrings(context).backToKoreaMap,
           onPressed: () => context.go('/explore'),
           icon: const Icon(Icons.arrow_back_rounded),
         ),
@@ -208,16 +236,18 @@ class _LocationHeader extends StatelessWidget {
           icon: Icons.public_rounded,
         ),
         _Chip(
-          label: 'Chặng $currentStage/9',
+          label: appStrings(context).stageProgress(currentStage),
           icon: Icons.route_rounded,
           color: AppColors.palePink,
         ),
         _Chip(
-          label: '${location.estimatedDurationMinutes ?? 30} phút',
+          label: appStrings(
+            context,
+          ).minutes(location.estimatedDurationMinutes ?? 30),
           icon: Icons.timelapse_rounded,
         ),
         IconButton.outlined(
-          tooltip: 'Lưu địa điểm',
+          tooltip: appStrings(context).saveLocation,
           onPressed: () {},
           icon: const Icon(Icons.bookmark_add_outlined),
         ),
@@ -236,52 +266,66 @@ class JourneyStepper extends StatelessWidget {
   final int currentStage;
   final ValueChanged<int>? onStageSelected;
 
-  static const stages = [
-    (Icons.play_circle_rounded, 'Mở đầu'),
-    (Icons.explore_rounded, 'Tổng quan'),
-    (Icons.history_edu_rounded, 'Lịch sử'),
-    (Icons.pin_drop_rounded, 'Điểm đến'),
-    (Icons.celebration_rounded, 'Trải nghiệm'),
-    (Icons.restaurant_rounded, 'Ẩm thực'),
-    (Icons.lightbulb_rounded, 'Fun Facts'),
-    (Icons.quiz_rounded, 'Quiz'),
-    (Icons.flight_takeoff_rounded, 'Du lịch'),
+  static const stageIcons = [
+    Icons.play_circle_rounded,
+    Icons.explore_rounded,
+    Icons.history_edu_rounded,
+    Icons.pin_drop_rounded,
+    Icons.celebration_rounded,
+    Icons.restaurant_rounded,
+    Icons.lightbulb_rounded,
+    Icons.quiz_rounded,
+    Icons.flight_takeoff_rounded,
   ];
 
   @override
-  Widget build(BuildContext context) => _Card(
-    padding: const EdgeInsets.symmetric(
-      horizontal: AppSpacing.md,
-      vertical: AppSpacing.sm,
-    ),
-    child: SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          for (var index = 0; index < stages.length; index++) ...[
-            _StageStep(
-              number: index + 1,
-              icon: stages[index].$1,
-              label: stages[index].$2,
-              isCurrent: index + 1 == currentStage,
-              isCompleted: index + 1 < currentStage,
-              onTap: onStageSelected == null
-                  ? null
-                  : () => onStageSelected!(index + 1),
-            ),
-            if (index != stages.length - 1)
-              Container(
-                width: 28,
-                height: 2,
-                color: index + 1 < currentStage
-                    ? AppColors.completedGreen
-                    : AppColors.borderSoft,
-              ),
-          ],
-        ],
+  Widget build(BuildContext context) {
+    final strings = appStrings(context);
+    final stageLabels = [
+      strings.opening,
+      strings.overview,
+      strings.history,
+      strings.destinations,
+      strings.experiences,
+      strings.cuisine,
+      strings.funFacts,
+      strings.quiz,
+      strings.travel,
+    ];
+    return _Card(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
       ),
-    ),
-  );
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            for (var index = 0; index < stageIcons.length; index++) ...[
+              _StageStep(
+                number: index + 1,
+                icon: stageIcons[index],
+                label: stageLabels[index],
+                isCurrent: index + 1 == currentStage,
+                isCompleted: index + 1 < currentStage,
+                onTap: onStageSelected == null
+                    ? null
+                    : () => onStageSelected!(index + 1),
+              ),
+              if (index != stageIcons.length - 1)
+                Container(
+                  width: 28,
+                  height: 2,
+                  color: index + 1 < currentStage
+                      ? AppColors.completedGreen
+                      : AppColors.borderSoft,
+                ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _StageStep extends StatelessWidget {
@@ -310,7 +354,7 @@ class _StageStep extends StatelessWidget {
         : AppColors.stitchMuted;
     return Semantics(
       button: onTap != null,
-      label: 'Chặng $number: $label',
+      label: appStrings(context).stageLabel(number, label),
       selected: isCurrent,
       child: InkWell(
         onTap: onTap,
@@ -356,9 +400,21 @@ class _StageNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = appStrings(context);
+    final stageLabels = [
+      strings.opening,
+      strings.overview,
+      strings.history,
+      strings.destinations,
+      strings.experiences,
+      strings.cuisine,
+      strings.funFacts,
+      strings.quiz,
+      strings.travel,
+    ];
     final label = currentStage == 9
-        ? 'Trở về bản đồ Hàn Quốc'
-        : 'Tiếp tục đến ${JourneyStepper.stages[currentStage].$2}';
+        ? strings.backToKoreaMap
+        : strings.continueTo(stageLabels[currentStage]);
     return Align(
       alignment: Alignment.centerRight,
       child: FilledButton.icon(
@@ -381,9 +437,8 @@ class _HeroStage extends StatelessWidget {
   Widget build(BuildContext context) => _Stage(
     stage: 1,
     icon: Icons.play_circle_rounded,
-    title: 'Mở đầu hành trình',
-    subtitle:
-        'Khung media lớn tạo cảm xúc trước khi người học bước vào các chặng khám phá.',
+    title: appStrings(context).journeyOpening,
+    subtitle: appStrings(context).journeyOpeningDescription,
     child: LayoutBuilder(
       builder: (context, constraints) {
         final wide = constraints.maxWidth >= 840;
@@ -397,7 +452,10 @@ class _HeroStage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _Chip(
-                label: _fallback(location.locationType, 'Địa điểm khám phá'),
+                label: _fallback(
+                  location.locationType,
+                  appStrings(context).exploreLocation,
+                ),
                 icon: Icons.style_rounded,
               ),
               const SizedBox(height: AppSpacing.md),
@@ -427,7 +485,7 @@ class _HeroStage extends StatelessWidget {
               FilledButton.icon(
                 onPressed: onStart,
                 icon: const Icon(Icons.arrow_forward_rounded),
-                label: const Text('Bắt đầu khám phá'),
+                label: Text(appStrings(context).startExploring),
               ),
             ],
           ),
@@ -461,9 +519,8 @@ class _OverviewStage extends StatelessWidget {
   Widget build(BuildContext context) => _Stage(
     stage: 2,
     icon: Icons.explore_rounded,
-    title: 'Tổng quan',
-    subtitle:
-        'Bento layout cho thông tin nhận diện, mô tả, bản đồ nhỏ và fact nhanh.',
+    title: appStrings(context).overview,
+    subtitle: appStrings(context).overviewDescription,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -518,7 +575,7 @@ class _Identity extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Thông tin chung',
+          appStrings(context).generalInformation,
           style: Theme.of(
             context,
           ).textTheme.titleLarge?.copyWith(color: AppColors.stitchText),
@@ -526,17 +583,17 @@ class _Identity extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
         _InfoRow(
           icon: Icons.public_rounded,
-          label: 'Khu vực',
+          label: appStrings(context).region,
           value: _inline([location.city, location.region, location.country]),
         ),
         _InfoRow(
           icon: Icons.signpost_rounded,
-          label: 'Loại địa điểm',
+          label: appStrings(context).locationType,
           value: location.locationType,
         ),
         _InfoRow(
           icon: Icons.translate_rounded,
-          label: 'Tên tiếng Anh',
+          label: appStrings(context).englishName,
           value: location.englishName,
         ),
         const Divider(height: AppSpacing.xl),
@@ -566,7 +623,7 @@ class _QuickFacts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (location.quickFacts.isEmpty) {
-      return const _Empty('Chưa có thông tin nhanh để hiển thị.');
+      return _Empty(appStrings(context).noQuickFacts);
     }
     return Wrap(
       spacing: AppSpacing.md,
@@ -690,7 +747,7 @@ class _HistoryStageState extends State<_HistoryStage> {
         const _HistoryHeader(),
         const SizedBox(height: AppSpacing.section),
         if (widget.items.isEmpty)
-          const _Empty('Nội dung lịch sử đang được cập nhật.')
+          _Empty(appStrings(context).historyUpdating)
         else
           LayoutBuilder(
             builder: (context, constraints) {
@@ -730,9 +787,9 @@ class _HistoryHeader extends StatelessWidget {
           color: AppColors.palePink,
           borderRadius: BorderRadius.circular(AppRadius.round),
         ),
-        child: const Text(
-          'CHẶNG 03/09',
-          style: TextStyle(
+        child: Text(
+          '${appStrings(context).stage.toUpperCase()} 03/09',
+          style: const TextStyle(
             color: AppColors.koreanRed,
             fontSize: 12,
             fontWeight: FontWeight.w900,
@@ -744,7 +801,7 @@ class _HistoryHeader extends StatelessWidget {
       Semantics(
         header: true,
         child: Text(
-          'Lịch sử & Di sản',
+          appStrings(context).historyHeritage,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineLarge?.copyWith(
             color: AppColors.koreanRed,
@@ -755,11 +812,10 @@ class _HistoryHeader extends StatelessWidget {
       const SizedBox(height: AppSpacing.sm),
       ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 720),
-        child: const Text(
-          'Khám phá những dấu ấn thời gian và câu chuyện văn hóa tạo nên '
-          'bức tranh đa sắc của quá khứ.',
+        child: Text(
+          appStrings(context).historyDescription,
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
             color: AppColors.stitchMuted,
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -1000,11 +1056,11 @@ class _HistoryCard extends StatelessWidget {
               ],
               _DetailRows(
                 entries: [
-                  ('Nhân vật liên quan', relatedPeople),
-                  ('Bạn có biết?', funFact),
-                  ('Nguồn ảnh/video', mediaCredit),
+                  (appStrings(context).relatedPeople, relatedPeople),
+                  (appStrings(context).didYouKnow, funFact),
+                  (appStrings(context).mediaSource, mediaCredit),
                   if (sourceUrl.isNotEmpty && sourceUri == null)
-                    ('Liên kết nguồn', sourceUrl),
+                    (appStrings(context).sourceLink, sourceUrl),
                 ],
               ),
               if (sourceUri != null)
@@ -1014,7 +1070,7 @@ class _HistoryCard extends StatelessWidget {
                   builder: (context, followLink) => TextButton.icon(
                     onPressed: followLink,
                     icon: const Icon(Icons.open_in_new_rounded),
-                    label: const Text('Xem nguồn media'),
+                    label: Text(appStrings(context).viewMediaSource),
                   ),
                 ),
             ],
@@ -1031,7 +1087,9 @@ class _HistoryCard extends StatelessWidget {
 
     return Semantics(
       container: true,
-      label: title.isEmpty ? 'Mốc lịch sử ${index + 1}' : title,
+      label: title.isEmpty
+          ? appStrings(context).historicalMilestone(index + 1)
+          : title,
       child: AnimatedContainer(
         key: ValueKey('history-card-$index'),
         duration: duration,
@@ -1104,7 +1162,11 @@ class _HistoryCard extends StatelessWidget {
                         ? Icons.keyboard_arrow_up_rounded
                         : Icons.arrow_forward_rounded,
                   ),
-                  label: Text(isExpanded ? 'Thu gọn' : 'Khám phá ngay'),
+                  label: Text(
+                    isExpanded
+                        ? appStrings(context).collapse
+                        : appStrings(context).discoverNow,
+                  ),
                 ),
               ),
             ],
@@ -1143,7 +1205,9 @@ class _HistoryMedia extends StatelessWidget {
         padding: const EdgeInsets.all(AppSpacing.xs),
         child: _Media(
           media: media,
-          fallbackLabel: title.isEmpty ? 'Mốc lịch sử ${index + 1}' : title,
+          fallbackLabel: title.isEmpty
+              ? appStrings(context).historicalMilestone(index + 1)
+              : title,
           compact: true,
         ),
       ),
@@ -1173,10 +1237,10 @@ class _HistoryMarker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final status = isExpanded
-        ? 'đang mở'
+        ? appStrings(context).openStatus
         : isViewed
-        ? 'đã xem'
-        : 'chưa xem';
+        ? appStrings(context).viewedStatus
+        : appStrings(context).unviewedStatus;
     final marker = isExpanded
         ? Container(
             width: 56,
@@ -1230,7 +1294,7 @@ class _HistoryMarker extends StatelessWidget {
 
     return Semantics(
       key: ValueKey('history-marker-$index'),
-      label: 'Mốc lịch sử ${index + 1}, $status',
+      label: '${appStrings(context).historicalMilestone(index + 1)}, $status',
       child: ExcludeSemantics(child: Center(child: marker)),
     );
   }
@@ -1462,9 +1526,8 @@ class _GuidelineStage extends StatelessWidget {
   Widget build(BuildContext context) => _Stage(
     stage: null,
     icon: Icons.volunteer_activism_rounded,
-    title: 'Ứng xử văn hóa',
-    subtitle:
-        'Các ghi chú nên làm và không nên làm được tách thành thẻ dễ quét.',
+    title: appStrings(context).culturalEtiquette,
+    subtitle: appStrings(context).etiquetteDescription,
     child: Wrap(
       spacing: AppSpacing.md,
       runSpacing: AppSpacing.md,
@@ -1481,8 +1544,8 @@ class _GuidelineStage extends StatelessWidget {
                     ? Icons.do_not_disturb_on_rounded
                     : Icons.check_circle_rounded,
                 label: item.string('kind') == 'dont'
-                    ? 'Không nên làm'
-                    : 'Nên làm',
+                    ? appStrings(context).shouldNotDo
+                    : appStrings(context).shouldDo,
                 value: item.string('content'),
               ),
             ),
@@ -1500,10 +1563,10 @@ class _FunFactsStage extends StatelessWidget {
   Widget build(BuildContext context) => _Stage(
     stage: 7,
     icon: Icons.lightbulb_rounded,
-    title: 'Fun Facts',
-    subtitle: 'Các fact được trình bày như sticker/postcard sưu tầm.',
+    title: appStrings(context).funFacts,
+    subtitle: appStrings(context).funFactsDescription,
     child: items.isEmpty
-        ? const _Empty('Chưa có fun fact để hiển thị.')
+        ? _Empty(appStrings(context).noFunFacts)
         : Wrap(
             spacing: AppSpacing.md,
             runSpacing: AppSpacing.md,
@@ -1566,11 +1629,10 @@ class _QuizStage extends StatelessWidget {
   Widget build(BuildContext context) => _Stage(
     stage: 8,
     icon: Icons.quiz_rounded,
-    title: 'Thử thách khám phá',
-    subtitle:
-        'Quiz hỗ trợ lựa chọn, đúng/sai, matching và sắp xếp. Trả lời sai vẫn hoàn thành nhiệm vụ.',
+    title: appStrings(context).explorationChallenge,
+    subtitle: appStrings(context).quizDescription,
     child: questions.isEmpty
-        ? const _Empty('Chưa có câu hỏi quiz để hiển thị.')
+        ? _Empty(appStrings(context).noQuiz)
         : Column(
             children: [
               _Card(
@@ -1581,7 +1643,7 @@ class _QuizStage extends StatelessWidget {
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
-                        '${questions.length} nhiệm vụ · +20 XP khi chính xác · +5 XP khi hoàn thành',
+                        appStrings(context).taskRewards(questions.length),
                         style: const TextStyle(fontWeight: FontWeight.w800),
                       ),
                     ),
@@ -1615,9 +1677,8 @@ class _TravelStage extends StatelessWidget {
     return _Stage(
       stage: 9,
       icon: Icons.flight_takeoff_rounded,
-      title: 'Thông tin du lịch',
-      subtitle:
-          'Các thông tin thay đổi theo thời gian luôn đi kèm nguồn và ngày cập nhật.',
+      title: appStrings(context).travelInformation,
+      subtitle: appStrings(context).travelDescription,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1627,22 +1688,22 @@ class _TravelStage extends StatelessWidget {
             children: [
               _TravelFact(
                 icon: Icons.schedule_rounded,
-                label: 'Giờ mở cửa',
+                label: appStrings(context).openingHours,
                 value: travel.string('opening_hours'),
               ),
               _TravelFact(
                 icon: Icons.confirmation_number_rounded,
-                label: 'Giá vé',
+                label: appStrings(context).ticketPrice,
                 value: travel.string('ticket_price'),
               ),
               _TravelFact(
                 icon: Icons.timer_rounded,
-                label: 'Thời lượng',
+                label: appStrings(context).duration,
                 value: travel.string('recommended_duration'),
               ),
               _TravelFact(
                 icon: Icons.wb_sunny_rounded,
-                label: 'Thời điểm đẹp',
+                label: appStrings(context).bestTime,
                 value: travel.string('best_time_to_visit'),
               ),
             ],
@@ -1651,10 +1712,13 @@ class _TravelStage extends StatelessWidget {
             const SizedBox(height: AppSpacing.lg),
             for (final item in transports) ...[
               _ContentCard(
-                title: _fallback(item.string('title'), 'Cách di chuyển'),
+                title: _fallback(
+                  item.string('title'),
+                  appStrings(context).directions,
+                ),
                 eyebrow: item.string('mode'),
                 description: item.string('instructions'),
-                details: [('Mẹo', item.string('tip'))],
+                details: [(appStrings(context).tip, item.string('tip'))],
               ),
               const SizedBox(height: AppSpacing.sm),
             ],
@@ -1666,9 +1730,9 @@ class _TravelStage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Lưu ý cho du khách',
-                    style: TextStyle(
+                  Text(
+                    appStrings(context).travelerNotes,
+                    style: const TextStyle(
                       fontWeight: FontWeight.w900,
                       color: AppColors.stitchText,
                     ),
@@ -1677,7 +1741,7 @@ class _TravelStage extends StatelessWidget {
                   for (final note in notes)
                     _InfoRow(
                       icon: Icons.check_rounded,
-                      label: 'Lưu ý',
+                      label: appStrings(context).note,
                       value: note.string('content'),
                     ),
                 ],
@@ -1687,9 +1751,9 @@ class _TravelStage extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           _Card(
             color: AppColors.palePink.withValues(alpha: .42),
-            child: const Text(
-              'Thông tin có thể thay đổi. Hãy kiểm tra nguồn chính thức trước khi đi.',
-              style: TextStyle(fontWeight: FontWeight.w700),
+            child: Text(
+              appStrings(context).travelDisclaimer,
+              style: const TextStyle(fontWeight: FontWeight.w700),
             ),
           ),
         ],
@@ -1715,7 +1779,7 @@ class _TravelFact extends StatelessWidget {
       child: _InfoRow(
         icon: icon,
         label: label,
-        value: value.isEmpty ? 'Đang cập nhật' : value,
+        value: value.isEmpty ? appStrings(context).updating : value,
       ),
     ),
   );
@@ -1760,7 +1824,8 @@ class _Stage extends StatelessWidget {
                 children: [
                   if (stage != null)
                     Text(
-                      'CHẶNG ${stage!.toString().padLeft(2, '0')}',
+                      '${appStrings(context).stage.toUpperCase()} '
+                      '${stage!.toString().padLeft(2, '0')}',
                       style: const TextStyle(
                         color: AppColors.koreanRed,
                         fontWeight: FontWeight.w900,
@@ -1890,7 +1955,7 @@ class _MediaPlaceholder extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'Ảnh đang được cập nhật',
+              appStrings(context).imageUpdating,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: AppColors.stitchText,
@@ -1939,9 +2004,9 @@ class _MiniMap extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Bản đồ khu vực',
-                style: TextStyle(
+              Text(
+                appStrings(context).areaMap,
+                style: const TextStyle(
                   fontWeight: FontWeight.w900,
                   color: AppColors.stitchText,
                 ),
@@ -2190,7 +2255,7 @@ class _QuizCardState extends State<_QuizCard> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Icon(Icons.check_rounded),
-            label: const Text('Kiểm tra đáp án'),
+            label: Text(appStrings(context).checkAnswer),
           ),
           if (_result != null) ...[
             const SizedBox(height: AppSpacing.md),
@@ -2203,8 +2268,8 @@ class _QuizCardState extends State<_QuizCard> {
                     ? Icons.check_circle_rounded
                     : Icons.info_rounded,
                 label: _result!.isCorrect
-                    ? 'Chính xác!'
-                    : 'Chưa chính xác, nhưng nhiệm vụ vẫn được hoàn thành.',
+                    ? appStrings(context).correctAnswer
+                    : appStrings(context).incorrectAnswer,
                 value: _result!.explanation,
               ),
             ),
@@ -2284,14 +2349,14 @@ class _QuizCardState extends State<_QuizCard> {
           trailing: Wrap(
             children: [
               IconButton(
-                tooltip: 'Đưa lên',
+                tooltip: appStrings(context).moveUp,
                 onPressed: index == 0
                     ? null
                     : () => _moveItem(index, index - 1),
                 icon: const Icon(Icons.keyboard_arrow_up_rounded),
               ),
               IconButton(
-                tooltip: 'Đưa xuống',
+                tooltip: appStrings(context).moveDown,
                 onPressed: index == _orderedItems.length - 1
                     ? null
                     : () => _moveItem(index, index + 1),
@@ -2328,9 +2393,13 @@ class _QuizCardState extends State<_QuizCard> {
       if (mounted) setState(() => _result = result);
     } on Object catch (error) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Không thể chấm quiz: $error')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              appStrings(context).quizScoringError(error.toString()),
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _submitting = false);

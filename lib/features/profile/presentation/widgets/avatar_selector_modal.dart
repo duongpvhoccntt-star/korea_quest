@@ -7,6 +7,7 @@ import 'package:korea_quest/design_system/components/app_buttons.dart';
 import 'package:korea_quest/design_system/components/progress_components.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
+import 'package:korea_quest/l10n/app_strings.dart';
 
 /// Result of avatar selection — either a preset key or raw bytes from device.
 typedef AvatarSelection = ({String? preset, Uint8List? bytes});
@@ -124,15 +125,15 @@ class _AvatarSelectorModalState extends State<AvatarSelectorModal> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Đổi ảnh đại diện',
+                        appStrings(context).changeAvatar,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w800,
                         ),
                       ),
                       const SizedBox(height: AppSpacing.xxs),
-                      const Text(
-                        'Chọn từ nhân vật văn hóa Hàn Quốc hoặc tải ảnh từ máy tính.',
-                        style: TextStyle(color: AppColors.stitchMuted),
+                      Text(
+                        appStrings(context).avatarDescription,
+                        style: const TextStyle(color: AppColors.stitchMuted),
                       ),
                     ],
                   ),
@@ -145,7 +146,7 @@ class _AvatarSelectorModalState extends State<AvatarSelectorModal> {
             OutlinedButton.icon(
               onPressed: _pickFromDevice,
               icon: const Icon(Icons.upload_file_rounded),
-              label: const Text('Tải ảnh từ máy tính'),
+              label: Text(appStrings(context).uploadFromDevice),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(0, 48),
                 shape: RoundedRectangleBorder(
@@ -156,9 +157,9 @@ class _AvatarSelectorModalState extends State<AvatarSelectorModal> {
             const SizedBox(height: AppSpacing.lg),
 
             // Preset grid
-            const Text(
-              'HOẶC CHỌN NHÂN VẬT ĐẠI DIỆN',
-              style: TextStyle(
+            Text(
+              appStrings(context).chooseAvatar,
+              style: const TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1.2,
@@ -230,14 +231,14 @@ class _AvatarSelectorModalState extends State<AvatarSelectorModal> {
               children: [
                 Expanded(
                   child: SecondaryButton(
-                    label: 'Hủy',
+                    label: appStrings(context).cancel,
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: PrimaryButton(
-                    label: 'Xác nhận',
+                    label: appStrings(context).confirm,
                     icon: Icons.check_rounded,
                     onPressed: () => Navigator.pop<AvatarSelection>(context, (
                       preset: _selectedPreset,
