@@ -394,6 +394,152 @@ int countWords(String value) {
   return normalized.split(RegExp(r'\s+')).length;
 }
 
+List<String> expandAdminValidationErrors(
+  List<String> rawErrors,
+  AdminLocationDraft draft,
+) {
+  final expanded = <String>[];
+  for (final rawError in rawErrors) {
+    final lower = rawError.trim().toLowerCase();
+    final matcher = switch (lower) {
+      final value when value.contains('câu một đáp án') =>
+        _singleChoiceProblems,
+      final value when value.contains('câu đúng/sai') => _trueFalseProblems,
+      final value when value.contains('câu nối cặp') => _matchingProblems,
+      final value when value.contains('câu sắp xếp') => _orderingProblems,
+      final value
+          when value.contains('câu hỏi cần nội dung') &&
+              value.contains('giải thích') =>
+        _questionContentProblems,
+      _ => null,
+    };
+    if (matcher == null) {
+      expanded.add(rawError);
+      continue;
+    }
+
+    var matchedQuestion = false;
+    for (var index = 0; index < draft.quiz.length; index++) {
+      final question = draft.quiz[index];
+      if (question['is_visible'] == false) continue;
+      final problems = matcher(question);
+      if (problems.isEmpty) continue;
+      matchedQuestion = true;
+      expanded.add(_quizDiagnostic(index, question, problems));
+    }
+    if (!matchedQuestion) expanded.add(rawError);
+  }
+  return expanded;
+}
+
+List<String> _questionContentProblems(Map<String, dynamic> question) {
+  final problems = <String>[];
+  if (_isBlank(question['prompt'])) {
+    problems.add('chưa nhập nội dung câu hỏi');
+  }
+  final explanationWords = countWords(
+    question['explanation']?.toString() ?? '',
+  );
+  if (explanationWords < 10 || explanationWords > 200) {
+    problems.add(
+      'phần giải thích có $explanationWords từ; cần từ 10 đến 200 từ',
+    );
+  }
+  return problems;
+}
+
+List<String> _singleChoiceProblems(Map<String, dynamic> question) {
+  if (_diagnosticText(question, 'kind') != 'single_choice') return const [];
+  final options = AdminLocationDraft.fromJsonList(question['options']);
+  final problems = <String>[];
+  if (options.length < 2 || options.length > 6) {
+    problems.add('có ${options.length} lựa chọn; cần từ 2 đến 6');
+  }
+  final correctCount = options
+      .where((option) => option['is_correct'] == true)
+      .length;
+  if (correctCount != 1) {
+    problems.add('có $correctCount đáp án đúng; cần đúng 1');
+  }
+  final blankOptions = <int>[
+    for (var index = 0; index < options.length; index++)
+      if (_isBlank(options[index]['text'])) index + 1,
+  ];
+  if (blankOptions.isNotEmpty) {
+    problems.add('lựa chọn ${blankOptions.join(', ')} đang để trống');
+  }
+  return problems;
+}
+
+List<String> _trueFalseProblems(Map<String, dynamic> question) {
+  if (_diagnosticText(question, 'kind') != 'true_false') return const [];
+  final options = AdminLocationDraft.fromJsonList(question['options']);
+  final problems = <String>[];
+  if (options.length != 2) {
+    problems.add('có ${options.length} lựa chọn; cần đúng 2');
+  }
+  final correctCount = options
+      .where((option) => option['is_correct'] == true)
+      .length;
+  if (correctCount != 1) {
+    problems.add('có $correctCount đáp án đúng; cần đúng 1');
+  }
+  return problems;
+}
+
+List<String> _matchingProblems(Map<String, dynamic> question) {
+  if (_diagnosticText(question, 'kind') != 'matching') return const [];
+  final pairs = AdminLocationDraft.fromJsonList(question['pairs']);
+  final problems = <String>[];
+  if (pairs.length < 2 || pairs.length > 8) {
+    problems.add('có ${pairs.length} cặp nối; cần từ 2 đến 8');
+  }
+  final blankPairs = <int>[
+    for (var index = 0; index < pairs.length; index++)
+      if (_isBlank(pairs[index]['left']) || _isBlank(pairs[index]['right']))
+        index + 1,
+  ];
+  if (blankPairs.isNotEmpty) {
+    problems.add('cặp ${blankPairs.join(', ')} đang để trống');
+  }
+  return problems;
+}
+
+List<String> _orderingProblems(Map<String, dynamic> question) {
+  if (_diagnosticText(question, 'kind') != 'ordering') return const [];
+  final items = AdminLocationDraft.fromJsonList(question['items']);
+  final problems = <String>[];
+  if (items.length < 2 || items.length > 8) {
+    problems.add('có ${items.length} mục sắp xếp; cần từ 2 đến 8');
+  }
+  final blankItems = <int>[
+    for (var index = 0; index < items.length; index++)
+      if (_isBlank(items[index]['text'])) index + 1,
+  ];
+  if (blankItems.isNotEmpty) {
+    problems.add('mục ${blankItems.join(', ')} đang để trống');
+  }
+  return problems;
+}
+
+String _quizDiagnostic(
+  int index,
+  Map<String, dynamic> question,
+  List<String> problems,
+) {
+  final prompt = _diagnosticText(question, 'prompt').trim();
+  final shortenedPrompt = prompt.length > 80
+      ? '${prompt.substring(0, 77)}…'
+      : prompt;
+  final label = shortenedPrompt.isEmpty ? '' : ' “$shortenedPrompt”';
+  return '[quiz:$index] Câu ${index + 1}$label: ${problems.join('. ')}.';
+}
+
+bool _isBlank(Object? value) => value?.toString().trim().isEmpty ?? true;
+
+String _diagnosticText(Map<String, dynamic> data, String key) =>
+    data[key]?.toString() ?? '';
+
 enum AdminDiagnosticSeverity { error, warning }
 
 class AdminDiagnostic {
@@ -402,18 +548,25 @@ class AdminDiagnostic {
     required this.stepIndex,
     this.severity = AdminDiagnosticSeverity.error,
     this.stepName = '',
+    this.itemIndex,
   });
 
   final String message;
   final int stepIndex;
   final AdminDiagnosticSeverity severity;
   final String stepName;
+  final int? itemIndex;
 
   bool get isBlocking => severity == AdminDiagnosticSeverity.error;
 }
 
 AdminDiagnostic parseAdminDiagnostic(String rawMessage) {
-  final msg = rawMessage.trim();
+  final raw = rawMessage.trim();
+  final locator = RegExp(r'^\[quiz:(\d+)\]\s*').firstMatch(raw);
+  final itemIndex = locator == null
+      ? null
+      : int.tryParse(locator.group(1) ?? '');
+  final msg = locator == null ? raw : raw.substring(locator.end).trim();
   final lower = msg.toLowerCase();
 
   const stepNames = [
@@ -475,7 +628,8 @@ AdminDiagnostic parseAdminDiagnostic(String rawMessage) {
   }
 
   // Step 7: Quiz tổng kết
-  if (lower.contains('quiz') ||
+  if (itemIndex != null ||
+      lower.contains('quiz') ||
       lower.contains('câu hỏi') ||
       lower.contains('đáp án') ||
       lower.contains('lựa chọn') ||
@@ -486,7 +640,12 @@ AdminDiagnostic parseAdminDiagnostic(String rawMessage) {
       lower.contains('matching') ||
       lower.contains('single_choice') ||
       lower.contains('single-choice')) {
-    return AdminDiagnostic(message: msg, stepIndex: 7, stepName: stepNames[7]);
+    return AdminDiagnostic(
+      message: msg,
+      stepIndex: 7,
+      stepName: stepNames[7],
+      itemIndex: itemIndex,
+    );
   }
 
   // Step 8: Du lịch

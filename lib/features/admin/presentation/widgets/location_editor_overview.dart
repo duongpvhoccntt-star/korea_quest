@@ -528,18 +528,21 @@ class LocationReviewEditor extends StatelessWidget {
     required this.draft,
     required this.validationErrors,
     required this.onChanged,
-    this.onGoToStep,
+    this.onGoToDiagnostic,
     super.key,
   });
 
   final AdminLocationDraft draft;
   final List<String> validationErrors;
   final VoidCallback onChanged;
-  final ValueChanged<int>? onGoToStep;
+  final ValueChanged<AdminDiagnostic>? onGoToDiagnostic;
 
   @override
   Widget build(BuildContext context) {
-    final diagnostics = validationErrors.map(parseAdminDiagnostic).toList();
+    final diagnostics = expandAdminValidationErrors(
+      validationErrors,
+      draft,
+    ).map(parseAdminDiagnostic).toList();
     final blockingErrors = diagnostics.where((d) => d.isBlocking).toList();
     final warnings = diagnostics.where((d) => !d.isBlocking).toList();
 
@@ -713,14 +716,14 @@ class LocationReviewEditor extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            if (onGoToStep != null)
+                            if (onGoToDiagnostic != null)
                               TextButton.icon(
                                 icon: const Icon(
                                   Icons.arrow_forward_rounded,
                                   size: 16,
                                 ),
                                 label: const Text('Đi tới sửa'),
-                                onPressed: () => onGoToStep!(diag.stepIndex),
+                                onPressed: () => onGoToDiagnostic!(diag),
                               ),
                           ],
                         ),
@@ -792,14 +795,14 @@ class LocationReviewEditor extends StatelessWidget {
                                 child: Text(diag.message),
                               ),
                             ),
-                            if (onGoToStep != null)
+                            if (onGoToDiagnostic != null)
                               TextButton.icon(
                                 icon: const Icon(
                                   Icons.arrow_forward_rounded,
                                   size: 16,
                                 ),
                                 label: const Text('Xem'),
-                                onPressed: () => onGoToStep!(diag.stepIndex),
+                                onPressed: () => onGoToDiagnostic!(diag),
                               ),
                           ],
                         ),

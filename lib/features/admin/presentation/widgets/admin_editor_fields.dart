@@ -278,6 +278,8 @@ class AdminRepeatableSection extends StatelessWidget {
     this.minimum,
     this.maximumGuide,
     this.maximum,
+    this.itemKeyBuilder,
+    this.highlightedIndex,
   });
 
   final String title;
@@ -294,6 +296,8 @@ class AdminRepeatableSection extends StatelessWidget {
   final int? minimum;
   final int? maximumGuide;
   final int? maximum;
+  final Key Function(Map<String, dynamic> item, int index)? itemKeyBuilder;
+  final int? highlightedIndex;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -346,8 +350,11 @@ class AdminRepeatableSection extends StatelessWidget {
         ),
       for (var index = 0; index < items.length; index++) ...[
         _RepeatableCard(
-          key: ObjectKey(items[index]),
+          key:
+              itemKeyBuilder?.call(items[index], index) ??
+              ObjectKey(items[index]),
           title: '$itemLabel ${index + 1}',
+          isHighlighted: highlightedIndex == index,
           canMoveUp: index > 0,
           canMoveDown: index < items.length - 1,
           onMoveUp: () {
@@ -375,6 +382,7 @@ class AdminRepeatableSection extends StatelessWidget {
 class _RepeatableCard extends StatelessWidget {
   const _RepeatableCard({
     required this.title,
+    required this.isHighlighted,
     required this.canMoveUp,
     required this.canMoveDown,
     required this.onMoveUp,
@@ -385,6 +393,7 @@ class _RepeatableCard extends StatelessWidget {
   });
 
   final String title;
+  final bool isHighlighted;
   final bool canMoveUp;
   final bool canMoveDown;
   final VoidCallback onMoveUp;
@@ -394,6 +403,13 @@ class _RepeatableCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Card(
+    color: isHighlighted ? AppColors.danger.withValues(alpha: 0.04) : null,
+    shape: isHighlighted
+        ? RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.medium),
+            side: const BorderSide(color: AppColors.danger, width: 2),
+          )
+        : null,
     child: Padding(
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(

@@ -133,6 +133,76 @@ void main() {
       expect(find.text('Slug công khai'), findsOneWidget);
     },
   );
+
+  testWidgets('quiz error button scrolls to the exact invalid question', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1260, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final repository = _QuizErrorDemoRepository();
+    addTearDown(repository.dispose);
+    Map<String, dynamic> question(String prompt, {bool invalid = false}) => {
+      'prompt': prompt,
+      'kind': 'single_choice',
+      'is_visible': true,
+      'options': invalid
+          ? [
+              {'text': 'Chỉ một lựa chọn', 'is_correct': true},
+            ]
+          : [
+              {'text': 'A', 'is_correct': true},
+              {'text': 'B', 'is_correct': false},
+            ],
+    };
+    final draft = AdminLocationDraft(
+      locationId: 'test-loc-quiz',
+      revisionId: 'test-rev-quiz',
+      quiz: [
+        question('Câu hợp lệ 1'),
+        question('Câu hợp lệ 2'),
+        question('Câu cần sửa', invalid: true),
+      ],
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [adminRepositoryProvider.overrideWithValue(repository)],
+        child: MaterialApp(
+          theme: AppTheme.light,
+          home: Scaffold(
+            body: LocationEditor(draft: draft, onClose: () {}),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('10. Kiểm tra & Xuất bản'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Kiểm tra điều kiện'));
+    await tester.tap(find.text('Kiểm tra điều kiện'));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('Câu 3 “Câu cần sửa”'), findsOneWidget);
+    await tester.ensureVisible(find.text('Đi tới sửa'));
+    await tester.tap(find.text('Đi tới sửa'));
+    await tester.pumpAndSettle();
+
+    final questionCardTitle = find.text('câu hỏi 3');
+    expect(questionCardTitle, findsOneWidget);
+    final targetY = tester.getCenter(questionCardTitle).dy;
+    expect(targetY, inInclusiveRange(0, 900));
+  });
+}
+
+class _QuizErrorDemoRepository extends DemoAdminRepository {
+  @override
+  Future<List<String>> validateDraft(AdminLocationDraft draft) async => const [
+    'Câu một đáp án cần 2–6 lựa chọn và đúng chính xác một đáp án.',
+  ];
 }
 
 Future<void> _pumpEditor(WidgetTester tester, Size viewport) async {
