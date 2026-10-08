@@ -210,7 +210,7 @@ class LocationOverviewEditor extends StatelessWidget {
         AdminEditorTextField(
           label: 'Mô tả ngắn',
           value: adminText(data, 'short_description'),
-          minWords: 25,
+          minWords: 10,
           maxWords: 200,
           maxLines: 3,
           onChanged: (value) {
@@ -222,7 +222,7 @@ class LocationOverviewEditor extends StatelessWidget {
         AdminEditorTextField(
           label: 'Mô tả chi tiết',
           value: adminText(data, 'long_description'),
-          minWords: 25,
+          minWords: 10,
           maxWords: 200,
           maxLines: 7,
           onChanged: (value) {

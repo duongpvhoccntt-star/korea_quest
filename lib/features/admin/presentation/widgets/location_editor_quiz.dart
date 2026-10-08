@@ -118,7 +118,7 @@ class _QuestionEditor extends StatelessWidget {
           'Giải thích đáp án',
           onChanged,
           maxLines: 4,
-          minWords: 25,
+          minWords: 10,
           maxWords: 200,
         ),
         const SizedBox(height: AppSpacing.md),

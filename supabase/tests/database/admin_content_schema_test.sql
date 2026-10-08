@@ -166,8 +166,8 @@ select like(
 );
 select like(
   pg_get_functiondef('public.validate_location_revision(uuid)'::regprocedure),
-  '%question.explanation) not between 25 and 200%',
-  'publication validator accepts quiz explanations from 25 to 200 words'
+  '%question.explanation) not between 10 and 200%',
+  'publication validator accepts quiz explanations from 10 to 200 words'
 );
 select unlike(
   pg_get_functiondef('public.validate_location_revision(uuid)'::regprocedure),

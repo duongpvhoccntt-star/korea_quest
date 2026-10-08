@@ -1,8 +1,8 @@
 # KoreaQuest Database & Domain Model
 
 > Trạng thái: Tài liệu thảo luận kỹ thuật, chưa phải cam kết triển khai production.
-> Nguồn đối chiếu: migrations đến `20261008094500_simplify_publish_validation.sql`, model/repository Admin và Explore, `CONTEXT.md`, ADR và `TEAM_OWNERSHIP.md` tại ngày 2026-10-08.
-> Trạng thái cloud: đã xác minh ngày 2026-10-08 trên project `KOREAQUEST` (org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`). Migration đến `20261008094500_simplify_publish_validation.sql` đã áp dụng; Edge Function `translate-location` đang ACTIVE; các secret `GEMINI_API_KEY` và `GEMINI_TRANSLATION_MODEL=gemini-3.1-flash-lite` đã được cấu hình.
+> Nguồn đối chiếu: migrations đến `20261008111918_lower_publish_word_minimum.sql`, model/repository Admin và Explore, `CONTEXT.md`, ADR và `TEAM_OWNERSHIP.md` tại ngày 2026-10-08.
+> Trạng thái cloud: đã xác minh ngày 2026-10-08 trên project `KOREAQUEST` (org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`). Migration đến `20261008111918_lower_publish_word_minimum.sql` đã áp dụng; Edge Function `translate-location` đang ACTIVE; các secret `GEMINI_API_KEY` và `GEMINI_TRANSLATION_MODEL=gemini-3.1-flash-lite` đã được cấu hình.
 
 ## 1. Mục tiêu và phạm vi
 
@@ -108,8 +108,8 @@ erDiagram
 | `latitude` | `double precision` | Có | — | -90..90; bắt buộc khi publish |
 | `longitude` | `double precision` | Có | — | -180..180; bắt buộc khi publish |
 | `location_type` | `text` | Không | rỗng | Loại địa điểm; bắt buộc khi publish |
-| `short_description` | `text` | Không | rỗng | Mô tả 25–200 từ khi publish |
-| `long_description` | `text` | Không | rỗng | Mô tả 25–200 từ khi publish |
+| `short_description` | `text` | Không | rỗng | Mô tả 10–200 từ khi publish |
+| `long_description` | `text` | Không | rỗng | Mô tả 10–200 từ khi publish |
 | `cover_image_url` | `text` | Không | rỗng | Ảnh bìa HTTP(S) khi publish |
 | `cover_image_credit` | `text` | Không | rỗng | Credit ảnh bìa |
 | `cover_image_source_url` | `text` | Không | rỗng | URL nguồn ảnh HTTP(S) |
@@ -151,8 +151,8 @@ erDiagram
 | `name` | `text` | Không | rỗng | Tên điểm nổi bật |
 | `korean_name` | `text` | Không | rỗng | Tên tiếng Hàn |
 | `tagline` | `text` | Không | rỗng | Tagline |
-| `short_description` | `text` | Không | rỗng | Mô tả 25–200 từ |
-| `long_description` | `text` | Không | rỗng | Mô tả 25–200 từ |
+| `short_description` | `text` | Không | rỗng | Mô tả 10–200 từ |
+| `long_description` | `text` | Không | rỗng | Mô tả 10–200 từ |
 | `address` | `text` | Không | rỗng | Vị trí/địa chỉ |
 | `activities` | `text[]` | Không | `{}` | Ít nhất một hoạt động khi publish |
 | `fun_fact` | `text` | Không | rỗng | Fact của điểm nổi bật |
@@ -170,8 +170,8 @@ erDiagram
 | `revision_id` | `uuid` | Không | — | FK revision; xóa cascade |
 | `name` | `text` | Không | rỗng | Tên trải nghiệm |
 | `korean_name` | `text` | Không | rỗng | Tên tiếng Hàn |
-| `short_description` | `text` | Không | rỗng | Mô tả 25–200 từ |
-| `long_description` | `text` | Không | rỗng | Mô tả 25–200 từ |
+| `short_description` | `text` | Không | rỗng | Mô tả 10–200 từ |
+| `long_description` | `text` | Không | rỗng | Mô tả 10–200 từ |
 | `origin_meaning` | `text` | Không | rỗng | Nguồn gốc/ý nghĩa |
 | `recognizable_features` | `text[]` | Không | `{}` | Ít nhất một đặc điểm khi publish |
 | `dos` | `text[]` | Không | `{}` | Điều nên làm; tùy chọn |
@@ -204,8 +204,8 @@ erDiagram
 | `revision_id` | `uuid` | Không | — | FK revision; xóa cascade |
 | `period_label` | `text` | Không | rỗng | Năm hoặc giai đoạn |
 | `title` | `text` | Không | rỗng | Tiêu đề 1–10 từ khi publish |
-| `short_description` | `text` | Không | rỗng | Mô tả 25–200 từ |
-| `long_description` | `text` | Không | rỗng | Mô tả 25–200 từ |
+| `short_description` | `text` | Không | rỗng | Mô tả 10–200 từ |
+| `long_description` | `text` | Không | rỗng | Mô tả 10–200 từ |
 | `related_people` | `text` | Có | — | Nhân vật liên quan; tùy chọn |
 | `media_kind` | `content_media_kind` | Không | `image` | Ảnh hoặc YouTube |
 | `media_url` | `text` | Không | rỗng | URL đúng loại media |
@@ -222,8 +222,8 @@ erDiagram
 | `revision_id` | `uuid` | Không | — | FK revision; xóa cascade |
 | `name` | `text` | Không | rỗng | Tên món |
 | `korean_name` | `text` | Không | rỗng | Tên tiếng Hàn |
-| `short_description` | `text` | Không | rỗng | Mô tả 25–200 từ |
-| `long_description` | `text` | Không | rỗng | Mô tả 25–200 từ |
+| `short_description` | `text` | Không | rỗng | Mô tả 10–200 từ |
+| `long_description` | `text` | Không | rỗng | Mô tả 10–200 từ |
 | `ingredients` | `text[]` | Không | `{}` | Ít nhất một nguyên liệu |
 | `flavors` | `text[]` | Không | `{}` | Ít nhất một hương vị |
 | `special_feature` | `text` | Không | rỗng | Điểm đặc biệt |
@@ -239,7 +239,7 @@ erDiagram
 |---|---|---:|---|---|
 | `id` | `uuid` | Không | UUID tự sinh | PK |
 | `revision_id` | `uuid` | Không | — | FK revision; xóa cascade |
-| `fact` | `text` | Không | rỗng | Nội dung 25–200 từ khi publish |
+| `fact` | `text` | Không | rỗng | Nội dung 10–200 từ khi publish |
 | `display_order` | `integer` | Không | `0` | >= 0; unique trong revision |
 
 ### 5.11 `quiz_questions`
@@ -251,7 +251,7 @@ erDiagram
 | `stage` | `quiz_stage` | Không | — | Check-in, Văn hóa hoặc Final Quiz |
 | `kind` | `quiz_question_kind` | Không | — | Kiểu dữ liệu đáp án |
 | `prompt` | `text` | Không | rỗng | Đề bài; unique không phân biệt hoa/thường trong revision |
-| `explanation` | `text` | Không | rỗng | Giải thích 25–200 từ khi publish |
+| `explanation` | `text` | Không | rỗng | Giải thích 10–200 từ khi publish |
 | `media_kind` | `content_media_kind` | Có | — | Media tùy chọn |
 | `media_url` | `text` | Có | — | URL media tùy chọn |
 | `media_credit` | `text` | Có | — | Credit media tùy chọn |
@@ -347,7 +347,7 @@ Ngoài số lượng, database kiểm tra trường cốt lõi, độ dài mô t
 | `matching` | `quiz_matching_pairs` | 2–8 cặp; hai vế không rỗng và không trùng trong từng phía |
 | `ordering` | `quiz_ordering_items` | 2–8 mục không rỗng; `correct_position` biểu diễn thứ tự đúng |
 
-Mọi Câu hỏi cần `prompt` và phần giải thích 25–200 từ. Media câu hỏi là tùy chọn.
+Mọi Câu hỏi cần `prompt` và phần giải thích 10–200 từ. Media câu hỏi là tùy chọn.
 
 `quiz_options.is_correct`, cặp matching và vị trí ordering hiện có thể được public đọc cùng revision Published. Điều này thuận tiện cho client MVP nhưng làm lộ đáp án nếu người dùng truy vấn API trực tiếp; nhóm cần quyết định có chuyển chấm điểm sang RPC/server hay không.
 
@@ -457,7 +457,7 @@ Kiểm tra ngày 2026-10-08 bằng Supabase CLI (`supabase migration list --link
 7. Bản dịch AI luôn là `needs_review`; chỉ bản được Admin duyệt mới hiển thị công khai.
 8. Thiếu bản dịch không ẩn nội dung: read model fallback tiếng Việt và trả cờ `is_fallback` để UI thông báo.
 9. API key Gemini chỉ đặt trong secret của Edge Function, không đưa vào Flutter Web.
-10. Rule publish cho MVP dùng khoảng 25–200 từ cho nội dung mô tả, giảm số section item tối thiểu, cho phép 2–6 đáp án ở câu một lựa chọn và không chặn vì metadata/media tùy chọn ở các mục lặp.
+10. Rule publish cho MVP dùng khoảng 10–200 từ cho nội dung mô tả, giảm số section item tối thiểu, cho phép 2–6 đáp án ở câu một lựa chọn và không chặn vì metadata/media tùy chọn ở các mục lặp.
 
 ## 15. Các điểm cần nhóm thảo luận
 
