@@ -349,6 +349,8 @@ Ngoài số lượng, database kiểm tra trường cốt lõi, độ dài mô t
 
 Mọi Câu hỏi cần `prompt` và phần giải thích 10–200 từ. Media câu hỏi là tùy chọn.
 
+`validate_location_revision` vẫn trả lỗi quiz theo nhóm dưới dạng `text[]`. Flutter Admin đối chiếu từng lỗi nhóm với Bản nháp vừa lưu để tạo `AdminDiagnostic` có `itemIndex`, số câu hiển thị, prompt rút gọn và lý do cụ thể. Nếu đối chiếu không tìm thấy câu tương ứng, ứng dụng giữ nguyên thông báo database thay vì che mất lỗi.
+
 `quiz_options.is_correct`, cặp matching và vị trí ordering hiện có thể được public đọc cùng revision Published. Điều này thuận tiện cho client MVP nhưng làm lộ đáp án nếu người dùng truy vấn API trực tiếp; nhóm cần quyết định có chuyển chấm điểm sang RPC/server hay không.
 
 ## 9. Media và nguồn
@@ -375,6 +377,8 @@ flowchart LR
 Admin lưu Tổng quan, Du lịch hoặc một section lặp lại qua RPC riêng. Mỗi lần lưu gửi `expected_lock_version`; database khóa row Draft, so sánh phiên khóa và tăng `lock_version` sau khi ghi. Nếu một tab hoặc Admin khác đã lưu trước, request cũ bị từ chối để tránh ghi đè thầm lặng.
 
 Khi sửa Location đã Published, `create_location_draft_from_current` sao chép revision hiện hành và toàn bộ bảng con sang Draft mới. `publish_location_revision` validate lại trên database, đổi bản Published cũ thành Archived rồi đổi Draft thành Published trong cùng transaction.
+
+Trong màn hình kiểm tra, lỗi quiz được hiển thị theo đúng số câu và prompt. Nút **Đi tới sửa** chuyển sang Quiz tổng kết, cuộn tới thẻ câu tương ứng và tô viền lỗi; locator dùng chỉ số nội bộ zero-based nhưng nội dung hiển thị cho Admin là one-based.
 
 Archive một Location bị từ chối nếu Location còn Draft hoặc đang là prerequisite của một Location Published khác.
 
@@ -427,15 +431,15 @@ Kiểm tra ngày 2026-10-08 bằng Supabase CLI (`supabase migration list --link
 | Hạng mục | Trạng thái quan sát được |
 |---|---|
 | Supabase Cloud project | Project `KOREAQUEST`, org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`, region Northeast Asia (Tokyo) |
-| Migration trên cloud | **Đã áp dụng đến** `20261008094500_simplify_publish_validation.sql`; cột Local và Remote đã khớp |
+| Migration trên cloud | **Đã áp dụng đến** `20261008111918_lower_publish_word_minimum.sql`; cột Local và Remote đã khớp |
 | Bảng trên cloud | Có đầy đủ các bảng Content, Gameplay và bảng mới `location_revision_translations` |
 | Dữ liệu trên cloud | Có 4 Location, 18 Location Revision, 2 Admin; migration đã backfill 18 bản nguồn tiếng Việt trong `location_revision_translations` |
 | Migration schema trong repo | Đã đồng bộ thêm migration cloud `20261004110000_diversify_namsan_media.sql`; migration đa ngôn ngữ `20261007193000` đã áp dụng cloud |
-| Nới rule xuất bản | Migration `20261008094500_simplify_publish_validation.sql` đã áp dụng lên cloud ngày 2026-10-08 |
+| Nới rule xuất bản | Các migration `20261008094500_simplify_publish_validation.sql` và `20261008111918_lower_publish_word_minimum.sql` đã áp dụng lên cloud ngày 2026-10-08 |
 | Edge Function | `translate-location` ACTIVE, version 3; endpoint yêu cầu JWT và trả HTTP 401 khi gọi không xác thực; smoke test `gemini-3.1-flash-lite` đã dịch thành công ngày 2026-10-08 |
 | Secret dịch AI | Đã cấu hình `GEMINI_API_KEY` và `GEMINI_TRANSLATION_MODEL=gemini-3.1-flash-lite` trên Supabase; giá trị khóa không lưu trong repository |
 | pgTAP | Có 42 assertion, gồm kiểm tra type/table/RPC đa ngôn ngữ và rule publish đã nới; chưa chạy local vì Docker engine chưa hoạt động |
-| Flutter Admin | Có model/repository và UI editor trong working tree local của owner, chưa commit |
+| Flutter Admin | Có model/repository và UI editor; lỗi quiz được định vị tới số câu cụ thể và nút sửa cuộn tới đúng thẻ |
 | Explore/Journey runtime | Explore đọc Supabase read model khi có cấu hình và gửi locale `vi`/`en`/`ko`; thiếu bản dịch sẽ fallback tiếng Việt |
 | Docker/local DB | Chưa chạy migration và pgTAP local |
 
@@ -458,6 +462,7 @@ Kiểm tra ngày 2026-10-08 bằng Supabase CLI (`supabase migration list --link
 8. Thiếu bản dịch không ẩn nội dung: read model fallback tiếng Việt và trả cờ `is_fallback` để UI thông báo.
 9. API key Gemini chỉ đặt trong secret của Edge Function, không đưa vào Flutter Web.
 10. Rule publish cho MVP dùng khoảng 10–200 từ cho nội dung mô tả, giảm số section item tối thiểu, cho phép 2–6 đáp án ở câu một lựa chọn và không chặn vì metadata/media tùy chọn ở các mục lặp.
+11. RPC validation tiếp tục giữ hợp đồng `text[]`; Flutter Admin làm giàu lỗi quiz bằng dữ liệu Bản nháp đã lưu và `AdminDiagnostic.itemIndex` để định vị chính xác mà không đổi hợp đồng database.
 
 ## 15. Các điểm cần nhóm thảo luận
 

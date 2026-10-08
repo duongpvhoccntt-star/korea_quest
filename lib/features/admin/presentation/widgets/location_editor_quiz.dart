@@ -10,11 +10,15 @@ class LocationQuizEditor extends StatelessWidget {
   const LocationQuizEditor({
     required this.draft,
     required this.onChanged,
+    this.itemKeyBuilder,
+    this.highlightedQuestionIndex,
     super.key,
   });
 
   final AdminLocationDraft draft;
   final VoidCallback onChanged;
+  final Key Function(Map<String, dynamic> question, int index)? itemKeyBuilder;
+  final int? highlightedQuestionIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +40,8 @@ class LocationQuizEditor extends StatelessWidget {
           itemLabel: 'câu hỏi',
           minimum: 5,
           maximum: 30,
+          itemKeyBuilder: itemKeyBuilder,
+          highlightedIndex: highlightedQuestionIndex,
           createItem: _newQuestion,
           onChanged: onChanged,
           itemBuilder: (context, question, index) => _QuestionEditor(

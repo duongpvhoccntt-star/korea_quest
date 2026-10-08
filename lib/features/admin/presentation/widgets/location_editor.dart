@@ -45,6 +45,8 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
   var _validationErrors = <String>[];
   var _activeLocale = ContentLocale.vi;
   var _translationDirty = false;
+  final _quizQuestionKeys = Expando<GlobalKey>();
+  int? _highlightedQuizQuestionIndex;
 
   bool get _dirty => _dirtySteps.isNotEmpty;
 
@@ -58,6 +60,7 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
     setState(() {
       _dirtySteps.add(_currentStep);
       _validationErrors = [];
+      _highlightedQuizQuestionIndex = null;
     });
   }
 
@@ -66,7 +69,42 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
     setState(() {
       _currentStep = nextStep;
       _validationErrors = [];
+      _highlightedQuizQuestionIndex = null;
     });
+  }
+
+  GlobalKey _quizQuestionKey(Map<String, dynamic> question) =>
+      _quizQuestionKeys[question] ??= GlobalKey();
+
+  Future<void> _goToDiagnostic(AdminDiagnostic diagnostic) async {
+    if (_saving) return;
+    final questionIndex = diagnostic.stepIndex == 7
+        ? diagnostic.itemIndex
+        : null;
+    final question =
+        questionIndex != null &&
+            questionIndex >= 0 &&
+            questionIndex < _draft.quiz.length
+        ? _draft.quiz[questionIndex]
+        : null;
+    final targetKey = question == null ? null : _quizQuestionKey(question);
+
+    setState(() {
+      _currentStep = diagnostic.stepIndex;
+      _validationErrors = [];
+      _highlightedQuizQuestionIndex = questionIndex;
+    });
+
+    if (targetKey == null) return;
+    await WidgetsBinding.instance.endOfFrame;
+    final targetContext = targetKey.currentContext;
+    if (targetContext == null || !targetContext.mounted) return;
+    await Scrollable.ensureVisible(
+      targetContext,
+      alignment: 0.12,
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeOutCubic,
+    );
   }
 
   Future<void> _requestClose() async {
@@ -177,8 +215,10 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
     }
   }
 
-  List<AdminDiagnostic> get _diagnostics =>
-      _validationErrors.map(parseAdminDiagnostic).toList();
+  List<AdminDiagnostic> get _diagnostics => expandAdminValidationErrors(
+    _validationErrors,
+    _draft,
+  ).map(parseAdminDiagnostic).toList();
 
   List<AdminDiagnostic> get _blockingErrors =>
       _diagnostics.where((d) => d.isBlocking).toList();
@@ -456,13 +496,18 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
       4 => LocationExperiencesEditor(draft: _draft, onChanged: _markDirty),
       5 => LocationFoodsEditor(draft: _draft, onChanged: _markDirty),
       6 => LocationFunFactsEditor(draft: _draft, onChanged: _markDirty),
-      7 => LocationQuizEditor(draft: _draft, onChanged: _markDirty),
+      7 => LocationQuizEditor(
+        draft: _draft,
+        onChanged: _markDirty,
+        itemKeyBuilder: (question, _) => _quizQuestionKey(question),
+        highlightedQuestionIndex: _highlightedQuizQuestionIndex,
+      ),
       8 => LocationTravelEditor(draft: _draft, onChanged: _markDirty),
       _ => LocationReviewEditor(
         draft: _draft,
         validationErrors: _validationErrors,
         onChanged: _markDirty,
-        onGoToStep: _selectStep,
+        onGoToDiagnostic: _goToDiagnostic,
       ),
     };
   }
