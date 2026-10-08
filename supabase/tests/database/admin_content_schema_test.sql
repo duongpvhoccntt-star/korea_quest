@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(38);
+select plan(42);
 
 select has_type(
   'public',
@@ -153,6 +153,26 @@ select is(
   private.word_count('mot hai ba'),
   3,
   'word count helper supports publication length rules'
+);
+select like(
+  pg_get_functiondef('public.validate_location_revision(uuid)'::regprocedure),
+  '%quiz_count not between 5 and 30%',
+  'publication validator accepts 5 to 30 final quiz questions'
+);
+select like(
+  pg_get_functiondef('public.validate_location_revision(uuid)'::regprocedure),
+  '%not between 2 and 6%',
+  'publication validator accepts 2 to 6 single-choice answers'
+);
+select like(
+  pg_get_functiondef('public.validate_location_revision(uuid)'::regprocedure),
+  '%question.explanation) not between 25 and 200%',
+  'publication validator accepts quiz explanations from 25 to 200 words'
+);
+select unlike(
+  pg_get_functiondef('public.validate_location_revision(uuid)'::regprocedure),
+  '%Cần ít nhất một nguồn hiển thị%',
+  'publication validator does not require a content source'
 );
 
 select set_config(

@@ -34,8 +34,8 @@ class LocationQuizEditor extends StatelessWidget {
           title: 'Quiz tổng kết',
           items: draft.quiz,
           itemLabel: 'câu hỏi',
-          minimum: 10,
-          maximum: 20,
+          minimum: 5,
+          maximum: 30,
           createItem: _newQuestion,
           onChanged: onChanged,
           itemBuilder: (context, question, index) => _QuestionEditor(
@@ -57,12 +57,12 @@ class _CountChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Chip(
     avatar: Icon(
-      count >= 10 && count <= 20
+      count >= 5 && count <= 30
           ? Icons.check_circle_outline
           : Icons.warning_amber_rounded,
-      color: count >= 10 && count <= 20 ? AppColors.green : AppColors.coralDark,
+      color: count >= 5 && count <= 30 ? AppColors.green : AppColors.coralDark,
     ),
-    label: Text('Quiz tổng kết: $count/20 · tối thiểu 10'),
+    label: Text('Quiz tổng kết: $count/30 · tối thiểu 5'),
   );
 }
 
@@ -119,7 +119,7 @@ class _QuestionEditor extends StatelessWidget {
           onChanged,
           maxLines: 4,
           minWords: 25,
-          maxWords: 50,
+          maxWords: 200,
         ),
         const SizedBox(height: AppSpacing.md),
         _MediaEditor(draft: draft, question: question, onChanged: onChanged),
@@ -231,7 +231,7 @@ class _SingleChoiceEditor extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Đáp án (3–4, chọn đúng một)',
+          'Đáp án (2–6, chọn đúng một)',
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -262,7 +262,7 @@ class _SingleChoiceEditor extends StatelessWidget {
                       ),
                       IconButton(
                         tooltip: 'Xóa đáp án',
-                        onPressed: options.length > 3
+                        onPressed: options.length > 2
                             ? () {
                                 final removedCorrect =
                                     options[index]['is_correct'] == true;
@@ -286,7 +286,7 @@ class _SingleChoiceEditor extends StatelessWidget {
           child: SecondaryButton(
             label: 'Thêm đáp án',
             icon: Icons.add_rounded,
-            onPressed: options.length < 4
+            onPressed: options.length < 6
                 ? () {
                     options.add({'text': '', 'is_correct': false});
                     onChanged();
@@ -334,10 +334,10 @@ class _MatchingEditor extends StatelessWidget {
   Widget build(BuildContext context) {
     final pairs = _mapList(question, 'pairs');
     return _NestedAnswerList(
-      title: 'Cặp nối (3–6 cặp, mỗi vế không trùng)',
+      title: 'Cặp nối (2–8 cặp, mỗi vế không trùng)',
       items: pairs,
-      minimum: 3,
-      maximum: 6,
+      minimum: 2,
+      maximum: 8,
       createItem: () => {'left': '', 'right': ''},
       onChanged: onChanged,
       itemBuilder: (item, index) => AdminFieldGrid(
@@ -360,10 +360,10 @@ class _OrderingEditor extends StatelessWidget {
   Widget build(BuildContext context) {
     final items = _mapList(question, 'items');
     return _NestedAnswerList(
-      title: 'Thứ tự đúng (3–6 mục)',
+      title: 'Thứ tự đúng (2–8 mục)',
       items: items,
-      minimum: 3,
-      maximum: 6,
+      minimum: 2,
+      maximum: 8,
       createItem: () => {'text': ''},
       onChanged: onChanged,
       itemBuilder: (item, index) =>
@@ -469,7 +469,6 @@ Map<String, dynamic> _newQuestion() => {
   'options': [
     {'text': '', 'is_correct': true},
     {'text': '', 'is_correct': false},
-    {'text': '', 'is_correct': false},
   ],
   'pairs': <Map<String, dynamic>>[],
   'items': <Map<String, dynamic>>[],
@@ -484,15 +483,14 @@ void _ensureAnswerData(Map<String, dynamic> question) {
       ];
       return;
     case 'matching':
-      question['pairs'] = List.generate(3, (_) => {'left': '', 'right': ''});
+      question['pairs'] = List.generate(2, (_) => {'left': '', 'right': ''});
       return;
     case 'ordering':
-      question['items'] = List.generate(3, (_) => {'text': ''});
+      question['items'] = List.generate(2, (_) => {'text': ''});
       return;
     default:
       question['options'] = [
         {'text': '', 'is_correct': true},
-        {'text': '', 'is_correct': false},
         {'text': '', 'is_correct': false},
       ];
       return;

@@ -48,23 +48,23 @@ void main() {
       );
     });
 
-    test('chỉ chấp nhận 10–20 câu Quiz tổng kết', () async {
+    test('chỉ chấp nhận 5–30 câu Quiz tổng kết', () async {
       final draft = AdminLocationDraft(
-        quiz: List.generate(9, (_) => <String, dynamic>{'is_visible': true}),
+        quiz: List.generate(4, (_) => <String, dynamic>{'is_visible': true}),
       );
 
       var errors = await repository.validateDraft(draft);
-      expect(errors, contains(contains('10 đến 20')));
+      expect(errors, contains(contains('5 đến 30')));
 
       draft.quiz.add(<String, dynamic>{'is_visible': true});
       errors = await repository.validateDraft(draft);
-      expect(errors, isNot(contains(contains('10 đến 20'))));
+      expect(errors, isNot(contains(contains('5 đến 30'))));
 
       draft.quiz.addAll(
-        List.generate(11, (_) => <String, dynamic>{'is_visible': false}),
+        List.generate(26, (_) => <String, dynamic>{'is_visible': false}),
       );
       errors = await repository.validateDraft(draft);
-      expect(errors, contains(contains('10 đến 20')));
+      expect(errors, contains(contains('5 đến 30')));
     });
 
     test('lưu và cập nhật cấu hình gameplay trong demo', () async {

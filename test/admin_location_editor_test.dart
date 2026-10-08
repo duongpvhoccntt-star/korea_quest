@@ -8,6 +8,31 @@ import 'package:korea_quest/features/admin/presentation/providers/admin_provider
 import 'package:korea_quest/features/admin/presentation/widgets/location_editor.dart';
 
 void main() {
+  test('demo validation uses the relaxed MVP section thresholds', () async {
+    final repository = DemoAdminRepository();
+    addTearDown(repository.dispose);
+    Map<String, dynamic> visibleItem() => {'is_visible': true};
+    final draft = AdminLocationDraft(
+      locationId: 'location-1',
+      revisionId: 'revision-1',
+      slug: 'dia-diem-test',
+      overview: {
+        ...AdminLocationDraft.emptyOverview(),
+        'name': 'Địa điểm test',
+      },
+      history: List.generate(2, (_) => visibleItem()),
+      highlights: List.generate(2, (_) => visibleItem()),
+      experiences: [visibleItem()],
+      foods: [visibleItem()],
+      funFacts: List.generate(2, (_) => visibleItem()),
+      quiz: List.generate(5, (_) => visibleItem()),
+    );
+
+    final errors = await repository.validateDraft(draft);
+
+    expect(errors, isEmpty);
+  });
+
   testWidgets('editor scrolls without overflowing a desktop viewport', (
     tester,
   ) async {
@@ -30,7 +55,7 @@ void main() {
     expect(find.text('Lịch sử hình thành'), findsOneWidget);
   });
 
-  testWidgets('editor only exposes the final quiz with a 20-question cap', (
+  testWidgets('editor only exposes the final quiz with a 30-question cap', (
     tester,
   ) async {
     await _pumpEditor(tester, const Size(1260, 3000));
@@ -38,7 +63,7 @@ void main() {
     await tester.tap(find.text('8. Quiz tổng kết'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Quiz tổng kết: 0/20 · tối thiểu 10'), findsOneWidget);
+    expect(find.text('Quiz tổng kết: 0/30 · tối thiểu 5'), findsOneWidget);
     expect(find.text('Nhóm quiz'), findsNothing);
     expect(find.text('Quiz Check-in'), findsNothing);
     expect(find.text('Quiz Văn hóa'), findsNothing);
