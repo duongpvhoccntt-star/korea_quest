@@ -1035,6 +1035,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get imageUpdating => 'Image being updated';
 
   @override
+  String get previousImage => 'Previous image';
+
+  @override
+  String get nextImage => 'Next image';
+
+  @override
+  String imagePosition(int current, int total) {
+    return 'Image $current of $total';
+  }
+
+  @override
   String get areaMap => 'Area map';
 
   @override

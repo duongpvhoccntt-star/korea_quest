@@ -1960,6 +1960,24 @@ abstract class AppLocalizations {
   /// **'Ảnh đang được cập nhật'**
   String get imageUpdating;
 
+  /// No description provided for @previousImage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ảnh trước'**
+  String get previousImage;
+
+  /// No description provided for @nextImage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ảnh tiếp theo'**
+  String get nextImage;
+
+  /// No description provided for @imagePosition.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ảnh {current} trên {total}'**
+  String imagePosition(int current, int total);
+
   /// No description provided for @areaMap.
   ///
   /// In vi, this message translates to:

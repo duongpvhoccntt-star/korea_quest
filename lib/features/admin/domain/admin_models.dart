@@ -78,6 +78,8 @@ enum AdminRevisionStatus {
   };
 }
 
+const adminImageGalleryLimit = 10;
+
 class AdminSession {
   const AdminSession({this.userId, this.email});
 
@@ -157,6 +159,17 @@ class AdminLocationDraft {
        translations = translations ?? {};
 
   factory AdminLocationDraft.fromJson(Map<String, dynamic> json) {
+    final history = _list(json['history']);
+    final highlights = _list(json['highlights']);
+    final experiences = _list(json['experiences']);
+    final foods = _list(json['foods']);
+    for (final item in [...history, ...highlights, ...experiences]) {
+      adminImageGallery(item, legacyPrefix: 'media');
+    }
+    for (final item in foods) {
+      adminImageGallery(item, legacyPrefix: 'image');
+    }
+
     return AdminLocationDraft(
       locationId: json['location_id'] as String,
       revisionId: json['revision_id'] as String,
@@ -165,11 +178,11 @@ class AdminLocationDraft {
       versionNumber: json['version_number'] as int,
       lockVersion: json['lock_version'] as int,
       overview: _map(json['overview']),
-      history: _list(json['history']),
-      highlights: _list(json['highlights']),
-      experiences: _list(json['experiences']),
+      history: history,
+      highlights: highlights,
+      experiences: experiences,
       experienceGuide: _map(json['experience_guide']),
-      foods: _list(json['foods']),
+      foods: foods,
       funFacts: _list(json['fun_facts']),
       quiz: _list(json['quiz']),
       travel: _map(json['travel']),
@@ -281,7 +294,9 @@ class AdminLocationDraft {
         'categories',
         'tags',
         'icon_name',
-        'unlock_after_stage',
+        'image_gallery',
+        'media_alt',
+        'image_alt',
         'is_visible',
         'is_recommended',
         'display_order',
@@ -311,6 +326,30 @@ class AdminLocationDraft {
       }
       return null;
     }
+
+    List<Map<String, dynamic>> translatableContentItems(
+      List<Map<String, dynamic>> items, {
+      required String legacyPrefix,
+      required bool supportsYoutube,
+    }) => [
+      for (final item in items)
+        () {
+          final localized = Map<String, dynamic>.from(
+            translatableShape(item) as Map? ?? const <String, dynamic>{},
+          );
+          final gallery = adminImageGallery(item, legacyPrefix: legacyPrefix);
+          if (supportsYoutube && item['media_kind'] == 'youtube') {
+            localized['media'] = {'alt': copy(item['media_alt'])};
+          } else if (gallery.isNotEmpty) {
+            localized['media'] = {
+              'images': [
+                for (final image in gallery) {'alt': copy(image['alt'])},
+              ],
+            };
+          }
+          return localized;
+        }(),
+    ];
 
     final o = overview;
     final summary = <String, dynamic>{
@@ -369,21 +408,90 @@ class AdminLocationDraft {
         'caption': copy(o['hook_caption']),
       },
       'quick_facts': translatableShape(o['quick_facts'] ?? const []),
-      'history': translatableShape(history),
-      'highlights': translatableShape(highlights),
-      'experiences': translatableShape(experiences),
+      'history': translatableContentItems(
+        history,
+        legacyPrefix: 'media',
+        supportsYoutube: true,
+      ),
+      'highlights': translatableContentItems(
+        highlights,
+        legacyPrefix: 'media',
+        supportsYoutube: true,
+      ),
+      'experiences': translatableContentItems(
+        experiences,
+        legacyPrefix: 'media',
+        supportsYoutube: true,
+      ),
       'culture_guidelines': [
         for (final value in (experienceGuide['dos'] as List? ?? const []))
           {'kind': 'do', 'content': copy(value)},
         for (final value in (experienceGuide['donts'] as List? ?? const []))
           {'kind': 'dont', 'content': copy(value)},
       ],
-      'foods': translatableShape(foods),
+      'foods': translatableContentItems(
+        foods,
+        legacyPrefix: 'image',
+        supportsYoutube: false,
+      ),
       'fun_facts': translatableShape(funFacts),
       'quiz': localizedQuiz,
       'travel': translatableShape(travel),
     };
     return {'summary': summary, 'detail': detail};
+  }
+}
+
+List<Map<String, dynamic>> adminImageGallery(
+  Map<String, dynamic> item, {
+  required String legacyPrefix,
+}) {
+  final rawGallery = item['image_gallery'];
+  final List<Map<String, dynamic>> gallery;
+  if (rawGallery is List<Map<String, dynamic>>) {
+    gallery = rawGallery;
+  } else if (rawGallery is List) {
+    gallery = rawGallery
+        .whereType<Map>()
+        .map(
+          (image) => image.map((key, value) => MapEntry(key.toString(), value)),
+        )
+        .toList();
+  } else {
+    gallery = <Map<String, dynamic>>[];
+  }
+
+  if (rawGallery == null &&
+      (item['${legacyPrefix}_url']?.toString().trim().isNotEmpty ?? false)) {
+    gallery.add({
+      'url': item['${legacyPrefix}_url']?.toString() ?? '',
+      'credit': item['${legacyPrefix}_credit']?.toString() ?? '',
+      'source_url': item['${legacyPrefix}_source_url']?.toString() ?? '',
+      'alt': item['${legacyPrefix}_alt']?.toString() ?? '',
+    });
+  }
+
+  item['image_gallery'] = gallery;
+  return gallery;
+}
+
+Map<String, dynamic> emptyAdminGalleryImage() => {
+  'url': '',
+  'credit': '',
+  'source_url': '',
+  'alt': '',
+};
+
+void applyUploadedGalleryImage(Map<String, dynamic> image, String publicUrl) {
+  image['url'] = publicUrl;
+  if (image['credit']?.toString().trim().isEmpty ?? true) {
+    image['credit'] = 'KoreaQuest';
+  }
+  if (image['source_url']?.toString().trim().isEmpty ?? true) {
+    image['source_url'] = publicUrl;
+  }
+  if (image['alt']?.toString().trim().isEmpty ?? true) {
+    image['alt'] = 'Ảnh tải lên KoreaQuest';
   }
 }
 

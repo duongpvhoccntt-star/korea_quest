@@ -1,8 +1,8 @@
 # KoreaQuest Database & Domain Model
 
 > Trạng thái: Tài liệu thảo luận kỹ thuật, chưa phải cam kết triển khai production.
-> Nguồn đối chiếu: migrations đến `20261008120000_finalize_free_exploration.sql`, model/repository Admin và Explore, `CONTEXT.md`, ADR và `TEAM_OWNERSHIP.md` tại ngày 2026-10-09.
-> Trạng thái cloud: đã xác minh ngày 2026-10-09 trên project `KOREAQUEST` (org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`). Cloud đã áp dụng đến `20261008120000_finalize_free_exploration.sql` và lịch sử Local/Remote khớp. Edge Function `translate-location` đang ACTIVE; các secret `GEMINI_API_KEY` và `GEMINI_TRANSLATION_MODEL=gemini-3.1-flash-lite` đã được cấu hình.
+> Nguồn đối chiếu: migrations đến `20261008160000_add_content_image_galleries.sql`, model/repository Admin và Explore, `CONTEXT.md`, ADR và `TEAM_OWNERSHIP.md` tại ngày 2026-10-09.
+> Trạng thái cloud: đã xác minh ngày 2026-10-09 trên project `KOREAQUEST` (org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`). Cloud đã áp dụng đến `20261008160000_add_content_image_galleries.sql`; lịch sử Local/Remote khớp và dry-run sau triển khai xác nhận không còn migration chờ áp dụng. OpenAPI có đủ bốn cột gallery cùng RPC Published/Admin mới; smoke test Published xác nhận `media.images` và các trường tương thích ảnh đầu tiên. Edge Function `translate-location` đang ACTIVE; các secret `GEMINI_API_KEY` và `GEMINI_TRANSLATION_MODEL=gemini-3.1-flash-lite` đã được cấu hình.
 
 ## 1. Mục tiêu và phạm vi
 
@@ -69,6 +69,8 @@ erDiagram
 ```
 
 `AUTH_USERS` là `auth.users` do Supabase Auth quản lý, không được tạo trong migration nội dung.
+
+Bốn bảng `location_history`, `location_highlights`, `location_experiences` và `location_foods` lưu gallery có thứ tự ngay trên từng item bằng `image_gallery jsonb`. Gallery không tạo aggregate hay quan hệ mới: mỗi mảng chứa tối đa 10 ảnh và giữ nguyên thứ tự hiển thị.
 
 ## 5. Data Dictionary
 
@@ -160,6 +162,7 @@ erDiagram
 | `media_url` | `text` | Không | rỗng | URL đúng loại media |
 | `media_credit` | `text` | Không | rỗng | Credit media |
 | `media_source_url` | `text` | Không | rỗng | URL nguồn HTTP(S) |
+| `image_gallery` | `jsonb` | Không | `[]` | Tối đa 10 ảnh có thứ tự; mỗi phần tử gồm `url`, `credit`, `source_url`, `alt` dạng chuỗi |
 | `display_order` | `integer` | Không | `0` | >= 0; unique trong revision |
 
 ### 5.6 `location_experiences`
@@ -181,6 +184,7 @@ erDiagram
 | `media_url` | `text` | Không | rỗng | URL đúng loại media |
 | `media_credit` | `text` | Không | rỗng | Credit media |
 | `media_source_url` | `text` | Không | rỗng | URL nguồn HTTP(S) |
+| `image_gallery` | `jsonb` | Không | `[]` | Tối đa 10 ảnh có thứ tự; mỗi phần tử gồm `url`, `credit`, `source_url`, `alt` dạng chuỗi |
 | `display_order` | `integer` | Không | `0` | >= 0; unique trong revision |
 
 
@@ -211,6 +215,7 @@ erDiagram
 | `media_url` | `text` | Không | rỗng | URL đúng loại media |
 | `media_credit` | `text` | Không | rỗng | Credit media |
 | `media_source_url` | `text` | Không | rỗng | URL nguồn HTTP(S) |
+| `image_gallery` | `jsonb` | Không | `[]` | Tối đa 10 ảnh có thứ tự; mỗi phần tử gồm `url`, `credit`, `source_url`, `alt` dạng chuỗi |
 | `fun_fact` | `text` | Không | rỗng | Fact của mốc lịch sử |
 | `display_order` | `integer` | Không | `0` | >= 0; unique trong revision |
 
@@ -231,6 +236,7 @@ erDiagram
 | `image_url` | `text` | Không | rỗng | URL ảnh HTTP(S) |
 | `image_credit` | `text` | Không | rỗng | Credit ảnh |
 | `image_source_url` | `text` | Không | rỗng | URL nguồn HTTP(S) |
+| `image_gallery` | `jsonb` | Không | `[]` | Tối đa 10 ảnh có thứ tự; mỗi phần tử gồm `url`, `credit`, `source_url`, `alt` dạng chuỗi |
 | `display_order` | `integer` | Không | `0` | >= 0; unique trong revision |
 
 ### 5.10 `location_fun_facts`
@@ -356,7 +362,7 @@ Media mở đầu → Tổng quan → Lịch sử → Điểm đến
 | Fun Facts | Tối thiểu 2 |
 | Quiz tổng kết | 5–30 câu |
 
-Ngoài số lượng, database kiểm tra trường cốt lõi, độ dài mô tả, media mở đầu, thông tin du lịch và tọa độ. Với các mục lặp (Lịch sử, Điểm đến, Trải nghiệm, Ẩm thực, Fun Fact), metadata bổ sung và media là tùy chọn; tên/nội dung chính và giới hạn từ vẫn bắt buộc. Draft luôn được phép lưu khi chưa đủ điều kiện publish. Thứ tự chín Chặng chỉ là hướng dẫn; Quiz, Du lịch và Fun Facts đều có thể mở trực tiếp trong Địa điểm `released`.
+Ngoài số lượng, database kiểm tra trường cốt lõi, độ dài mô tả, media mở đầu, thông tin du lịch và tọa độ. Với các mục lặp (Lịch sử, Điểm đến, Trải nghiệm, Ẩm thực, Fun Fact), metadata bổ sung và media là tùy chọn; tên/nội dung chính và giới hạn từ vẫn bắt buộc. Draft luôn được phép lưu khi chưa đủ điều kiện publish. Gallery của từng item có tối đa 10 phần tử; Draft có thể chứa ảnh chưa hoàn chỉnh, nhưng khi publish mọi ảnh đã thêm phải có URL HTTP(S) hợp lệ. Thứ tự chín Chặng chỉ là hướng dẫn; Quiz, Du lịch và Fun Facts đều có thể mở trực tiếp trong Địa điểm `released`.
 
 ## 8. Quiz Model
 
@@ -376,6 +382,8 @@ Mọi Câu hỏi cần `prompt` và phần giải thích 10–200 từ. Media c�
 ## 9. Media và nguồn
 
 - Ảnh dùng URL HTTP(S); video dùng domain YouTube hoặc `youtu.be`.
+- Lịch sử, Điểm đến, Trải nghiệm và Ẩm thực dùng `image_gallery` có thứ tự, tối đa 10 ảnh. Public read model trả `media.images`; đồng thời chiếu ảnh đầu tiên vào `media.url`, `media.credit`, `media.source_url`, `media.alt` để tương thích client cũ.
+- Lịch sử, Điểm đến và Trải nghiệm vẫn có thể chọn một video YouTube thay cho gallery. Gallery được giữ trong Draft khi đổi chế độ, nhưng public payload chỉ trả loại media đang hoạt động.
 - Ảnh bìa và hook cần credit cùng URL nguồn; media trong từng mục Lịch sử, Điểm đến, Trải nghiệm, Ẩm thực và Fun Fact là tùy chọn cho MVP.
 - Media của Câu hỏi là trường tùy chọn duy nhất trong quiz.
 - `location_sources` lưu nguồn cấp revision, gồm title, publisher, URL và ngày truy cập.
@@ -398,6 +406,8 @@ Admin lưu Tổng quan, Du lịch hoặc một section lặp lại qua RPC riên
 
 Khi sửa Location đã Published, `create_location_draft_from_current` sao chép revision hiện hành và toàn bộ bảng con sang Draft mới. `publish_location_revision` validate lại trên database, đổi bản Published cũ thành Archived rồi đổi Draft thành Published trong cùng transaction.
 
+Editor gallery cho biết rõ số ảnh hiện có trên giới hạn 10, cho phép thêm, tải lên, xóa và đổi thứ tự từng ảnh cùng metadata. Nguồn dịch chỉ chứa `media.images[index].alt`; URL, credit và URL nguồn là dữ liệu dùng chung. RPC lưu gallery vẫn nhận payload cũ không có `image_gallery` và tự chuẩn hóa ảnh đơn thành gallery một phần tử.
+
 Trong màn hình kiểm tra, lỗi quiz được hiển thị theo đúng số câu và prompt. Nút **Đi tới sửa** chuyển sang Quiz tổng kết, cuộn tới thẻ câu tương ứng và tô viền lỗi; locator dùng chỉ số nội bộ zero-based nhưng nội dung hiển thị cho Admin là one-based.
 
 Archive một Location bị từ chối nếu Location còn Draft. Không còn dependency Địa điểm tiên quyết.
@@ -414,14 +424,16 @@ Admin biên tập theo ba tab ngôn ngữ. Tiếng Việt là Bản nguồn. Nú
 | `create_location_draft_from_current` | `location_id` | JSON IDs + lock version | Trả Draft hiện có hoặc clone revision mới nhất |
 | `save_location_overview` | revision, expected lock, slug, payload | JSON lock version mới | Lưu overview và thay toàn bộ quick facts |
 | `save_location_section` | revision, expected lock, section name, items | JSON lock version mới | Thay nguyên tử một section lặp lại hoặc quiz |
+| `save_location_section_with_galleries` | revision, expected lock, section name, items | JSON lock version mới | Bao `save_location_section`, lưu gallery cho bốn section hỗ trợ và nhận cả payload ảnh đơn cũ |
 | `save_location_travel` | revision, expected lock, payload | JSON lock version mới | Lưu thông tin du lịch |
 | `validate_location_revision` | `revision_id` | `text[]` | Trả danh sách lỗi publish, không đổi trạng thái |
+| `validate_location_revision_with_galleries` | `revision_id` | `text[]` | Kết hợp validation cũ với URL và giới hạn gallery; được `publish_location_revision` sử dụng |
 | `publish_location_revision` | revision, expected lock | JSON location/revision/status | Validate và hoán đổi Published trong transaction |
 | `archive_location` | `location_id` | `void` | Lưu trữ Location sau khi kiểm tra không còn Draft |
 | `admin_list_locations` | — | Bảng summary | Danh sách revision ưu tiên Draft rồi Published |
 | `get_admin_location` | `location_id` | JSON document | Nạp Draft cùng toàn bộ section cho editor |
 | `list_published_locations` | `requested_locale` | JSON summaries | Phủ bản dịch đã duyệt; fallback tiếng Việt khi thiếu. Trả Published chưa archive, gồm `release_status` |
-| `get_published_location` | slug, `requested_locale` | JSON document | Trả nội dung theo locale và metadata `resolved_locale`/`is_fallback` khi `release_status = released` |
+| `get_published_location` | slug, `requested_locale` | JSON document | Trả nội dung theo locale, thêm `media.images` cho gallery và metadata `resolved_locale`/`is_fallback` khi `release_status = released` |
 | `submit_quiz_answer` | question, answer, `requested_locale` | JSON result | Chấm bằng dữ liệu gốc và chỉ bản địa hóa phần giải thích |
 | `record_content_view` | kind, revision, content | `void` | Ghi lượt xem duy nhất, gồm Fun Fact; không mở khóa nội dung |
 | `admin_list_location_translations` | revision | JSON list | Nạp các bản dịch và trạng thái duyệt cho Admin |
@@ -452,7 +464,8 @@ Cập nhật ngày 2026-10-09:
 | Hạng mục | Trạng thái hiện tại |
 |---|---|
 | Supabase Cloud project | Project `KOREAQUEST`, org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`, region Northeast Asia (Tokyo) |
-| Migration trên cloud | **Đã áp dụng đến** `20261008120000_finalize_free_exploration.sql`; lịch sử Local/Remote khớp khi xác minh ngày 2026-10-09 |
+| Migration trên cloud | **Đã áp dụng đến** `20261008160000_add_content_image_galleries.sql`; lịch sử Local/Remote khớp và dry-run sau triển khai báo database up-to-date ngày 2026-10-09 |
+| Gallery ảnh nội dung | Đã triển khai migration, RPC, Admin editor, public carousel và test; OpenAPI Cloud xác nhận bốn cột `image_gallery`, RPC lưu/validate, và smoke test Published trả đúng `media.images` cùng ảnh đầu tương thích |
 | Bảng trên cloud | Có đầy đủ các bảng Content, Gameplay và bảng mới `location_revision_translations` |
 | Dữ liệu trên cloud | Có 4 Location, 18 Location Revision, 2 Admin; migration đã backfill 18 bản nguồn tiếng Việt trong `location_revision_translations` |
 | Nới rule xuất bản | Các migration `20261008094500_simplify_publish_validation.sql` và `20261008111918_lower_publish_word_minimum.sql` đã áp dụng lên cloud ngày 2026-10-08 |
@@ -488,6 +501,7 @@ Cập nhật ngày 2026-10-09:
 12. API key Gemini chỉ đặt trong secret của Edge Function, không đưa vào Flutter Web.
 13. Rule publish cho MVP dùng khoảng 10–200 từ cho nội dung mô tả, giảm số section item tối thiểu, cho phép 2–6 đáp án ở câu một lựa chọn và không chặn vì metadata/media tùy chọn ở các mục lặp.
 14. RPC validation tiếp tục giữ hợp đồng `text[]`; Flutter Admin làm giàu lỗi quiz bằng dữ liệu Bản nháp đã lưu và `AdminDiagnostic.itemIndex` để định vị chính xác mà không đổi hợp đồng database.
+15. Card Lịch sử, Điểm đến, Trải nghiệm và Ẩm thực dùng gallery tối đa 10 ảnh, chỉ hiển thị một ảnh tại một thời điểm. Ba loại đầu có thể dùng một video YouTube thay thế; public payload giữ các trường media ảnh đầu tiên để tương thích ngược, còn bản dịch chỉ lưu alt theo đúng chỉ số ảnh.
 
 ## 15. Các điểm cần nhóm thảo luận
 

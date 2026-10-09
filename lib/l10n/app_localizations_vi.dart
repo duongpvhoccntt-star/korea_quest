@@ -1034,6 +1034,17 @@ class AppLocalizationsVi extends AppLocalizations {
   String get imageUpdating => 'Ảnh đang được cập nhật';
 
   @override
+  String get previousImage => 'Ảnh trước';
+
+  @override
+  String get nextImage => 'Ảnh tiếp theo';
+
+  @override
+  String imagePosition(int current, int total) {
+    return 'Ảnh $current trên $total';
+  }
+
+  @override
   String get areaMap => 'Bản đồ khu vực';
 
   @override

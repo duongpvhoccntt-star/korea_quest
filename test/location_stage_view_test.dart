@@ -41,6 +41,20 @@ void main() {
           'credit': 'KoreaQuest',
           'source_url': 'https://example.com/source',
           'alt': 'Cung điện Gyeongbokgung',
+          'images': <Object?>[
+            <String, Object?>{
+              'url': 'https://example.com/gyeongbokgung.jpg',
+              'credit': 'KoreaQuest',
+              'source_url': 'https://example.com/source',
+              'alt': 'Cung điện Gyeongbokgung',
+            },
+            <String, Object?>{
+              'url': 'https://example.com/courtyard.jpg',
+              'credit': 'KoreaQuest',
+              'source_url': 'https://example.com/source-2',
+              'alt': 'Sân cung điện Gyeongbokgung',
+            },
+          ],
         },
       },
       <String, Object?>{
@@ -195,6 +209,21 @@ void main() {
     expect(find.text('Văn hóa'), findsOneWidget);
     expect(find.byIcon(Icons.lock_rounded), findsNothing);
     expect(find.textContaining('bị khóa'), findsNothing);
+  });
+
+  testWidgets('moves between multiple images in a history card', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      buildApp(stage: 3, currentLocation: historyLocation, onStage: (_) {}),
+    );
+
+    expect(find.text('1/2'), findsOneWidget);
+    final nextButton = find.byKey(const ValueKey('gallery-next'));
+    await tester.ensureVisible(nextButton);
+    await tester.tap(nextButton);
+    await tester.pumpAndSettle();
+    expect(find.text('2/2'), findsOneWidget);
   });
 
   testWidgets('opens one history milestone and remembers viewed markers', (

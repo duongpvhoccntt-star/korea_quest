@@ -989,6 +989,17 @@ class AppLocalizationsKo extends AppLocalizations {
   String get imageUpdating => '이미지 업데이트 중';
 
   @override
+  String get previousImage => '이전 이미지';
+
+  @override
+  String get nextImage => '다음 이미지';
+
+  @override
+  String imagePosition(int current, int total) {
+    return '전체 $total장 중 $current번째 이미지';
+  }
+
+  @override
   String get areaMap => '지역 지도';
 
   @override
