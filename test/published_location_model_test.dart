@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:korea_quest/features/explore/domain/published_location.dart';
+import 'package:korea_quest/shared/models/domain_models.dart';
 
 void main() {
   test('published location keeps ordered public content from read model', () {
@@ -59,6 +60,7 @@ void main() {
     });
 
     expect(summary.isReleased, isFalse);
+    expect(summary.releaseStatus, LocationReleaseStatus.comingSoon);
     expect(summary.estimatedDurationMinutes, isNull);
   });
 }

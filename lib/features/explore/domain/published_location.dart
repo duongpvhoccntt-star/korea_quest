@@ -1,3 +1,5 @@
+import 'package:korea_quest/shared/models/domain_models.dart';
+
 typedef JsonMap = Map<String, dynamic>;
 
 class PublishedLocationSummary {
@@ -28,7 +30,7 @@ class PublishedLocationSummary {
         shortDescription: json.string('short_description'),
         thumbnailUrl: json.string('thumbnail_url'),
         thumbnailAlt: json.string('thumbnail_alt'),
-        releaseStatus: json.string('release_status'),
+        releaseStatus: LocationReleaseStatus.fromWire(json['release_status']),
         categories: json.stringList('categories'),
         estimatedDurationMinutes: json.intOrNull('estimated_duration_minutes'),
         requestedLocale: json.string('requested_locale'),
@@ -44,14 +46,14 @@ class PublishedLocationSummary {
   final String shortDescription;
   final String thumbnailUrl;
   final String thumbnailAlt;
-  final String releaseStatus;
+  final LocationReleaseStatus releaseStatus;
   final List<String> categories;
   final int? estimatedDurationMinutes;
   final String requestedLocale;
   final String resolvedLocale;
   final bool isFallback;
 
-  bool get isReleased => releaseStatus == 'released';
+  bool get isReleased => releaseStatus.isReleased;
 }
 
 class PublishedLocationDetail {
@@ -73,7 +75,8 @@ class PublishedLocationDetail {
   String get locationType => data.string('location_type');
   String get shortDescription => data.string('short_description');
   String get longDescription => data.string('long_description');
-  String get releaseStatus => data.string('release_status');
+  LocationReleaseStatus get releaseStatus =>
+      LocationReleaseStatus.fromWire(data['release_status']);
   int? get estimatedDurationMinutes =>
       data.intOrNull('estimated_duration_minutes');
   List<String> get tags => data.stringList('tags');

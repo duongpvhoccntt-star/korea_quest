@@ -502,7 +502,6 @@ class LocationFunFactsEditor extends StatelessWidget {
       'media_credit': '',
       'media_source_url': '',
       'media_alt': '',
-      'unlock_after_stage': 1,
       'is_visible': true,
     },
     onChanged: onChanged,
@@ -513,26 +512,6 @@ class LocationFunFactsEditor extends StatelessWidget {
             _field(item, 'title', 'Tiêu đề', onChanged),
             _field(item, 'category', 'Danh mục', onChanged),
             _field(item, 'icon_name', 'Tên icon (không bắt buộc)', onChanged),
-            AdminEditorDropdown(
-              key: ValueKey('${identityHashCode(item)}-unlock-stage'),
-              label: 'Mở khóa sau chặng',
-              value: adminText(item, 'unlock_after_stage').isEmpty
-                  ? '1'
-                  : adminText(item, 'unlock_after_stage'),
-              items: const {
-                '1': '1. Mở đầu',
-                '2': '2. Tổng quan',
-                '3': '3. Lịch sử',
-                '4': '4. Điểm đến',
-                '5': '5. Trải nghiệm',
-                '6': '6. Ẩm thực',
-                '7': '7. Fun Facts',
-              },
-              onChanged: (value) {
-                item['unlock_after_stage'] = int.parse(value);
-                onChanged();
-              },
-            ),
           ],
         ),
         const SizedBox(height: AppSpacing.md),

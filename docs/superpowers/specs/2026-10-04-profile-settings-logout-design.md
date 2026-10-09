@@ -1,5 +1,7 @@
 # Thiết kế tính năng: Hồ sơ (Profile), Cài đặt (Settings) & Đăng xuất (Logout)
 
+> **Superseded (2026-10-08):** Các mô tả reset “khóa lại địa điểm” trong tài liệu này đã được ADR-0012 thay thế. Reset chỉ xóa XP, tiến độ và phần thưởng đã nhận; không thay đổi `release_status` hoặc quyền truy cập nội dung.
+
 - **Ngày tạo:** 2026-10-04
 - **Người phụ trách module:** Phạm Văn Dương (`auth`, `profile`, `settings`, `home`, `passport`)
 - **Tài liệu tham chiếu:** [`AGENTS.md`](../../../AGENTS.md), [`docs/TEAM_OWNERSHIP.md`](../../TEAM_OWNERSHIP.md)

@@ -51,6 +51,7 @@ void main() {
       expect(draft.status, AdminRevisionStatus.draft);
       expect(draft.overview['quick_facts'], isA<List<Map<String, dynamic>>>());
       expect(draft.overview['release_status'], 'coming_soon');
+      expect(draft.overview, isNot(contains('prerequisite_location_id')));
       expect(draft.experienceGuide['dos'], isA<List<String>>());
       expect(
         draft.travel['transport_options'],

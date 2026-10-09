@@ -242,7 +242,9 @@ class _ProfileDashboard extends StatelessWidget {
         .where((item) => item.status == LocationStatus.completed)
         .length;
     final available = locations
-        .where((item) => item.status == LocationStatus.available)
+        .where(
+          (item) => item.isReleased && item.status == LocationStatus.available,
+        )
         .length;
     final active = locations
         .where((item) => item.status == LocationStatus.inProgress)

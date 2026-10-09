@@ -18,7 +18,7 @@ class PassportPage extends ConsumerWidget {
     final strings = appStrings(context);
     final user = ref.watch(currentUserProvider);
     final progress = ref.watch(userProgressProvider);
-    final stamps = ref.watch(passportStampsProvider);
+    final stamps = ref.watch(earnedPassportStampsProvider);
     if (user.isLoading || progress.isLoading || stamps.isLoading) {
       return const LoadingIndicator();
     }
@@ -79,21 +79,25 @@ class PassportPage extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: items.length,
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 260,
-              mainAxisExtent: 245,
-              crossAxisSpacing: AppSpacing.md,
-              mainAxisSpacing: AppSpacing.md,
-            ),
-            itemBuilder: (context, index) {
-              final stamp = items[index];
-              return Card(
-                child: Opacity(
-                  opacity: stamp.isEarned ? 1 : .45,
+          if (items.isEmpty)
+            const EmptyState(
+              title: 'Chưa nhận dấu mộc nào',
+              message: 'Dấu mộc đã nhận sẽ xuất hiện tại đây.',
+            )
+          else
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: items.length,
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 260,
+                mainAxisExtent: 245,
+                crossAxisSpacing: AppSpacing.md,
+                mainAxisSpacing: AppSpacing.md,
+              ),
+              itemBuilder: (context, index) {
+                final stamp = items[index];
+                return Card(
                   child: Padding(
                     padding: const EdgeInsets.all(AppSpacing.md),
                     child: Column(
@@ -111,7 +115,7 @@ class PassportPage extends ConsumerWidget {
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            stamp.isEarned ? stamp.seal : '🔒',
+                            stamp.seal,
                             style: const TextStyle(
                               fontSize: 34,
                               color: AppColors.coral,
@@ -124,22 +128,17 @@ class PassportPage extends ConsumerWidget {
                           style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
                         Text(
-                          stamp.earnedDate == null
-                              ? strings.locked
-                              : DateFormat(
-                                  'dd/MM/yyyy',
-                                  Localizations.localeOf(
-                                    context,
-                                  ).toLanguageTag(),
-                                ).format(stamp.earnedDate!),
+                          DateFormat(
+                            'dd/MM/yyyy',
+                            Localizations.localeOf(context).toLanguageTag(),
+                          ).format(stamp.earnedDate),
                         ),
                       ],
                     ),
                   ),
-                ),
-              );
-            },
-          ),
+                );
+              },
+            ),
         ],
       ),
     );

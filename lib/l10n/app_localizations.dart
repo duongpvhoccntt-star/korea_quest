@@ -352,12 +352,6 @@ abstract class AppLocalizations {
   /// **'Đang khám phá'**
   String get exploring;
 
-  /// No description provided for @locked.
-  ///
-  /// In vi, this message translates to:
-  /// **'Chưa mở khóa'**
-  String get locked;
-
   /// No description provided for @all.
   ///
   /// In vi, this message translates to:
@@ -369,12 +363,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Đã xong'**
   String get done;
-
-  /// No description provided for @notOpened.
-  ///
-  /// In vi, this message translates to:
-  /// **'Chưa mở'**
-  String get notOpened;
 
   /// No description provided for @stage.
   ///
@@ -1078,11 +1066,11 @@ abstract class AppLocalizations {
   /// **'Trải nghiệm hành trình văn hóa'**
   String get studentDemoDescription;
 
-  /// No description provided for @unlockedBadges.
+  /// No description provided for @earnedBadgesMessage.
   ///
   /// In vi, this message translates to:
-  /// **'3/12 huy hiệu đã mở'**
-  String get unlockedBadges;
+  /// **'Huy hiệu đã nhận sẽ được lưu vào bộ sưu tập'**
+  String get earnedBadgesMessage;
 
   /// No description provided for @quizWaiting.
   ///

@@ -141,7 +141,7 @@ Tạo bộ token dùng chung, tránh hard-code màu và kích thước trong mà
 * Trắng kem: nền chính.
 * Vàng: XP, Level và phần thưởng.
 * Xanh lá: hoàn thành.
-* Xám: chưa mở khóa hoặc vô hiệu hóa.
+* Xám trung tính: vô hiệu hóa hoặc nội dung Sắp ra mắt; không biểu thị khóa tiến độ.
 
 Chuẩn bị:
 
@@ -177,7 +177,7 @@ Tạo các component nền tảng:
 * ConfirmationDialog.
 * Toast/Snackbar helper.
 
-Component phải hỗ trợ các trạng thái phù hợp như default, hover, focus, disabled, loading, error, success, locked và completed.
+Component phải hỗ trợ các trạng thái phù hợp như default, hover, focus, disabled, loading, error, success, coming soon và completed. Không dùng trạng thái `locked` cho tiến độ gameplay.
 
 Đảm bảo vùng bấm đủ lớn, độ tương phản dễ đọc và trạng thái không chỉ được thể hiện bằng màu sắc.
 
@@ -197,9 +197,9 @@ Tạo các model nền tảng, có kiểu dữ liệu rõ ràng:
 Sử dụng enum thay cho chuỗi tùy ý cho các trạng thái như:
 
 * LocationStatus.
+* LocationReleaseStatus.
 * MissionStatus.
 * JourneyStage.
-* AchievementStatus.
 
 Tạo mock repository và dữ liệu thống nhất:
 
@@ -218,7 +218,9 @@ Người dùng:
 * Cung điện Gyeongbokgung: đã hoàn thành.
 * Làng Bukchon Hanok: đang thực hiện.
 * Tháp Namsan: chưa bắt đầu.
-* Đảo Jeju: chưa mở khóa.
+* Đảo Jeju: Sắp ra mắt, hiển thị trên bản đồ nhưng chưa truy cập được.
+
+Mọi Địa điểm `released` và mọi Chặng đều chọn trực tiếp được. Huy hiệu và Dấu mộc mẫu chỉ xuất hiện khi đã nhận; trạng thái rỗng không dùng placeholder khóa.
 
 Huy hiệu:
 

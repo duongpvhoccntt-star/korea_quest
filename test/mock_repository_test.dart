@@ -11,13 +11,14 @@ void main() {
       final user = await repository.getCurrentUser();
       final progress = await repository.getUserProgress();
       final locations = await repository.getLocations();
-      final achievements = await repository.getAchievements();
+      final achievements = await repository.getEarnedAchievements();
 
       expect(user.fullName, 'Phạm Văn Dương');
       expect(progress.currentXp, 1250);
       expect(locations, hasLength(4));
       expect(locations.first.status, LocationStatus.completed);
-      expect(locations.last.status, LocationStatus.locked);
+      expect(locations.last.status, LocationStatus.available);
+      expect(locations.last.releaseStatus, LocationReleaseStatus.comingSoon);
       expect(
         achievements.map((item) => item.title),
         contains('Hành trình 7 ngày'),

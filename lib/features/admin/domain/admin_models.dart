@@ -230,7 +230,6 @@ class AdminLocationDraft {
     'release_status': 'coming_soon',
     'estimated_duration_minutes': '',
     'display_order': 0,
-    'prerequisite_location_id': '',
     'stamp_name': '',
     'stamp_description': '',
     'stamp_image_url': '',
@@ -680,9 +679,8 @@ AdminDiagnostic parseAdminDiagnostic(String rawMessage) {
     return AdminDiagnostic(message: msg, stepIndex: 1, stepName: stepNames[1]);
   }
 
-  // Step 9: Nguồn, xem trước & Xuất bản (sources, prerequisite, revision, draft)
+  // Step 9: Nguồn, xem trước & Xuất bản (sources, revision, draft)
   if (lower.contains('nguồn') ||
-      lower.contains('tiên quyết') ||
       lower.contains('phiên bản') ||
       lower.contains('bản nháp')) {
     return AdminDiagnostic(message: msg, stepIndex: 9, stepName: stepNames[9]);
@@ -694,7 +692,6 @@ AdminDiagnostic parseAdminDiagnostic(String rawMessage) {
 enum AdminAchievementMetric {
   completedLocations('completed_locations', 'Địa điểm hoàn thành'),
   correctAnswers('correct_answers', 'Câu trả lời đúng'),
-  unlockedFunFacts('unlocked_fun_facts', 'Fun Fact đã mở'),
   streakDays('streak_days', 'Ngày duy trì chuỗi'),
   completedSpecificLocation(
     'completed_specific_location',

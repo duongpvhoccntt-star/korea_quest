@@ -144,16 +144,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exploring => 'Exploring';
 
   @override
-  String get locked => 'Locked';
-
-  @override
   String get all => 'All';
 
   @override
   String get done => 'Done';
-
-  @override
-  String get notOpened => 'Locked';
 
   @override
   String get stage => 'Stage';
@@ -545,7 +539,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get studentDemoDescription => 'Experience the cultural journey';
 
   @override
-  String get unlockedBadges => '3/12 badges unlocked';
+  String get earnedBadgesMessage =>
+      'Earned badges are saved to your collection';
 
   @override
   String get quizWaiting => '50+ culture quizzes are waiting for you';

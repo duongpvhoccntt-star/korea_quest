@@ -83,13 +83,11 @@ class LocationOpeningEditor extends StatelessWidget {
 class LocationOverviewEditor extends StatelessWidget {
   const LocationOverviewEditor({
     required this.draft,
-    required this.availableLocations,
     required this.onChanged,
     super.key,
   });
 
   final AdminLocationDraft draft;
-  final List<AdminLocationSummary> availableLocations;
   final VoidCallback onChanged;
 
   @override
@@ -97,15 +95,6 @@ class LocationOverviewEditor extends StatelessWidget {
     final data = draft.overview;
     final quickFacts = AdminLocationDraft.fromJsonList(data['quick_facts']);
     data['quick_facts'] = quickFacts;
-    final prerequisiteItems = <String, String>{
-      '': 'Không có — Địa điểm bắt đầu',
-      for (final location in availableLocations)
-        if (location.locationId != draft.locationId)
-          location.locationId: location.name.isEmpty
-              ? location.slug
-              : location.name,
-    };
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -178,15 +167,6 @@ class LocationOverviewEditor extends StatelessWidget {
                 decimal: true,
                 signed: true,
               ),
-            ),
-            AdminEditorDropdown(
-              label: 'Địa điểm tiên quyết',
-              value: adminText(data, 'prerequisite_location_id'),
-              items: prerequisiteItems,
-              onChanged: (value) {
-                data['prerequisite_location_id'] = value;
-                onChanged();
-              },
             ),
             AdminStringListField(
               label: 'Tag nổi bật',

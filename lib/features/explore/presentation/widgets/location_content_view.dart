@@ -1270,9 +1270,7 @@ class _HistoryMarker extends StatelessWidget {
               color: AppColors.paper,
               shape: BoxShape.circle,
               border: Border.all(
-                color: isViewed
-                    ? AppColors.completedGreen
-                    : AppColors.lockedGray,
+                color: isViewed ? AppColors.completedGreen : AppColors.disabled,
                 width: 3,
               ),
               boxShadow: AppShadows.small,
@@ -1575,19 +1573,13 @@ class _FunFactsStage extends StatelessWidget {
                 SizedBox(
                   width: 260,
                   child: _Card(
-                    color: index < 2
-                        ? Colors.white
-                        : AppColors.skyLight.withValues(alpha: .45),
+                    color: Colors.white,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
-                          index < 2
-                              ? Icons.auto_awesome_rounded
-                              : Icons.lock_outline_rounded,
-                          color: index < 2
-                              ? AppColors.koreanRed
-                              : AppColors.lockedGray,
+                        const Icon(
+                          Icons.auto_awesome_rounded,
+                          color: AppColors.koreanRed,
                         ),
                         const SizedBox(height: AppSpacing.sm),
                         Text(

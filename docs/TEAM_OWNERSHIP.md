@@ -89,13 +89,13 @@ GET  /me/passport
 ### Trạng thái địa điểm trên bản đồ
 
 ```
-Completed | Current | Unlocked | Locked
+Completed | In Progress | Not Started | Coming Soon
 ```
 
 ### Database phụ trách
 
 ```
-locations              (id, name, slug, description, thumbnail_url, order_number, unlock_condition, status)
+locations              (id, name, slug, description, thumbnail_url, order_number, release_status)
 location_checkin       (location_id, introduction, address, highlight, description)
 location_history       (id, location_id, year, title, content, order_number)
 location_media         (id, location_id, type, url, caption)   -- type: image | video
@@ -131,7 +131,7 @@ completed_questions == total_questions  →  Check-in hoàn thành
 | Nhận từ                    | Nội dung                                                                    |
 | :--------------------------- | :--------------------------------------------------------------------------- |
 | **Phạm Văn Dương** | `user_id`, `location_id` khi người dùng chọn địa điểm            |
-| **Lê Uyên Nhi**      | `next_location_unlocked = true` → Thức cập nhật trạng thái bản đồ |
+| **Lê Uyên Nhi**      | `xp`, `badge`, `stamp` đã nhận để Thức và Dương cập nhật giao diện |
 
 | Truyền cho             | Nội dung                                     |
 | :---------------------- | :-------------------------------------------- |
@@ -154,7 +154,7 @@ completed_questions == total_questions  →  Check-in hoàn thành
 | Tính số sao                     | `lib/features/journey/`                       |
 | Trao huy hiệu                    | `lib/features/achievements/`                  |
 | Trao dấu mộc                    | `lib/features/achievements/`                  |
-| Mở khóa địa điểm tiếp theo | `lib/features/journey/`                       |
+| Ghi nhận hoàn thành hành trình | `lib/features/journey/`                    |
 
 ### Công thức XP
 
@@ -174,7 +174,7 @@ Một nhiệm vụ không được cộng XP nhiều lần.
 41–60%  → ★★★
 61–80%  → ★★★★
 81–100% → ★★★★★
-Số sao không ảnh hưởng đến việc mở khóa địa điểm.
+Số sao chỉ phản ánh kết quả; không ảnh hưởng đến quyền truy cập địa điểm hoặc Chặng.
 ```
 
 ### Database phụ trách
@@ -199,7 +199,7 @@ user_stamps             (user_id, location_id, earned_at)
 
 ```
 Văn hóa → Từ vựng → Tổng kết → Tính XP → Tính sao
-→ Nhận huy hiệu → Nhận dấu mộc → Mở khóa địa điểm tiếp theo
+→ Nhận huy hiệu → Nhận dấu mộc → Tiếp tục tự do khám phá
 ```
 
 ### Điểm tích hợp
@@ -210,7 +210,7 @@ Văn hóa → Từ vựng → Tổng kết → Tính XP → Tính sao
 
 | Truyền cho                   | Nội dung                                                               |
 | :---------------------------- | :---------------------------------------------------------------------- |
-| **Nguyễn Viết Thức** | `next_location_unlocked = true` để cập nhật bản đồ             |
+| **Nguyễn Viết Thức** | tiến độ và phần thưởng đã nhận để cập nhật bản đồ              |
 | **Phạm Văn Dương**  | `xp`, `badge`, `stamp` để hiển thị ở Trang chủ & Hộ chiếu |
 
 ---
@@ -226,13 +226,15 @@ user_id · location_id · section_id · question_id
 ### Enum trạng thái section
 
 ```
-locked | unlocked | in_progress | completed
+not_started | in_progress | completed
 ```
 
 ### Enum trạng thái location
 
 ```
-locked | unlocked | current | completed
+available | in_progress | completed
+
+Tình trạng ra mắt của Địa điểm dùng enum riêng: `coming_soon | released`. Chỉ `coming_soon` chặn truy cập; tiến độ cá nhân không chặn nội dung.
 ```
 
 ### Cấu trúc kết quả câu hỏi

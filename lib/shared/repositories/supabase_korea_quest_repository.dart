@@ -52,16 +52,16 @@ class SupabaseKoreaQuestRepository implements KoreaQuestRepository {
           final item = Map<String, dynamic>.from(
             raw.map((key, value) => MapEntry('$key', value)),
           );
-          final releaseStatus = item['release_status']?.toString();
           return Location(
             id: item['slug']?.toString() ?? '',
             name: item['name']?.toString() ?? '',
             koreanName: item['korean_name']?.toString() ?? '',
             city: item['city']?.toString() ?? '',
             description: item['short_description']?.toString() ?? '',
-            status: releaseStatus == 'released'
-                ? LocationStatus.available
-                : LocationStatus.locked,
+            status: LocationStatus.available,
+            releaseStatus: LocationReleaseStatus.fromWire(
+              item['release_status'],
+            ),
             rewardXp: 0,
           );
         })
@@ -96,9 +96,10 @@ class SupabaseKoreaQuestRepository implements KoreaQuestRepository {
       _fallback.getMissions(locationId);
 
   @override
-  Future<List<Achievement>> getAchievements() => _fallback.getAchievements();
+  Future<List<Achievement>> getEarnedAchievements() =>
+      _fallback.getEarnedAchievements();
 
   @override
-  Future<List<PassportStamp>> getPassportStamps() =>
-      _fallback.getPassportStamps();
+  Future<List<PassportStamp>> getEarnedPassportStamps() =>
+      _fallback.getEarnedPassportStamps();
 }

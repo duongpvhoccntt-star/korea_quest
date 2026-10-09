@@ -1,4 +1,4 @@
-﻿import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:korea_quest/app/app_config.dart';
 import 'package:korea_quest/shared/models/domain_models.dart';
 import 'package:korea_quest/shared/repositories/korea_quest_repository.dart';
@@ -24,12 +24,12 @@ final locationsProvider = FutureProvider<List<Location>>(
   (ref) => ref.watch(koreaQuestRepositoryProvider).getLocations(),
 );
 
-final achievementsProvider = FutureProvider<List<Achievement>>(
-  (ref) => ref.watch(koreaQuestRepositoryProvider).getAchievements(),
+final earnedAchievementsProvider = FutureProvider<List<Achievement>>(
+  (ref) => ref.watch(koreaQuestRepositoryProvider).getEarnedAchievements(),
 );
 
-final passportStampsProvider = FutureProvider<List<PassportStamp>>(
-  (ref) => ref.watch(koreaQuestRepositoryProvider).getPassportStamps(),
+final earnedPassportStampsProvider = FutureProvider<List<PassportStamp>>(
+  (ref) => ref.watch(koreaQuestRepositoryProvider).getEarnedPassportStamps(),
 );
 
 final locationProvider = FutureProvider.family<Location?, String>(

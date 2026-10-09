@@ -39,8 +39,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       await ref.read(koreaQuestRepositoryProvider).resetUserProgress();
       ref.invalidate(userProgressProvider);
       ref.invalidate(locationsProvider);
-      ref.invalidate(achievementsProvider);
-      ref.invalidate(passportStampsProvider);
+      ref.invalidate(earnedAchievementsProvider);
+      ref.invalidate(earnedPassportStampsProvider);
 
       if (mounted) {
         AppToast.show(context, strings.resetProgressSuccess);

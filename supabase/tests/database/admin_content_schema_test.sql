@@ -55,11 +55,59 @@ select has_column(
   'hook_media_kind',
   'opening media supports image or YouTube'
 );
-select has_column(
+select hasnt_column(
   'public',
   'location_fun_facts',
   'unlock_after_stage',
-  'fun facts can unlock after a content stage'
+  'fun facts are no longer gated by a content stage'
+);
+select hasnt_column(
+  'public',
+  'location_revisions',
+  'prerequisite_location_id',
+  'locations no longer depend on a prerequisite location'
+);
+select hasnt_column(
+  'public',
+  'explorer_progress_summary',
+  'unlocked_fun_fact_count',
+  'progress summary no longer tracks unlock-specific counters'
+);
+select hasnt_table(
+  'public',
+  'explorer_fun_fact_unlocks',
+  'unlock-specific fun fact history has been removed'
+);
+select is(
+  (
+    select array_agg(value.enumlabel::text order by value.enumsortorder)
+    from pg_type type
+    join pg_namespace namespace on namespace.oid = type.typnamespace
+    join pg_enum value on value.enumtypid = type.oid
+    where namespace.nspname = 'public'
+      and type.typname = 'stage_progress_status'
+  ),
+  array['not_started', 'in_progress', 'completed']::text[],
+  'stage progress contains no locked or available state'
+);
+select is(
+  (
+    select array_agg(value.enumlabel::text order by value.enumsortorder)
+    from pg_type type
+    join pg_namespace namespace on namespace.oid = type.typnamespace
+    join pg_enum value on value.enumtypid = type.oid
+    where namespace.nspname = 'public'
+      and type.typname = 'achievement_metric'
+  ),
+  array[
+    'completed_locations',
+    'correct_answers',
+    'streak_days',
+    'completed_specific_location',
+    'challenge_completion',
+    'content_views'
+  ]::text[],
+  'achievement metrics use content views instead of unlock counts'
 );
 select has_table(
   'public',
@@ -139,6 +187,12 @@ select has_function(
 );
 select has_function(
   'public',
+  'get_published_location',
+  array['text'],
+  'published location detail RPC exists'
+);
+select has_function(
+  'public',
   'join_challenge',
   array['uuid'],
   'challenge enrollment RPC exists'
@@ -197,7 +251,41 @@ select ok(
 );
 
 reset role;
+
+update public.location_revisions
+set release_status = 'coming_soon'
+where location_id = (
+  select id from public.locations where slug = 'gyeongbokgung'
+)
+  and status = 'published';
+
 set local role anon;
+
+select ok(
+  public.list_published_locations() @> jsonb_build_array(
+    jsonb_build_object(
+      'slug', 'gyeongbokgung',
+      'release_status', 'coming_soon'
+    )
+  ),
+  'coming-soon location remains visible in the public summary'
+);
+select is(
+  public.get_published_location('gyeongbokgung'),
+  null::jsonb,
+  'coming-soon location detail is not directly accessible'
+);
+select is(
+  (
+    select count(*)
+    from public.location_revisions revision
+    join public.locations location on location.id = revision.location_id
+    where location.slug = 'gyeongbokgung'
+      and revision.status = 'published'
+  ),
+  0::bigint,
+  'coming-soon revision content is hidden by RLS'
+);
 
 select is(
   (select count(*) from public.locations),
