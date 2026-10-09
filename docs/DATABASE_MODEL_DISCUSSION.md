@@ -1,8 +1,8 @@
 # KoreaQuest Database & Domain Model
 
 > Trạng thái: Tài liệu thảo luận kỹ thuật, chưa phải cam kết triển khai production.
-> Nguồn đối chiếu: migrations đến `20261008111918_lower_publish_word_minimum.sql`, model/repository Admin và Explore, `CONTEXT.md`, ADR và `TEAM_OWNERSHIP.md` tại ngày 2026-10-08.
-> Trạng thái cloud: đã xác minh ngày 2026-10-08 trên project `KOREAQUEST` (org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`). Migration đến `20261008111918_lower_publish_word_minimum.sql` đã áp dụng; Edge Function `translate-location` đang ACTIVE; các secret `GEMINI_API_KEY` và `GEMINI_TRANSLATION_MODEL=gemini-3.1-flash-lite` đã được cấu hình.
+> Nguồn đối chiếu: migrations đến `20261008111918_lower_publish_word_minimum.sql`, Edge Function `translate-location`, model/repository Admin và Explore, `CONTEXT.md`, ADR và `TEAM_OWNERSHIP.md` tại ngày 2026-10-09.
+> Trạng thái cloud: đã xác minh ngày 2026-10-09 trên project `KOREAQUEST` (org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`). Migration đến `20261008111918_lower_publish_word_minimum.sql` đã áp dụng; Edge Function `translate-location` version 4 đang ACTIVE; các secret `GEMINI_API_KEY` và `GEMINI_TRANSLATION_MODEL=gemini-3.1-flash-lite` đã được cấu hình.
 
 ## 1. Mục tiêu và phạm vi
 
@@ -382,7 +382,7 @@ Trong màn hình kiểm tra, lỗi quiz được hiển thị theo đúng số c
 
 Archive một Location bị từ chối nếu Location còn Draft hoặc đang là prerequisite của một Location Published khác.
 
-Admin biên tập theo ba tab ngôn ngữ. Tiếng Việt là Bản nguồn. Nút dịch gọi Edge Function `translate-location`; function xác thực Admin, đọc `GEMINI_API_KEY` phía server và trả JSON cùng cấu trúc. Khi `lock_version` bản nguồn thay đổi, trigger chuyển bản Anh/Hàn sang `needs_review`. Chỉ bản dịch có trạng thái `approved` mới được phủ lên read model công khai.
+Admin biên tập theo ba tab ngôn ngữ. Tiếng Việt là Bản nguồn. Nút dịch gọi Edge Function `translate-location`; function xác thực Admin, đọc `GEMINI_API_KEY` phía server và trả JSON cùng cấu trúc. Prompt khóa rõ nguồn `vi` và đích `en`/`ko`. Phản hồi được kiểm tra để không chấp nhận JSON chỉ sao chép tiếng Việt; riêng bản Hàn phải có tỷ lệ Hangul phù hợp. Nếu phản hồi đầu tiên sai ngôn ngữ, function tự yêu cầu Gemini dịch lại đúng một lần rồi trả lỗi nếu vẫn không đạt, vì vậy nội dung tiếng Việt không được lưu nhầm vào locale Hàn. Khi `lock_version` bản nguồn thay đổi, trigger chuyển bản Anh/Hàn sang `needs_review`. Chỉ bản dịch có trạng thái `approved` mới được phủ lên read model công khai.
 
 ## 11. RPC và helper công khai
 
@@ -436,7 +436,7 @@ Kiểm tra ngày 2026-10-08 bằng Supabase CLI (`supabase migration list --link
 | Dữ liệu trên cloud | Có 4 Location, 18 Location Revision, 2 Admin; migration đã backfill 18 bản nguồn tiếng Việt trong `location_revision_translations` |
 | Migration schema trong repo | Đã đồng bộ thêm migration cloud `20261004110000_diversify_namsan_media.sql`; migration đa ngôn ngữ `20261007193000` đã áp dụng cloud |
 | Nới rule xuất bản | Các migration `20261008094500_simplify_publish_validation.sql` và `20261008111918_lower_publish_word_minimum.sql` đã áp dụng lên cloud ngày 2026-10-08 |
-| Edge Function | `translate-location` ACTIVE, version 3; endpoint yêu cầu JWT và trả HTTP 401 khi gọi không xác thực; smoke test `gemini-3.1-flash-lite` đã dịch thành công ngày 2026-10-08 |
+| Edge Function | `translate-location` version 4 ACTIVE từ ngày 2026-10-09; endpoint yêu cầu JWT. Bản deploy khóa rõ nguồn/đích, kiểm tra sai ngôn ngữ và retry tối đa một lần; 2 regression test cho trường hợp locale Hàn đã pass |
 | Secret dịch AI | Đã cấu hình `GEMINI_API_KEY` và `GEMINI_TRANSLATION_MODEL=gemini-3.1-flash-lite` trên Supabase; giá trị khóa không lưu trong repository |
 | pgTAP | Có 42 assertion, gồm kiểm tra type/table/RPC đa ngôn ngữ và rule publish đã nới; chưa chạy local vì Docker engine chưa hoạt động |
 | Flutter Admin | Có model/repository và UI editor; lỗi quiz được định vị tới số câu cụ thể và nút sửa cuộn tới đúng thẻ |
@@ -463,6 +463,7 @@ Kiểm tra ngày 2026-10-08 bằng Supabase CLI (`supabase migration list --link
 9. API key Gemini chỉ đặt trong secret của Edge Function, không đưa vào Flutter Web.
 10. Rule publish cho MVP dùng khoảng 10–200 từ cho nội dung mô tả, giảm số section item tối thiểu, cho phép 2–6 đáp án ở câu một lựa chọn và không chặn vì metadata/media tùy chọn ở các mục lặp.
 11. RPC validation tiếp tục giữ hợp đồng `text[]`; Flutter Admin làm giàu lỗi quiz bằng dữ liệu Bản nháp đã lưu và `AdminDiagnostic.itemIndex` để định vị chính xác mà không đổi hợp đồng database.
+12. Edge Function không được lưu phản hồi Gemini chỉ sao chép Bản nguồn. Prompt phải chỉ rõ nguồn/đích; output sai ngôn ngữ được retry tối đa một lần và bị từ chối nếu vẫn không đạt.
 
 ## 15. Các điểm cần nhóm thảo luận
 
