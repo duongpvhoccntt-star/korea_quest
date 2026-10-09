@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:korea_quest/core/services/quiz_feedback_sound.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/shadows/app_shadows.dart';
@@ -2303,10 +2306,16 @@ class _QuizCardState extends State<_QuizCard> {
       },
       _ => <String, dynamic>{},
     };
+    // This runs in the button's user gesture, allowing Web Audio to play once
+    // the asynchronous score request completes.
+    unawaited(QuizFeedbackSound.prime());
     setState(() => _submitting = true);
     try {
       final result = await widget.onSubmit(answer);
-      if (mounted) setState(() => _result = result);
+      if (mounted) {
+        setState(() => _result = result);
+        unawaited(QuizFeedbackSound.play(isCorrect: result.isCorrect));
+      }
     } on Object catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
