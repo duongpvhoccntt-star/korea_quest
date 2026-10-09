@@ -360,26 +360,12 @@ class _BrandLockup extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
+          Image.asset(
+            'assets/images/koreaquest_logo_mark.png',
+            key: const ValueKey('koreaquest-brand-logo'),
             width: 42,
             height: 42,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: AppColors.coral,
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.paper, width: 3),
-              boxShadow: const [
-                BoxShadow(color: AppColors.coral, spreadRadius: 2),
-              ],
-            ),
-            child: const Text(
-              'KQ',
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: 'Georgia',
-                fontWeight: FontWeight.w800,
-              ),
-            ),
+            filterQuality: FilterQuality.high,
           ),
           const SizedBox(width: AppSpacing.sm),
           Column(
