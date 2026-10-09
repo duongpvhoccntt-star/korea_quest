@@ -242,6 +242,41 @@ void main() {
     await tester.pump();
 
     expect(find.byKey(const ValueKey('quiz-feedback-1')), findsOneWidget);
+    expect(find.byKey(const ValueKey('quiz-answer-effect-1')), findsOneWidget);
+    expect(find.byIcon(Icons.check_circle_rounded), findsWidgets);
+  });
+
+  testWidgets('shows miss feedback after an incorrect quiz answer', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: LocationContentView(
+              location: quizLocation,
+              currentStage: 8,
+              onStageSelected: (_) {},
+              onSubmitQuizAnswer: (_, _) async =>
+                  const QuizAnswerResult(isCorrect: false, explanation: 'Try again'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.ensureVisible(find.text('Other option'));
+    await tester.tap(find.text('Other option'));
+    await tester.tap(
+      find.ancestor(
+        of: find.byIcon(Icons.check_rounded),
+        matching: find.byType(FilledButton),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byKey(const ValueKey('quiz-answer-effect-1')), findsOneWidget);
+    expect(find.byIcon(Icons.close_rounded), findsOneWidget);
   });
 
   testWidgets('renders the history heading and published milestone data', (

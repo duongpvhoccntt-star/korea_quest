@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -2147,7 +2148,10 @@ class _QuizCardState extends State<_QuizCard> {
   @override
   Widget build(BuildContext context) {
     final kind = widget.question.string('kind');
-    return _Card(
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        _Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2187,41 +2191,89 @@ class _QuizCardState extends State<_QuizCard> {
           ],
         ],
       ),
+        ),
+        if (_result != null)
+          Positioned.fill(
+            child: IgnorePointer(
+              child: _QuizAnswerVisualEffect(
+                key: ValueKey('quiz-answer-effect-$_feedbackSequence'),
+                isCorrect: _result!.isCorrect,
+              ),
+            ),
+          ),
+      ],
     );
   }
 
   Widget _options() => Column(
     children: [
       for (final option in widget.question.mapList('options'))
-        Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-          child: InkWell(
-            onTap: () => setState(() => _optionId = option.string('id')),
-            borderRadius: BorderRadius.circular(AppRadius.medium),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(AppSpacing.md),
-              decoration: BoxDecoration(
-                color: _optionId == option.string('id')
-                    ? AppColors.skyLight
-                    : Colors.white,
-                borderRadius: BorderRadius.circular(AppRadius.medium),
-                border: Border.all(
-                  color: _optionId == option.string('id')
-                      ? AppColors.koreanBlue
-                      : AppColors.borderSoft,
-                  width: 2,
+        _option(option),
+    ],
+  );
+
+  Widget _option(JsonMap option) {
+    final isSelected = _optionId == option.string('id');
+    final result = isSelected ? _result : null;
+    final isCorrect = result?.isCorrect ?? false;
+    final feedbackColor = isCorrect ? AppColors.green : AppColors.coral;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: _QuizOptionFeedbackFrame(
+        key: ValueKey('quiz-option-feedback-${option.string('id')}'),
+        shake: result != null && !isCorrect,
+        sequence: _feedbackSequence,
+        child: InkWell(
+          onTap: () => setState(() => _optionId = option.string('id')),
+          borderRadius: BorderRadius.circular(AppRadius.medium),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppSpacing.md),
+            decoration: BoxDecoration(
+              color: result != null
+                  ? feedbackColor.withValues(alpha: .18)
+                  : isSelected
+                  ? AppColors.skyLight
+                  : Colors.white,
+              borderRadius: BorderRadius.circular(AppRadius.medium),
+              border: Border.all(
+                color: result != null
+                    ? feedbackColor
+                    : isSelected
+                    ? AppColors.koreanBlue
+                    : AppColors.borderSoft,
+                width: 2,
+              ),
+              boxShadow: result != null && isCorrect
+                  ? [
+                      BoxShadow(
+                        color: AppColors.green.withValues(alpha: .34),
+                        blurRadius: AppSpacing.lg,
+                        spreadRadius: AppSpacing.xxs,
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    option.string('text'),
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
                 ),
-              ),
-              child: Text(
-                option.string('text'),
-                style: const TextStyle(fontWeight: FontWeight.w700),
-              ),
+                if (result != null)
+                  _QuizResultMarker(
+                    isCorrect: isCorrect,
+                    sequence: _feedbackSequence,
+                  ),
+              ],
             ),
           ),
         ),
-    ],
-  );
+      ),
+    );
+  }
 
   Widget _submitAction(BuildContext context) => Stack(
     clipBehavior: Clip.none,
@@ -2394,6 +2446,173 @@ class _QuizFloatingFeedback extends StatelessWidget {
       ),
     ),
   );
+}
+
+class _QuizOptionFeedbackFrame extends StatelessWidget {
+  const _QuizOptionFeedbackFrame({
+    required this.child,
+    required this.shake,
+    required this.sequence,
+    super.key,
+  });
+
+  final Widget child;
+  final bool shake;
+  final int sequence;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!shake) return child;
+    return TweenAnimationBuilder<double>(
+      key: ValueKey('quiz-option-shake-$sequence'),
+      tween: Tween(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 620),
+      curve: Curves.easeOut,
+      builder: (context, progress, child) => Transform.translate(
+        offset: Offset(
+          math.sin(progress * math.pi * 6) * AppSpacing.xs * (1 - progress),
+          0,
+        ),
+        child: child,
+      ),
+      child: child,
+    );
+  }
+}
+
+class _QuizResultMarker extends StatelessWidget {
+  const _QuizResultMarker({
+    required this.isCorrect,
+    required this.sequence,
+  });
+
+  final bool isCorrect;
+  final int sequence;
+
+  @override
+  Widget build(BuildContext context) => TweenAnimationBuilder<double>(
+    key: ValueKey('quiz-result-marker-$sequence'),
+    tween: Tween(begin: 0, end: 1),
+    duration: const Duration(milliseconds: 460),
+    curve: Curves.easeOutBack,
+    builder: (context, scale, child) => Transform.scale(scale: scale, child: child),
+    child: Icon(
+      isCorrect ? Icons.check_circle_rounded : Icons.close_rounded,
+      color: isCorrect ? AppColors.green : AppColors.coral,
+    ),
+  );
+}
+
+class _QuizAnswerVisualEffect extends StatelessWidget {
+  const _QuizAnswerVisualEffect({required this.isCorrect, super.key});
+
+  final bool isCorrect;
+
+  @override
+  Widget build(BuildContext context) => TweenAnimationBuilder<double>(
+    tween: Tween(begin: 0, end: 1),
+    duration: Duration(milliseconds: isCorrect ? 2500 : 1600),
+    curve: Curves.easeOut,
+    builder: (context, progress, _) => CustomPaint(
+      painter: _QuizAnswerEffectPainter(
+        isCorrect: isCorrect,
+        progress: progress,
+      ),
+      child: const SizedBox.expand(),
+    ),
+  );
+}
+
+class _QuizAnswerEffectPainter extends CustomPainter {
+  const _QuizAnswerEffectPainter({
+    required this.isCorrect,
+    required this.progress,
+  });
+
+  final bool isCorrect;
+  final double progress;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (isCorrect) {
+      _paintCelebration(canvas, size);
+    } else {
+      _paintMiss(canvas, size);
+    }
+  }
+
+  void _paintCelebration(Canvas canvas, Size size) {
+    final origin = Offset(size.width / 2, size.height * .48);
+    final burstProgress = Curves.easeOut.transform((progress / .72).clamp(0, 1));
+    final fade = (1 - progress).clamp(0.0, 1.0);
+    const colors = [
+      AppColors.gold,
+      AppColors.koreanBlue,
+      AppColors.blossom,
+      AppColors.completedGreen,
+      AppColors.butter,
+    ];
+    final particlePaint = Paint()..style = PaintingStyle.fill;
+
+    for (var index = 0; index < 36; index++) {
+      final angle = math.pi * 2 * index / 36;
+      final distance = (size.shortestSide * (.22 + (index % 5) * .035)) *
+          burstProgress;
+      final position = origin +
+          Offset(math.cos(angle) * distance, math.sin(angle) * distance);
+      particlePaint.color = colors[index % colors.length].withValues(alpha: fade);
+      canvas.drawCircle(position, 2 + index % 3, particlePaint);
+    }
+
+    for (var index = 0; index < 30; index++) {
+      final x = size.width * ((index * 37 % 100) / 100);
+      final y = size.height * (.12 + progress * .74) +
+          math.sin(progress * math.pi + index) * AppSpacing.sm;
+      canvas.save();
+      canvas.translate(x, y);
+      canvas.rotate(progress * math.pi * (index.isEven ? 2 : -2));
+      particlePaint.color =
+          colors[(index + 1) % colors.length].withValues(alpha: fade);
+      canvas.drawRect(
+        Rect.fromCenter(center: Offset.zero, width: AppSpacing.xs, height: AppSpacing.sm),
+        particlePaint,
+      );
+      canvas.restore();
+    }
+  }
+
+  void _paintMiss(Canvas canvas, Size size) {
+    final origin = Offset(size.width / 2, size.height * .48);
+    final fade = (1 - progress).clamp(0.0, 1.0);
+    final paint = Paint()..style = PaintingStyle.fill;
+
+    paint.color = AppColors.disabled.withValues(alpha: fade * .42);
+    canvas.drawCircle(origin + const Offset(-12, -4), AppSpacing.sm, paint);
+    canvas.drawCircle(origin + const Offset(10, -8), AppSpacing.md, paint);
+    canvas.drawCircle(origin + const Offset(26, -2), AppSpacing.xs, paint);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: origin + const Offset(4, 9),
+          width: AppSpacing.xxl,
+          height: AppSpacing.md,
+        ),
+        const Radius.circular(AppRadius.medium),
+      ),
+      paint,
+    );
+
+    for (var index = 0; index < 8; index++) {
+      final x = origin.dx + (index - 3.5) * AppSpacing.md;
+      final y = origin.dy + AppSpacing.md + progress * AppSpacing.xxl;
+      paint.color = AppColors.locationBlue.withValues(alpha: fade * .55);
+      canvas.drawCircle(Offset(x, y), AppSpacing.xxs, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _QuizAnswerEffectPainter oldDelegate) =>
+      oldDelegate.progress != progress || oldDelegate.isCorrect != isCorrect;
 }
 
 String _fallback(String value, String fallback) =>
