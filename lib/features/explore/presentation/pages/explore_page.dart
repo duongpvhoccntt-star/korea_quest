@@ -59,9 +59,9 @@ class _LocationCard extends StatelessWidget {
   Widget build(BuildContext context) => Card(
     clipBehavior: Clip.antiAlias,
     child: InkWell(
-      onTap: location.status == LocationStatus.locked
-          ? null
-          : () => context.go('/locations/${location.id}'),
+      onTap: location.isReleased
+          ? () => context.go('/locations/${location.id}')
+          : null,
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
@@ -69,7 +69,10 @@ class _LocationCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                StatusChip(status: location.status),
+                StatusChip(
+                  status: location.status,
+                  releaseStatus: location.releaseStatus,
+                ),
                 const Spacer(),
                 Text('+${location.rewardXp} XP'),
               ],

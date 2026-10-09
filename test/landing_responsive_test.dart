@@ -1,5 +1,4 @@
-import 'dart:ui';
-
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:korea_quest/app/app.dart';
@@ -25,6 +24,9 @@ void main() {
       expect(find.textContaining('Mỗi điểm đến'), findsOneWidget);
       expect(find.text('Bản đồ phiêu lưu'), findsOneWidget);
       expect(find.text('Chọn nơi câu chuyện bắt đầu'), findsOneWidget);
+      expect(find.text('Sắp ra mắt'), findsNothing);
+      expect(find.byIcon(Icons.lock_rounded), findsNothing);
+      expect(find.textContaining('Chưa mở khóa'), findsNothing);
       expect(tester.takeException(), isNull);
     });
   }

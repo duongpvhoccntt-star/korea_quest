@@ -15,7 +15,7 @@ MVP khám phá văn hóa Hàn Quốc theo hướng game-based learning
 
 **KoreaQuest** là ứng dụng khám phá văn hóa Hàn Quốc theo hướng game-based learning.
 
-Người dùng chọn một địa điểm, hoàn thành các phần nội dung và nhiệm vụ để nhận XP, huy hiệu, dấu mộc và mở khóa địa điểm tiếp theo.
+Người dùng chọn bất kỳ địa điểm đã phát hành, khám phá trực tiếp các phần nội dung và nhiệm vụ để nhận XP, huy hiệu và dấu mộc. Tiến độ không khóa địa điểm hoặc nội dung.
 
 ### Luồng MVP
 
@@ -34,7 +34,7 @@ Người dùng chọn một địa điểm, hoàn thành các phần nội dung 
 → Từ vựng<br />
 → Tổng kết<br />
 → Nhận XP / Huy hiệu / Dấu mộc<br />
-→ Mở khóa địa điểm tiếp theo</th>
+→ Tiếp tục tự do khám phá</th>
 </tr>
 </thead>
 <tbody>
@@ -344,9 +344,9 @@ Các trạng thái:
 <thead>
 <tr class="header">
 <th>Completed<br />
-Current<br />
-Unlocked<br />
-Locked</th>
+In Progress<br />
+Available<br />
+Coming Soon</th>
 </tr>
 </thead>
 <tbody>
@@ -364,7 +364,7 @@ Ví dụ:
 <th>✅ Seoul<br />
 🏮 Gwangjang<br />
 📍 Gyeongbokgung<br />
-🔒 Busan</th>
+🗓️ Busan — Sắp ra mắt</th>
 </tr>
 </thead>
 <tbody>
@@ -387,8 +387,7 @@ slug<br />
 description<br />
 thumbnail_url<br />
 order_number<br />
-unlock_condition<br />
-status</th>
+release_status</th>
 </tr>
 </thead>
 <tbody>
@@ -685,7 +684,7 @@ Khi:
 | completed_questions = total_questions |
 |---------------------------------------|
 
-thì Check-in hoàn thành và mở phần Văn hóa.
+thì Check-in được ghi nhận là hoàn thành. Văn hóa vẫn có thể mở trực tiếp từ đầu.
 
 ---
 
@@ -706,7 +705,7 @@ Luồng hoàn chỉnh:
 → Xem mô tả / lịch sử / ảnh / video<br />
 → Làm nhiệm vụ<br />
 → Hoàn thành Check-in<br />
-→ Mở Văn hóa</th>
+→ Chọn trực tiếp Chặng tiếp theo hoặc bất kỳ Chặng nào</th>
 </tr>
 </thead>
 <tbody>
@@ -1063,7 +1062,7 @@ Dựa trên tỷ lệ câu trả lời đúng:
 </tbody>
 </table>
 
-Số sao **không ảnh hưởng đến việc mở khóa**.
+Số sao chỉ phản ánh kết quả và **không ảnh hưởng đến quyền truy cập**.
 
 ---
 
@@ -1134,9 +1133,9 @@ Dương sẽ lấy dữ liệu này để hiển thị trong Hộ chiếu.
 
 ---
 
-## 5.10. Mở khóa địa điểm tiếp theo
+## 5.10. Tiếp tục khám phá địa điểm
 
-Ví dụ:
+Mọi địa điểm `released` đều có thể truy cập ngay. Hoàn thành một địa điểm chỉ cập nhật tiến độ, XP và phần thưởng; không đổi quyền truy cập địa điểm khác.
 
 <table>
 <colgroup>
@@ -1145,15 +1144,15 @@ Ví dụ:
 <thead>
 <tr class="header">
 <th>Gwangjang completed<br />
-↓<br />
-Gyeongbokgung unlocked</th>
+Gyeongbokgung available<br />
+Busan coming_soon</th>
 </tr>
 </thead>
 <tbody>
 </tbody>
 </table>
 
-Sau khi cập nhật trạng thái, module Bản đồ của Thức sẽ hiển thị địa điểm mới.
+Module Bản đồ của Thức luôn hiển thị các địa điểm đã xuất bản: `released` có thể mở, `coming_soon` hiển thị nhãn “Sắp ra mắt” và chưa mở chi tiết.
 
 ---
 
@@ -1174,7 +1173,7 @@ Luồng hoàn chỉnh:
 → Tính sao<br />
 → Nhận huy hiệu<br />
 → Nhận dấu mộc<br />
-→ Mở khóa địa điểm tiếp theo</th>
+→ Tiếp tục tự do khám phá</th>
 </tr>
 </thead>
 <tbody>
@@ -1217,7 +1216,7 @@ Luồng hoàn chỉnh:
 | Số sao                     | **Lê Uyên Nhi**      |
 | Trao huy hiệu              | **Lê Uyên Nhi**      |
 | Trao dấu mộc               | **Lê Uyên Nhi**      |
-| Mở khóa địa điểm tiếp theo | **Lê Uyên Nhi**      |
+| Ghi nhận hoàn thành hành trình | **Lê Uyên Nhi**   |
 
 ---
 
@@ -1249,8 +1248,7 @@ Trạng thái section:
 </colgroup>
 <thead>
 <tr class="header">
-<th>locked<br />
-unlocked<br />
+<th>not_started<br />
 in_progress<br />
 completed</th>
 </tr>
@@ -1267,9 +1265,8 @@ Trạng thái location:
 </colgroup>
 <thead>
 <tr class="header">
-<th>locked<br />
-unlocked<br />
-current<br />
+<th>available<br />
+in_progress<br />
 completed</th>
 </tr>
 </thead>
@@ -1336,16 +1333,11 @@ checkin_completed = true</th>
 </tbody>
 </table>
 
-Nhi dùng trạng thái này để cho phép mở Văn hóa.
+Nhi dùng trạng thái này để ghi nhận tiến độ Check-in; Văn hóa không phụ thuộc trạng thái này để truy cập.
 
 ### Nhi → Thức
 
-Sau khi hoàn thành địa điểm:
-
-| next_location_unlocked = true |
-|-------------------------------|
-
-Thức hiển thị trạng thái mới trên bản đồ.
+Sau khi hoàn thành địa điểm, Nhi truyền tiến độ và phần thưởng đã nhận. Thức không nhận cờ mở khóa; quyền truy cập chỉ dựa trên `release_status`.
 
 ### Nhi → Dương
 
@@ -1412,7 +1404,7 @@ Một tính năng chỉ được coi là hoàn thành khi:
 
 ### Lê Uyên Nhi
 
-|     | **Văn hóa → Từ vựng → Tổng kết → XP → Sao → Huy hiệu → Dấu mộc → Mở khóa địa điểm.** |
+|     | **Văn hóa → Từ vựng → Tổng kết → XP → Sao → Huy hiệu → Dấu mộc → Tiếp tục khám phá.** |
 |-----|--------------------------------------------------------------------------------------|
 
 Mỗi thành viên chịu trách nhiệm **trọn gói tính năng mình nhận**, từ giao diện đến dữ liệu và backend.

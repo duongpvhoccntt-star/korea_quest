@@ -61,19 +61,21 @@ Chỉ còn một Quiz tổng kết, không còn nhóm Check-in hay Văn hóa.
 - Media gồm loại, URL, credit, URL nguồn và alt text.
 - Mỗi mục nội dung có cờ hiển thị để ẩn mà chưa cần xóa.
 - Nguồn có trạng thái kiểm chứng, ngày kiểm chứng và cờ nguồn chính thức.
-- Fun Fact có tiêu đề, danh mục, icon/media và Chặng mở khóa.
+- Fun Fact có tiêu đề, danh mục và icon/media; không có điều kiện mở khóa theo Chặng.
 - Du lịch có nhiều phương án di chuyển, nhiều lưu ý, thông tin tiếp cận, nguồn chính thức và ngày kiểm chứng.
 
 ## Tiến trình người chơi
 
 `explorer_journeys` là phiên chơi theo Địa điểm/Phiên bản. Các bảng con lưu:
 
-- `explorer_stage_progress`: trạng thái từng Chặng.
+- `explorer_stage_progress`: trạng thái `not_started`, `in_progress`, `completed` của từng Chặng; trạng thái này không kiểm soát truy cập.
 - `explorer_quiz_attempts`, `explorer_quiz_answers`: lịch sử làm Quiz và đáp án.
-- `explorer_fun_fact_unlocks`: Fun Fact đã mở/đã đọc.
+- `explorer_content_views(kind = 'fun_fact')`: lượt xem Fun Fact dùng cho tiến độ, Huy hiệu và Thử thách.
 - `explorer_saved_locations`, `explorer_saved_highlights`: bookmark cá nhân.
 - `explorer_xp_ledger`: sổ cái XP bất biến.
 - `explorer_stamps`: Dấu mộc hoàn thành.
+
+Mọi Địa điểm `released` và toàn bộ chín Chặng được truy cập ngay. `coming_soon` là tình trạng biên tập, vẫn xuất hiện trong danh mục nhưng RPC chi tiết không trả nội dung.
 
 RLS chỉ cho người chơi đọc dữ liệu của chính mình. Không cấp quyền ghi trực tiếp vào tiến trình, XP và Dấu mộc; gameplay phải dùng RPC bảo mật để chấm đáp án và trao thưởng.
 

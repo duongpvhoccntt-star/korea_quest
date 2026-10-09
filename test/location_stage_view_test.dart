@@ -41,6 +41,20 @@ void main() {
           'credit': 'KoreaQuest',
           'source_url': 'https://example.com/source',
           'alt': 'Cung điện Gyeongbokgung',
+          'images': <Object?>[
+            <String, Object?>{
+              'url': 'https://example.com/gyeongbokgung.jpg',
+              'credit': 'KoreaQuest',
+              'source_url': 'https://example.com/source',
+              'alt': 'Cung điện Gyeongbokgung',
+            },
+            <String, Object?>{
+              'url': 'https://example.com/courtyard.jpg',
+              'credit': 'KoreaQuest',
+              'source_url': 'https://example.com/source-2',
+              'alt': 'Sân cung điện Gyeongbokgung',
+            },
+          ],
         },
       },
       <String, Object?>{
@@ -63,6 +77,30 @@ void main() {
         'title': 'Di sản được bảo tồn',
         'short_description': 'Di sản tiếp tục được gìn giữ cho tương lai.',
         'media': <String, Object?>{},
+      },
+    ],
+  });
+
+  const funFactLocation = PublishedLocationDetail({
+    'id': 'fun-fact-sample',
+    'slug': 'fun-fact-sample',
+    'name': 'Địa điểm Fun Fact',
+    'city': 'Seoul',
+    'fun_facts': <Object?>[
+      <String, Object?>{
+        'id': 'fact-1',
+        'title': 'Fact 1',
+        'fact': 'Nội dung 1',
+      },
+      <String, Object?>{
+        'id': 'fact-2',
+        'title': 'Fact 2',
+        'fact': 'Nội dung 2',
+      },
+      <String, Object?>{
+        'id': 'fact-3',
+        'title': 'Fact 3',
+        'fact': 'Nội dung 3',
       },
     ],
   });
@@ -122,6 +160,32 @@ void main() {
     await tester.tap(find.text('Bắt đầu khám phá'));
     expect(selectedStage, 2);
   });
+
+  testWidgets('allows selecting any stage directly', (tester) async {
+    var selectedStage = -1;
+
+    await tester.pumpWidget(
+      buildApp(stage: 1, onStage: (stage) => selectedStage = stage),
+    );
+
+    final travelStage = find.textContaining('Du lịch').last;
+    await tester.ensureVisible(travelStage);
+    await tester.tap(travelStage);
+
+    expect(selectedStage, 9);
+  });
+
+  testWidgets('shows every fun fact without lock styling', (tester) async {
+    await tester.pumpWidget(
+      buildApp(stage: 7, currentLocation: funFactLocation, onStage: (_) {}),
+    );
+
+    expect(find.byIcon(Icons.auto_awesome_rounded), findsNWidgets(3));
+    expect(find.byIcon(Icons.lock_rounded), findsNothing);
+    expect(find.byIcon(Icons.lock_outline_rounded), findsNothing);
+    expect(find.text('Fact 3'), findsOneWidget);
+  });
+
   testWidgets('does not render inactive detail action buttons', (tester) async {
     await tester.pumpWidget(buildApp(stage: 3, onStage: (_) {}));
 
@@ -145,6 +209,21 @@ void main() {
     expect(find.text('Văn hóa'), findsOneWidget);
     expect(find.byIcon(Icons.lock_rounded), findsNothing);
     expect(find.textContaining('bị khóa'), findsNothing);
+  });
+
+  testWidgets('moves between multiple images in a history card', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      buildApp(stage: 3, currentLocation: historyLocation, onStage: (_) {}),
+    );
+
+    expect(find.text('1/2'), findsOneWidget);
+    final nextButton = find.byKey(const ValueKey('gallery-next'));
+    await tester.ensureVisible(nextButton);
+    await tester.tap(nextButton);
+    await tester.pumpAndSettle();
+    expect(find.text('2/2'), findsOneWidget);
   });
 
   testWidgets('opens one history milestone and remembers viewed markers', (

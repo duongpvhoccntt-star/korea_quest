@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/admin/domain/admin_models.dart';
 import 'package:korea_quest/features/admin/presentation/widgets/admin_editor_fields.dart';
+import 'package:korea_quest/features/admin/presentation/widgets/admin_image_gallery_editor.dart';
 import 'package:korea_quest/features/admin/presentation/widgets/admin_image_upload_button.dart';
 
 class LocationHistoryEditor extends StatelessWidget {
@@ -33,6 +34,7 @@ class LocationHistoryEditor extends StatelessWidget {
       'media_credit': '',
       'media_source_url': '',
       'media_alt': '',
+      'image_gallery': <Map<String, dynamic>>[],
       'fun_fact': '',
       'is_visible': true,
     },
@@ -90,12 +92,7 @@ class LocationHistoryEditor extends StatelessWidget {
           maxLines: 3,
         ),
         const SizedBox(height: AppSpacing.md),
-        _mediaFields(draft, item, onChanged),
-        const SizedBox(height: AppSpacing.sm),
-        AdminMediaPreview(
-          kind: adminText(item, 'media_kind'),
-          url: adminText(item, 'media_url'),
-        ),
+        _mediaFields(draft, item, onChanged, supportsGallery: true),
         const SizedBox(height: AppSpacing.md),
         _field(item, 'fun_fact', 'Fun fact', onChanged, maxLines: 3),
         _visibilityToggle(item, onChanged),
@@ -136,6 +133,7 @@ class LocationHighlightsEditor extends StatelessWidget {
       'media_credit': '',
       'media_source_url': '',
       'media_alt': '',
+      'image_gallery': <Map<String, dynamic>>[],
       'is_visible': true,
     },
     onChanged: onChanged,
@@ -188,12 +186,7 @@ class LocationHighlightsEditor extends StatelessWidget {
           },
         ),
         const SizedBox(height: AppSpacing.md),
-        _mediaFields(draft, item, onChanged),
-        const SizedBox(height: AppSpacing.sm),
-        AdminMediaPreview(
-          kind: adminText(item, 'media_kind'),
-          url: adminText(item, 'media_url'),
-        ),
+        _mediaFields(draft, item, onChanged, supportsGallery: true),
         const SizedBox(height: AppSpacing.md),
         _field(item, 'fun_fact', 'Fun fact', onChanged, maxLines: 3),
         _visibilityToggle(item, onChanged),
@@ -279,6 +272,7 @@ class LocationExperiencesEditor extends StatelessWidget {
           'media_credit': '',
           'media_source_url': '',
           'media_alt': '',
+          'image_gallery': <Map<String, dynamic>>[],
           'is_visible': true,
         },
         onChanged: onChanged,
@@ -339,12 +333,7 @@ class LocationExperiencesEditor extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.md),
-            _mediaFields(draft, item, onChanged),
-            const SizedBox(height: AppSpacing.sm),
-            AdminMediaPreview(
-              kind: adminText(item, 'media_kind'),
-              url: adminText(item, 'media_url'),
-            ),
+            _mediaFields(draft, item, onChanged, supportsGallery: true),
             _visibilityToggle(item, onChanged),
           ],
         ),
@@ -383,6 +372,7 @@ class LocationFoodsEditor extends StatelessWidget {
       'image_credit': '',
       'image_source_url': '',
       'image_alt': '',
+      'image_gallery': <Map<String, dynamic>>[],
       'is_visible': true,
     },
     onChanged: onChanged,
@@ -451,24 +441,12 @@ class LocationFoodsEditor extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.md),
-        AdminFieldGrid(
-          children: [
-            _field(item, 'image_url', 'URL ảnh', onChanged),
-            _field(item, 'image_credit', 'Credit ảnh', onChanged),
-            _field(item, 'image_source_url', 'URL nguồn ảnh', onChanged),
-            _field(item, 'image_alt', 'Mô tả thay thế ảnh', onChanged),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        AdminImageUploadButton(
+        AdminImageGalleryEditor(
           draft: draft,
-          onUploaded: (url) {
-            applyUploadedImage(item, url, urlKey: 'image_url');
-            onChanged();
-          },
+          item: item,
+          legacyPrefix: 'image',
+          onChanged: onChanged,
         ),
-        const SizedBox(height: AppSpacing.sm),
-        AdminMediaPreview(kind: 'image', url: adminText(item, 'image_url')),
         _visibilityToggle(item, onChanged),
       ],
     ),
@@ -502,7 +480,6 @@ class LocationFunFactsEditor extends StatelessWidget {
       'media_credit': '',
       'media_source_url': '',
       'media_alt': '',
-      'unlock_after_stage': 1,
       'is_visible': true,
     },
     onChanged: onChanged,
@@ -513,26 +490,6 @@ class LocationFunFactsEditor extends StatelessWidget {
             _field(item, 'title', 'Tiêu đề', onChanged),
             _field(item, 'category', 'Danh mục', onChanged),
             _field(item, 'icon_name', 'Tên icon (không bắt buộc)', onChanged),
-            AdminEditorDropdown(
-              key: ValueKey('${identityHashCode(item)}-unlock-stage'),
-              label: 'Mở khóa sau chặng',
-              value: adminText(item, 'unlock_after_stage').isEmpty
-                  ? '1'
-                  : adminText(item, 'unlock_after_stage'),
-              items: const {
-                '1': '1. Mở đầu',
-                '2': '2. Tổng quan',
-                '3': '3. Lịch sử',
-                '4': '4. Điểm đến',
-                '5': '5. Trải nghiệm',
-                '6': '6. Ẩm thực',
-                '7': '7. Fun Facts',
-              },
-              onChanged: (value) {
-                item['unlock_after_stage'] = int.parse(value);
-                onChanged();
-              },
-            ),
           ],
         ),
         const SizedBox(height: AppSpacing.md),
@@ -547,11 +504,6 @@ class LocationFunFactsEditor extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.md),
         _mediaFields(draft, item, onChanged),
-        const SizedBox(height: AppSpacing.sm),
-        AdminMediaPreview(
-          kind: adminText(item, 'media_kind'),
-          url: adminText(item, 'media_url'),
-        ),
         _visibilityToggle(item, onChanged),
       ],
     ),
@@ -561,8 +513,9 @@ class LocationFunFactsEditor extends StatelessWidget {
 Widget _mediaFields(
   AdminLocationDraft draft,
   Map<String, dynamic> item,
-  VoidCallback onChanged,
-) {
+  VoidCallback onChanged, {
+  bool supportsGallery = false,
+}) {
   final isImage = adminText(item, 'media_kind') == 'image';
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -579,13 +532,23 @@ Widget _mediaFields(
               onChanged();
             },
           ),
-          _field(item, 'media_url', 'URL media', onChanged),
-          _field(item, 'media_credit', 'Credit media', onChanged),
-          _field(item, 'media_source_url', 'URL nguồn media', onChanged),
-          _field(item, 'media_alt', 'Mô tả thay thế media', onChanged),
+          if (!isImage || !supportsGallery) ...[
+            _field(item, 'media_url', 'URL media', onChanged),
+            _field(item, 'media_credit', 'Credit media', onChanged),
+            _field(item, 'media_source_url', 'URL nguồn media', onChanged),
+            _field(item, 'media_alt', 'Mô tả thay thế media', onChanged),
+          ],
         ],
       ),
-      if (isImage) ...[
+      if (isImage && supportsGallery) ...[
+        const SizedBox(height: AppSpacing.md),
+        AdminImageGalleryEditor(
+          draft: draft,
+          item: item,
+          legacyPrefix: 'media',
+          onChanged: onChanged,
+        ),
+      ] else if (isImage) ...[
         const SizedBox(height: AppSpacing.sm),
         AdminImageUploadButton(
           draft: draft,
@@ -593,6 +556,13 @@ Widget _mediaFields(
             applyUploadedImage(item, url, urlKey: 'media_url');
             onChanged();
           },
+        ),
+      ],
+      if (!isImage || !supportsGallery) ...[
+        const SizedBox(height: AppSpacing.sm),
+        AdminMediaPreview(
+          kind: adminText(item, 'media_kind'),
+          url: adminText(item, 'media_url'),
         ),
       ],
     ],

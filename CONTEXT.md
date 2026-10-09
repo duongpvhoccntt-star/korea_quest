@@ -20,16 +20,12 @@ _Avoid_: Màn chơi, map
 Tên định danh duy nhất của một Địa điểm trong URL công khai, được đề xuất từ tên Địa điểm, có thể chỉnh trước lần Xuất bản đầu tiên và được giữ ổn định sau đó.
 _Avoid_: UUID Địa điểm, tên hiển thị
 
-**Địa điểm tiên quyết**:
-Địa điểm mà Nhà thám hiểm phải hoàn thành trước khi một Địa điểm khác được mở khóa; mỗi Địa điểm có tối đa một Địa điểm tiên quyết trong MVP.
-_Avoid_: Địa điểm trước, trạng thái khóa
-
 **Tiến độ Địa điểm**:
-Trạng thái khám phá của một Nhà thám hiểm đối với một Địa điểm, từ chưa khả dụng đến hoàn thành.
+Trạng thái hoạt động của một Nhà thám hiểm đối với một Địa điểm, từ chưa bắt đầu, đang thực hiện đến hoàn thành. Tiến độ chỉ ghi nhận hành trình và không kiểm soát quyền truy cập Địa điểm hay Chặng.
 _Avoid_: Trạng thái nội dung, trạng thái Địa điểm toàn cục
 
 **Tình trạng ra mắt**:
-Trạng thái toàn cục cho biết Địa điểm đang Sắp ra mắt hay Đã phát hành trên bản đồ; trạng thái này không biểu thị tiến độ của từng Nhà thám hiểm.
+Trạng thái biên tập toàn cục cho biết Địa điểm đang Sắp ra mắt hay Đã phát hành trên bản đồ. Địa điểm Đã phát hành được truy cập ngay; Địa điểm Sắp ra mắt được hiển thị nhưng chưa thể mở. Trạng thái này không biểu thị tiến độ của từng Nhà thám hiểm.
 _Avoid_: Tiến độ Địa điểm, trạng thái khóa
 
 **Điểm nổi bật**:
@@ -73,7 +69,7 @@ _Avoid_: URL Ảnh nội dung, Nguồn tham khảo nội dung
 _Avoid_: URL nguồn, ảnh Sổ lưu niệm
 
 **Hành trình**:
-Trải nghiệm khám phá gắn với một Địa điểm và gồm chín Chặng tuần tự: Mở đầu, Tổng quan, Lịch sử, Điểm đến, Trải nghiệm, Ẩm thực, Fun Facts, Quiz tổng kết và Du lịch.
+Trải nghiệm khám phá gắn với một Địa điểm và gồm chín Chặng theo thứ tự hướng dẫn: Mở đầu, Tổng quan, Lịch sử, Điểm đến, Trải nghiệm, Ẩm thực, Fun Facts, Quiz tổng kết và Du lịch. Nhà thám hiểm có thể chọn trực tiếp bất kỳ Chặng nào.
 _Avoid_: Khóa học, chiến dịch
 
 **Thời lượng khám phá dự kiến**:
@@ -85,7 +81,7 @@ Khoảng thời gian thực địa được khuyến nghị để tham quan mộ
 _Avoid_: Thời lượng khám phá dự kiến
 
 **Chặng**:
-Một phần có thứ tự trong Hành trình, tập trung vào một nhóm nội dung hoặc hoạt động khám phá.
+Một phần có thứ tự hướng dẫn trong Hành trình, tập trung vào một nhóm nội dung hoặc hoạt động khám phá. Trạng thái Chặng là chưa bắt đầu, đang thực hiện hoặc hoàn thành và không dùng để chặn Chặng khác.
 _Avoid_: Level, bước
 
 **Mở đầu**:
@@ -105,7 +101,7 @@ Chặng gồm một nhóm 10–20 Câu hỏi khi Xuất bản, dùng để kiể
 _Avoid_: Quiz Check-in, Quiz Văn hóa
 
 **Fun Fact**:
-Một thông tin văn hóa ngắn thuộc bộ sưu tập của Địa điểm, được mở khi Nhà thám hiểm hoàn thành Chặng do nội dung quy định và được ghi nhận trong tiến độ cá nhân.
+Một thông tin văn hóa ngắn thuộc nội dung của Địa điểm, hiển thị ngay khi Địa điểm Đã phát hành. Lượt xem được ghi nhận trong tiến độ cá nhân và có thể dùng làm tiêu chí Huy hiệu hoặc Thử thách.
 _Avoid_: Thông tin nhanh, Câu hỏi
 
 **Quy tắc ứng xử**:

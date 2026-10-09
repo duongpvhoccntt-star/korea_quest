@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:korea_quest/core/utils/optimized_image_url.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/shadows/app_shadows.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/shared/widgets/youtube_player.dart';
 import 'package:korea_quest/features/explore/domain/published_location.dart';
+import 'package:korea_quest/features/explore/presentation/widgets/content_image_gallery.dart';
 import 'package:korea_quest/l10n/app_strings.dart';
 import 'package:url_launcher/link.dart';
 
@@ -1270,9 +1270,7 @@ class _HistoryMarker extends StatelessWidget {
               color: AppColors.paper,
               shape: BoxShape.circle,
               border: Border.all(
-                color: isViewed
-                    ? AppColors.completedGreen
-                    : AppColors.lockedGray,
+                color: isViewed ? AppColors.completedGreen : AppColors.disabled,
                 width: 3,
               ),
               boxShadow: AppShadows.small,
@@ -1575,19 +1573,13 @@ class _FunFactsStage extends StatelessWidget {
                 SizedBox(
                   width: 260,
                   child: _Card(
-                    color: index < 2
-                        ? Colors.white
-                        : AppColors.skyLight.withValues(alpha: .45),
+                    color: Colors.white,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
-                          index < 2
-                              ? Icons.auto_awesome_rounded
-                              : Icons.lock_outline_rounded,
-                          color: index < 2
-                              ? AppColors.koreanRed
-                              : AppColors.lockedGray,
+                        const Icon(
+                          Icons.auto_awesome_rounded,
+                          color: AppColors.koreanRed,
                         ),
                         const SizedBox(height: AppSpacing.sm),
                         Text(
@@ -1876,8 +1868,8 @@ class _Media extends StatelessWidget {
   Widget build(BuildContext context) {
     final url = media.string('url');
     final radius = BorderRadius.vertical(
-      top: const Radius.circular(24),
-      bottom: Radius.circular(roundedBottom ? 24 : 0),
+      top: const Radius.circular(AppRadius.large),
+      bottom: Radius.circular(roundedBottom ? AppRadius.large : 0),
     );
     final aspect = large
         ? 16 / 8
@@ -1890,91 +1882,15 @@ class _Media extends StatelessWidget {
         child: YoutubePlayer(url: url, label: fallbackLabel),
       );
     }
-    return ClipRRect(
+    return ContentImageGallery(
+      images: contentGalleryImages(media),
+      fallbackLabel: fallbackLabel,
+      aspectRatio: aspect,
       borderRadius: radius,
-      child: AspectRatio(
-        aspectRatio: aspect,
-        child: url.isEmpty
-            ? _MediaPlaceholder(label: fallbackLabel, large: large)
-            : Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.network(
-                    optimizedImageUrl(url, maxWidth: large ? 1280 : 720),
-                    fit: BoxFit.cover,
-                    webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
-                    semanticLabel: media.string('alt').isEmpty
-                        ? fallbackLabel
-                        : media.string('alt'),
-                    loadingBuilder: (context, child, progress) =>
-                        progress == null
-                        ? child
-                        : const ColoredBox(
-                            color: AppColors.skyLight,
-                            child: Center(child: CircularProgressIndicator()),
-                          ),
-                    errorBuilder: (context, error, stackTrace) =>
-                        _MediaPlaceholder(label: fallbackLabel, large: large),
-                  ),
-                  if (large)
-                    const DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Colors.transparent, Color(0xAA111B32)],
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-      ),
+      maxImageWidth: large ? 1280 : 720,
+      showGradient: large,
     );
   }
-}
-
-class _MediaPlaceholder extends StatelessWidget {
-  const _MediaPlaceholder({required this.label, required this.large});
-
-  final String label;
-  final bool large;
-
-  @override
-  Widget build(BuildContext context) => ColoredBox(
-    color: AppColors.skyLight,
-    child: Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.image_outlined,
-              size: large ? 56 : 36,
-              color: AppColors.koreanBlue,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              appStrings(context).imageUpdating,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.stitchText,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              label,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.stitchMuted),
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
 }
 
 class _MiniMap extends StatelessWidget {

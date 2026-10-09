@@ -62,11 +62,7 @@ class JourneyPage extends ConsumerWidget {
                     child: Icon(_statusIcon(mission.status)),
                   ),
                   title: Text(mission.title),
-                  subtitle: Text(
-                    mission.status == MissionStatus.locked
-                        ? 'Mở sau khi hoàn thành chặng trước'
-                        : '+${mission.rewardXp} XP',
-                  ),
+                  subtitle: Text('+${mission.rewardXp} XP'),
                   trailing: const Icon(Icons.chevron_right_rounded),
                 ),
               ),
@@ -111,13 +107,11 @@ class JourneyPage extends ConsumerWidget {
     MissionStatus.completed => AppColors.green,
     MissionStatus.inProgress => AppColors.coral,
     MissionStatus.notStarted => AppColors.teal,
-    MissionStatus.locked => AppColors.disabled,
   };
 
   IconData _statusIcon(MissionStatus status) => switch (status) {
     MissionStatus.completed => Icons.check_rounded,
     MissionStatus.inProgress => Icons.play_arrow_rounded,
     MissionStatus.notStarted => Icons.flag_outlined,
-    MissionStatus.locked => Icons.lock_outline_rounded,
   };
 }

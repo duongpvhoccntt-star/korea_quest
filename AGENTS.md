@@ -4,14 +4,14 @@
 
 **KoreaQuest** là ứng dụng khám phá văn hóa Hàn Quốc theo hướng **game-based learning**.
 
-Người dùng chọn địa điểm, hoàn thành các phần nội dung (Check-in → Văn hóa → Từ vựng), nhận XP, huy hiệu, dấu mộc và mở khóa địa điểm tiếp theo.
+Người dùng chọn bất kỳ địa điểm đã phát hành, khám phá các phần nội dung (Check-in → Văn hóa → Từ vựng), nhận XP, huy hiệu và dấu mộc. Tiến độ không khóa địa điểm hoặc nội dung.
 
 **Phạm vi MVP:**
 
 ```
 Đăng nhập → Trang chủ → Bản đồ → Chọn địa điểm
 → Check-in → Văn hóa → Từ vựng → Tổng kết
-→ Nhận XP / Huy hiệu / Dấu mộc → Mở khóa địa điểm tiếp theo
+→ Nhận XP / Huy hiệu / Dấu mộc → Tiếp tục tự do khám phá
 ```
 
 ---

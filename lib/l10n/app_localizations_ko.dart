@@ -141,16 +141,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get exploring => '탐험 중';
 
   @override
-  String get locked => '잠김';
-
-  @override
   String get all => '전체';
 
   @override
   String get done => '완료';
-
-  @override
-  String get notOpened => '잠김';
 
   @override
   String get stage => '단계';
@@ -517,7 +511,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get studentDemoDescription => '문화 여정 체험';
 
   @override
-  String get unlockedBadges => '배지 3/12개 잠금 해제';
+  String get earnedBadgesMessage => '획득한 배지는 컬렉션에 저장됩니다';
 
   @override
   String get quizWaiting => '50개 이상의 문화 퀴즈가 기다립니다';
@@ -993,6 +987,17 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get imageUpdating => '이미지 업데이트 중';
+
+  @override
+  String get previousImage => '이전 이미지';
+
+  @override
+  String get nextImage => '다음 이미지';
+
+  @override
+  String imagePosition(int current, int total) {
+    return '전체 $total장 중 $current번째 이미지';
+  }
 
   @override
   String get areaMap => '지역 지도';

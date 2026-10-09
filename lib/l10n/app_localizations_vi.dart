@@ -144,16 +144,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get exploring => 'Đang khám phá';
 
   @override
-  String get locked => 'Chưa mở khóa';
-
-  @override
   String get all => 'Tất cả';
 
   @override
   String get done => 'Đã xong';
-
-  @override
-  String get notOpened => 'Chưa mở';
 
   @override
   String get stage => 'Chặng';
@@ -541,7 +535,8 @@ class AppLocalizationsVi extends AppLocalizations {
   String get studentDemoDescription => 'Trải nghiệm hành trình văn hóa';
 
   @override
-  String get unlockedBadges => '3/12 huy hiệu đã mở';
+  String get earnedBadgesMessage =>
+      'Huy hiệu đã nhận sẽ được lưu vào bộ sưu tập';
 
   @override
   String get quizWaiting => '50+ câu đố văn hóa đang chờ bạn';
@@ -1037,6 +1032,17 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get imageUpdating => 'Ảnh đang được cập nhật';
+
+  @override
+  String get previousImage => 'Ảnh trước';
+
+  @override
+  String get nextImage => 'Ảnh tiếp theo';
+
+  @override
+  String imagePosition(int current, int total) {
+    return 'Ảnh $current trên $total';
+  }
 
   @override
   String get areaMap => 'Bản đồ khu vực';

@@ -397,8 +397,6 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
 
   @override
   Widget build(BuildContext context) {
-    final availableLocations =
-        ref.watch(adminLocationsProvider).value ?? const [];
     return PopScope(
       canPop: !_dirty,
       onPopInvokedWithResult: (didPop, result) {
@@ -462,7 +460,7 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
                     padding: EdgeInsets.only(bottom: AppSpacing.md),
                     child: _UnsavedNotice(),
                   ),
-                _buildStep(availableLocations),
+                _buildStep(),
                 const SizedBox(height: AppSpacing.xl),
                 _EditorActions(
                   currentStep: _currentStep,
@@ -483,14 +481,10 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
     );
   }
 
-  Widget _buildStep(List<AdminLocationSummary> availableLocations) {
+  Widget _buildStep() {
     return switch (_currentStep) {
       0 => LocationOpeningEditor(draft: _draft, onChanged: _markDirty),
-      1 => LocationOverviewEditor(
-        draft: _draft,
-        availableLocations: availableLocations,
-        onChanged: _markDirty,
-      ),
+      1 => LocationOverviewEditor(draft: _draft, onChanged: _markDirty),
       2 => LocationHistoryEditor(draft: _draft, onChanged: _markDirty),
       3 => LocationHighlightsEditor(draft: _draft, onChanged: _markDirty),
       4 => LocationExperiencesEditor(draft: _draft, onChanged: _markDirty),
