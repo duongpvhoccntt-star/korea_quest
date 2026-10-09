@@ -1,12 +1,26 @@
 import 'dart:typed_data';
 
-enum LocationStatus { completed, inProgress, available, locked }
+enum LocationStatus { completed, inProgress, available }
 
-enum MissionStatus { notStarted, inProgress, completed, locked }
+enum LocationReleaseStatus {
+  comingSoon('coming_soon'),
+  released('released');
+
+  const LocationReleaseStatus(this.wireValue);
+
+  final String wireValue;
+
+  bool get isReleased => this == LocationReleaseStatus.released;
+
+  static LocationReleaseStatus fromWire(Object? value) =>
+      value?.toString() == LocationReleaseStatus.released.wireValue
+      ? LocationReleaseStatus.released
+      : LocationReleaseStatus.comingSoon;
+}
+
+enum MissionStatus { notStarted, inProgress, completed }
 
 enum JourneyStage { checkIn, culture, vocabulary, summary }
-
-enum AchievementStatus { earned, locked }
 
 class AppUser {
   const AppUser({
@@ -80,6 +94,7 @@ class Location {
     required this.city,
     required this.description,
     required this.status,
+    required this.releaseStatus,
     required this.rewardXp,
   });
 
@@ -89,7 +104,10 @@ class Location {
   final String city;
   final String description;
   final LocationStatus status;
+  final LocationReleaseStatus releaseStatus;
   final int rewardXp;
+
+  bool get isReleased => releaseStatus.isReleased;
 }
 
 class JourneyProgress {
@@ -115,14 +133,12 @@ class Achievement {
     required this.title,
     required this.description,
     required this.icon,
-    required this.status,
   });
 
   final String id;
   final String title;
   final String description;
   final String icon;
-  final AchievementStatus status;
 }
 
 class PassportStamp {
@@ -131,16 +147,14 @@ class PassportStamp {
     required this.name,
     required this.koreanName,
     required this.seal,
-    this.earnedDate,
+    required this.earnedDate,
   });
 
   final String locationId;
   final String name;
   final String koreanName;
   final String seal;
-  final DateTime? earnedDate;
-
-  bool get isEarned => earnedDate != null;
+  final DateTime earnedDate;
 }
 
 class Mission {

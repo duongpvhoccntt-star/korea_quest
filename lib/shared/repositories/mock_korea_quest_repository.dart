@@ -32,6 +32,7 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
       city: 'Seoul',
       description: 'Bước vào trung tâm lịch sử của triều đại Joseon.',
       status: LocationStatus.completed,
+      releaseStatus: LocationReleaseStatus.released,
       rewardXp: 450,
     ),
     Location(
@@ -41,6 +42,7 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
       city: 'Seoul',
       description: 'Nếp sống truyền thống giữa lòng thành phố hiện đại.',
       status: LocationStatus.inProgress,
+      releaseStatus: LocationReleaseStatus.released,
       rewardXp: 380,
     ),
     Location(
@@ -50,6 +52,7 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
       city: 'Seoul',
       description: 'Ngắm Seoul và khám phá biểu tượng tình yêu hiện đại.',
       status: LocationStatus.available,
+      releaseStatus: LocationReleaseStatus.released,
       rewardXp: 420,
     ),
     Location(
@@ -59,7 +62,8 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
       city: 'Jeju',
       description:
           'Thiên nhiên hùng vĩ, truyền thuyết Haenyeo và ngọn núi lửa Hallasan huyền bí.',
-      status: LocationStatus.locked,
+      status: LocationStatus.available,
+      releaseStatus: LocationReleaseStatus.comingSoon,
       rewardXp: 600,
     ),
   ];
@@ -70,28 +74,24 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
       title: 'Nhà thám hiểm đầu tiên',
       description: 'Hoàn thành địa điểm đầu tiên',
       icon: '🧭',
-      status: AchievementStatus.earned,
     ),
     Achievement(
       id: 'history-lover',
       title: 'Người yêu lịch sử',
       description: 'Hoàn thành 10 câu hỏi lịch sử',
       icon: '🏯',
-      status: AchievementStatus.earned,
     ),
     Achievement(
       id: 'vocabulary-master',
       title: 'Cao thủ từ vựng',
       description: 'Ghi nhớ 30 từ mới',
       icon: '가',
-      status: AchievementStatus.earned,
     ),
     Achievement(
       id: 'seven-day-journey',
       title: 'Hành trình 7 ngày',
       description: 'Duy trì chuỗi khám phá 7 ngày',
       icon: '🔥',
-      status: AchievementStatus.earned,
     ),
   ];
 
@@ -143,7 +143,8 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
           koreanName: locations[i].koreanName,
           city: locations[i].city,
           description: locations[i].description,
-          status: i == 0 ? LocationStatus.available : LocationStatus.locked,
+          status: LocationStatus.available,
+          releaseStatus: locations[i].releaseStatus,
           rewardXp: locations[i].rewardXp,
         ),
     ];
@@ -192,7 +193,7 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
           id: 'jeju-checkin-3',
           title: 'Khám phá hệ thống dung nham Manjanggul',
           stage: JourneyStage.checkIn,
-          status: MissionStatus.locked,
+          status: MissionStatus.notStarted,
           rewardXp: 90,
         ),
         // ── Văn hóa ──────────────────────────────────────────────────────────
@@ -200,21 +201,21 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
           id: 'jeju-culture-1',
           title: 'Haenyeo — Người phụ nữ biển (해녀)',
           stage: JourneyStage.culture,
-          status: MissionStatus.locked,
+          status: MissionStatus.notStarted,
           rewardXp: 130,
         ),
         Mission(
           id: 'jeju-culture-2',
           title: 'Dol Hareubang — Ông đá thần (돌하르방)',
           stage: JourneyStage.culture,
-          status: MissionStatus.locked,
+          status: MissionStatus.notStarted,
           rewardXp: 110,
         ),
         Mission(
           id: 'jeju-culture-3',
           title: 'Lễ hội Jeju & nghề làm muối truyền thống',
           stage: JourneyStage.culture,
-          status: MissionStatus.locked,
+          status: MissionStatus.notStarted,
           rewardXp: 120,
         ),
         // ── Từ vựng ──────────────────────────────────────────────────────────
@@ -222,21 +223,21 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
           id: 'jeju-vocab-1',
           title: '바다 (Biển) & 섬 (Đảo) — Từ vựng thiên nhiên',
           stage: JourneyStage.vocabulary,
-          status: MissionStatus.locked,
+          status: MissionStatus.notStarted,
           rewardXp: 150,
         ),
         Mission(
           id: 'jeju-vocab-2',
           title: '감귤 (Quýt) & 흑돼지 (Heo đen) — Đặc sản Jeju',
           stage: JourneyStage.vocabulary,
-          status: MissionStatus.locked,
+          status: MissionStatus.notStarted,
           rewardXp: 160,
         ),
         Mission(
           id: 'jeju-vocab-3',
           title: 'Từ vựng phương ngữ Jeju (제주어)',
           stage: JourneyStage.vocabulary,
-          status: MissionStatus.locked,
+          status: MissionStatus.notStarted,
           rewardXp: 180,
         ),
       ];
@@ -262,55 +263,40 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
         id: 'vocabulary',
         title: 'Từ vựng tại chỗ',
         stage: JourneyStage.vocabulary,
-        status: MissionStatus.locked,
+        status: MissionStatus.notStarted,
         rewardXp: 200,
       ),
     ];
   }
 
   @override
-  Future<List<Achievement>> getAchievements() async {
-    if (!_progressReset) return achievements;
-    return [
-      for (final achievement in achievements)
-        Achievement(
-          id: achievement.id,
-          title: achievement.title,
-          description: achievement.description,
-          icon: achievement.icon,
-          status: AchievementStatus.locked,
-        ),
-    ];
-  }
+  Future<List<Achievement>> getEarnedAchievements() async =>
+      _progressReset ? const [] : achievements;
 
   @override
-  Future<List<PassportStamp>> getPassportStamps() async => [
-    PassportStamp(
-      locationId: 'gyeongbokgung',
-      name: 'Gyeongbokgung',
-      koreanName: '경복궁',
-      seal: '宮',
-      earnedDate: _progressReset ? null : DateTime(2026, 8, 2),
-    ),
-    PassportStamp(
-      locationId: 'bukchon-hanok',
-      name: 'Bukchon Hanok',
-      koreanName: '북촌',
-      seal: '村',
-      earnedDate: _progressReset ? null : DateTime(2026, 8, 5),
-    ),
-    PassportStamp(
-      locationId: 'namsan',
-      name: 'Tháp Namsan',
-      koreanName: '남산',
-      seal: '山',
-      earnedDate: _progressReset ? null : DateTime(2026, 8, 9),
-    ),
-    const PassportStamp(
-      locationId: 'jeju',
-      name: 'Đảo Jeju',
-      koreanName: '제주',
-      seal: '島',
-    ),
-  ];
+  Future<List<PassportStamp>> getEarnedPassportStamps() async => _progressReset
+      ? const []
+      : [
+          PassportStamp(
+            locationId: 'gyeongbokgung',
+            name: 'Gyeongbokgung',
+            koreanName: '경복궁',
+            seal: '宮',
+            earnedDate: DateTime(2026, 8, 2),
+          ),
+          PassportStamp(
+            locationId: 'bukchon-hanok',
+            name: 'Bukchon Hanok',
+            koreanName: '북촌',
+            seal: '村',
+            earnedDate: DateTime(2026, 8, 5),
+          ),
+          PassportStamp(
+            locationId: 'namsan',
+            name: 'Tháp Namsan',
+            koreanName: '남산',
+            seal: '山',
+            earnedDate: DateTime(2026, 8, 9),
+          ),
+        ];
 }

@@ -410,16 +410,16 @@ class _MapNode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locked = location.status == LocationStatus.locked;
-    final color = locked
+    final comingSoon = !location.isReleased;
+    final color = comingSoon
         ? AppColors.disabled
         : active
         ? AppColors.coral
         : location.status == LocationStatus.completed
         ? AppColors.teal
         : AppColors.gold;
-    final icon = locked
-        ? Icons.lock_rounded
+    final icon = comingSoon
+        ? Icons.schedule_rounded
         : location.status == LocationStatus.completed
         ? Icons.check_rounded
         : Icons.location_on_rounded;
@@ -1010,13 +1010,13 @@ class _LocationCard extends StatelessWidget {
       1 => const [AppColors.locationClay, AppColors.locationPeach],
       _ => const [AppColors.locationTeal, AppColors.locationMint],
     };
-    final locked = location.status == LocationStatus.locked;
-    final status = switch (location.status) {
-      LocationStatus.completed => appStrings(context).completed,
-      LocationStatus.inProgress => appStrings(context).inProgress,
-      LocationStatus.available => appStrings(context).availableToExplore,
-      LocationStatus.locked => appStrings(context).locked,
-    };
+    final status = !location.isReleased
+        ? 'Sắp ra mắt'
+        : switch (location.status) {
+            LocationStatus.completed => appStrings(context).completed,
+            LocationStatus.inProgress => appStrings(context).inProgress,
+            LocationStatus.available => appStrings(context).availableToExplore,
+          };
     return Container(
       height: featured ? 410 : 330,
       clipBehavior: Clip.antiAlias,
@@ -1134,9 +1134,9 @@ class _LocationCard extends StatelessWidget {
                   const SizedBox(height: AppSpacing.md),
                   PrimaryButton(
                     label: appStrings(context).continueJourney,
-                    onPressed: locked
-                        ? null
-                        : () => context.go('/journey/${location.id}'),
+                    onPressed: location.isReleased
+                        ? () => context.go('/journey/${location.id}')
+                        : null,
                   ),
                 ],
               ],

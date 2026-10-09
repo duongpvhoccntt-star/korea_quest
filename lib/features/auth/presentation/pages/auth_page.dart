@@ -741,7 +741,7 @@ class _AchievementPreview extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  appStrings(context).unlockedBadges,
+                  appStrings(context).earnedBadgesMessage,
                   style: const TextStyle(fontWeight: FontWeight.w900),
                 ),
                 Text(

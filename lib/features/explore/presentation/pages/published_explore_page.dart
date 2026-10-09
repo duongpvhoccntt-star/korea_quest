@@ -14,6 +14,8 @@ import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/explore/domain/published_location.dart';
 import 'package:korea_quest/features/explore/presentation/providers/location_content_providers.dart';
 import 'package:korea_quest/l10n/app_strings.dart';
+import 'package:korea_quest/shared/models/domain_models.dart';
+import 'package:korea_quest/shared/providers/repository_providers.dart';
 
 const _allFilter = '__all__';
 const _comingSoonFilter = '__coming_soon__';
@@ -34,6 +36,15 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
   @override
   Widget build(BuildContext context) {
     final locations = ref.watch(publishedLocationsProvider);
+    final achievements = ref.watch(earnedAchievementsProvider);
+    if (achievements.isLoading) {
+      return const Center(child: LoadingIndicator());
+    }
+    if (achievements.hasError) {
+      return const Center(
+        child: ErrorState(message: 'Không thể tải huy hiệu đã nhận.'),
+      );
+    }
     return locations.when(
       loading: () => const Center(child: LoadingIndicator()),
       error: (error, stack) => Center(
@@ -45,11 +56,14 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
           ),
         ),
       ),
-      data: _buildDashboard,
+      data: (items) => _buildDashboard(items, achievements.requireValue),
     );
   }
 
-  Widget _buildDashboard(List<PublishedLocationSummary> items) {
+  Widget _buildDashboard(
+    List<PublishedLocationSummary> items,
+    List<Achievement> achievements,
+  ) {
     final filters = _filtersFor(items);
     final visible = _filtered(items);
     final selected = _selectedLocation(visible, items);
@@ -74,6 +88,7 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
                           total: items.length,
                           visible: visible,
                           selected: selected,
+                          achievements: achievements,
                           onExplore: _openLocation,
                         ),
                       ),
@@ -117,7 +132,10 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
                     onExplore: _openLocation,
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  _BadgeCollection(total: items.length),
+                  _BadgeCollection(
+                    total: items.length,
+                    achievements: achievements,
+                  ),
                 ],
               ],
             ),
@@ -189,12 +207,14 @@ class _SideRail extends StatelessWidget {
     required this.total,
     required this.visible,
     required this.selected,
+    required this.achievements,
     required this.onExplore,
   });
 
   final int total;
   final List<PublishedLocationSummary> visible;
   final PublishedLocationSummary? selected;
+  final List<Achievement> achievements;
   final ValueChanged<PublishedLocationSummary> onExplore;
 
   @override
@@ -204,7 +224,7 @@ class _SideRail extends StatelessWidget {
       const SizedBox(height: AppSpacing.lg),
       _RecommendationStrip(locations: visible, onExplore: onExplore),
       const SizedBox(height: AppSpacing.lg),
-      _BadgeCollection(total: total),
+      _BadgeCollection(total: total, achievements: achievements),
       if (selected != null) ...[
         const SizedBox(height: AppSpacing.lg),
         _MiniJourneyCard(location: selected!, onExplore: onExplore),
@@ -421,7 +441,7 @@ class _MapMarker extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = switch (status) {
       _MarkerStatus.selected => AppColors.koreanBlue,
-      _MarkerStatus.comingSoon => AppColors.lockedGray,
+      _MarkerStatus.comingSoon => AppColors.disabled,
       _ => AppColors.blossom,
     };
     final size = status == _MarkerStatus.selected ? 72.0 : 56.0;
@@ -469,8 +489,8 @@ class _MapMarker extends StatelessWidget {
                     const ColoredBox(
                       color: Color(0x88FFFFFF),
                       child: Icon(
-                        Icons.lock_clock_rounded,
-                        color: AppColors.lockedGray,
+                        Icons.schedule_rounded,
+                        color: AppColors.disabled,
                       ),
                     ),
                 ],
@@ -669,9 +689,10 @@ class _SuggestionTile extends StatelessWidget {
 }
 
 class _BadgeCollection extends StatelessWidget {
-  const _BadgeCollection({required this.total});
+  const _BadgeCollection({required this.total, required this.achievements});
 
   final int total;
+  final List<Achievement> achievements;
 
   @override
   Widget build(BuildContext context) => _SurfaceCard(
@@ -685,28 +706,33 @@ class _BadgeCollection extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.w800),
         ),
         const SizedBox(height: AppSpacing.md),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            for (final icon in const [
-              Icons.local_dining,
-              Icons.stadium,
-              Icons.train,
-              Icons.auto_awesome_rounded,
-              Icons.lock,
-            ])
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.lockedGray),
+        if (achievements.isEmpty)
+          const Text(
+            'Chưa nhận huy hiệu nào.',
+            style: TextStyle(color: AppColors.stitchMuted),
+          )
+        else
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: [
+              for (final achievement in achievements)
+                Container(
+                  width: 48,
+                  height: 48,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.completedGreen),
+                  ),
+                  child: Text(
+                    achievement.icon,
+                    style: const TextStyle(fontSize: 24),
+                  ),
                 ),
-                child: Icon(icon, color: AppColors.lockedGray),
-              ),
-          ],
-        ),
+            ],
+          ),
         const SizedBox(height: AppSpacing.sm),
         Text(
           appStrings(context).publishedLocationsWaiting(total),

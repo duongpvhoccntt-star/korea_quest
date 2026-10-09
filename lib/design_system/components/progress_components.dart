@@ -72,34 +72,36 @@ class UserAvatar extends StatelessWidget {
 }
 
 class StatusChip extends StatelessWidget {
-  const StatusChip({required this.status, super.key});
+  const StatusChip({
+    required this.status,
+    required this.releaseStatus,
+    super.key,
+  });
 
   final LocationStatus status;
+  final LocationReleaseStatus releaseStatus;
 
   @override
   Widget build(BuildContext context) {
-    final (label, icon, color) = switch (status) {
-      LocationStatus.completed => (
-        appStrings(context).completed,
-        Icons.check_circle,
-        AppColors.completedGreen,
-      ),
-      LocationStatus.inProgress => (
-        appStrings(context).inProgress,
-        Icons.directions_walk,
-        AppColors.koreanRed,
-      ),
-      LocationStatus.available => (
-        appStrings(context).availableToExplore,
-        Icons.explore,
-        AppColors.koreanBlue,
-      ),
-      LocationStatus.locked => (
-        appStrings(context).locked,
-        Icons.lock,
-        AppColors.lockedGray,
-      ),
-    };
+    final (label, icon, color) = !releaseStatus.isReleased
+        ? ('Sắp ra mắt', Icons.schedule_rounded, AppColors.disabled)
+        : switch (status) {
+            LocationStatus.completed => (
+              appStrings(context).completed,
+              Icons.check_circle,
+              AppColors.completedGreen,
+            ),
+            LocationStatus.inProgress => (
+              appStrings(context).inProgress,
+              Icons.directions_walk,
+              AppColors.koreanRed,
+            ),
+            LocationStatus.available => (
+              appStrings(context).availableToExplore,
+              Icons.explore,
+              AppColors.koreanBlue,
+            ),
+          };
     return Chip(
       avatar: Icon(icon, size: 16, color: color),
       label: Text(label),

@@ -6,6 +6,8 @@ import 'package:korea_quest/features/achievements/presentation/pages/achievement
 import 'package:korea_quest/features/passport/presentation/pages/passport_page.dart';
 import 'package:korea_quest/features/profile/presentation/pages/profile_page.dart';
 import 'package:korea_quest/features/settings/presentation/pages/settings_page.dart';
+import 'package:korea_quest/shared/providers/repository_providers.dart';
+import 'package:korea_quest/shared/repositories/mock_korea_quest_repository.dart';
 
 void main() {
   final pages = <String, Widget Function()>{
@@ -44,4 +46,29 @@ void main() {
       );
     }
   }
+
+  testWidgets('empty collections do not render unearned reward placeholders', (
+    tester,
+  ) async {
+    final repository = MockKoreaQuestRepository();
+    await repository.resetUserProgress();
+
+    Widget buildPage(Widget page) => ProviderScope(
+      overrides: [koreaQuestRepositoryProvider.overrideWithValue(repository)],
+      child: MaterialApp(
+        theme: AppTheme.light,
+        home: Scaffold(body: page),
+      ),
+    );
+
+    await tester.pumpWidget(buildPage(const AchievementsPage()));
+    await tester.pumpAndSettle();
+    expect(find.text('Chưa nhận huy hiệu nào'), findsOneWidget);
+    expect(find.byIcon(Icons.lock_rounded), findsNothing);
+
+    await tester.pumpWidget(buildPage(const PassportPage()));
+    await tester.pumpAndSettle();
+    expect(find.text('Chưa nhận dấu mộc nào'), findsOneWidget);
+    expect(find.byIcon(Icons.lock_rounded), findsNothing);
+  });
 }

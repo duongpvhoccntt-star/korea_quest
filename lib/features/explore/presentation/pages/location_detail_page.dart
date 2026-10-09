@@ -30,8 +30,10 @@ class LocationDetailPage extends ConsumerWidget {
           eyebrow: '${item.city} · ${item.koreanName}',
           title: item.name,
           description: item.description,
-          actionLabel: 'Bắt đầu hành trình',
-          onAction: () => context.go('/journey/${item.id}'),
+          actionLabel: item.isReleased ? 'Bắt đầu hành trình' : null,
+          onAction: item.isReleased
+              ? () => context.go('/journey/${item.id}')
+              : null,
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(AppSpacing.xl),
@@ -40,7 +42,10 @@ class LocationDetailPage extends ConsumerWidget {
                 runSpacing: AppSpacing.md,
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  StatusChip(status: item.status),
+                  StatusChip(
+                    status: item.status,
+                    releaseStatus: item.releaseStatus,
+                  ),
                   Text('Phần thưởng tối đa: ${item.rewardXp} XP'),
                   const Text('3 chặng · Check-in · Văn hóa · Từ vựng'),
                 ],

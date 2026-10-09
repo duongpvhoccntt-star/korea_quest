@@ -101,7 +101,7 @@ class SupabaseAdminRepository implements AdminRepository {
     required List<Map<String, dynamic>> items,
   }) async {
     final result = await _client.rpc(
-      'save_location_section',
+      'save_location_section_with_galleries',
       params: {
         'revision_id': draft.revisionId,
         'expected_lock_version': draft.lockVersion,
@@ -141,7 +141,7 @@ class SupabaseAdminRepository implements AdminRepository {
   @override
   Future<List<String>> validateDraft(AdminLocationDraft draft) async {
     final result = await _client.rpc(
-      'validate_location_revision',
+      'validate_location_revision_with_galleries',
       params: {'revision_id': draft.revisionId},
     );
     return (result as List<dynamic>).map((item) => item.toString()).toList();

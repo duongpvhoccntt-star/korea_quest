@@ -17,6 +17,6 @@ abstract interface class KoreaQuestRepository {
   Future<Location?> getLocation(String id);
   Future<JourneyProgress> getJourney(String locationId);
   Future<List<Mission>> getMissions(String locationId);
-  Future<List<Achievement>> getAchievements();
-  Future<List<PassportStamp>> getPassportStamps();
+  Future<List<Achievement>> getEarnedAchievements();
+  Future<List<PassportStamp>> getEarnedPassportStamps();
 }

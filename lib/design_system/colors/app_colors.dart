@@ -40,5 +40,4 @@ abstract final class AppColors {
   static const stitchMuted = Color(0xFF667085);
   static const borderSoft = Color(0xFFE8E2DB);
   static const completedGreen = Color(0xFF63C59A);
-  static const lockedGray = Color(0xFFBBC1CC);
 }

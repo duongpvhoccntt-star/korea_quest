@@ -22,15 +22,18 @@ class HomePage extends ConsumerWidget {
     final userAsync = ref.watch(currentUserProvider);
     final progressAsync = ref.watch(userProgressProvider);
     final locationsAsync = ref.watch(locationsProvider);
+    final achievementsAsync = ref.watch(earnedAchievementsProvider);
 
     if (userAsync.isLoading ||
         progressAsync.isLoading ||
-        locationsAsync.isLoading) {
+        locationsAsync.isLoading ||
+        achievementsAsync.isLoading) {
       return const LoadingIndicator();
     }
     if (userAsync.hasError ||
         progressAsync.hasError ||
-        locationsAsync.hasError) {
+        locationsAsync.hasError ||
+        achievementsAsync.hasError) {
       return ErrorState(
         message: strings.loadJourneyError,
         onRetry: () => ref.invalidate(koreaQuestRepositoryProvider),
@@ -40,6 +43,7 @@ class HomePage extends ConsumerWidget {
     final user = userAsync.requireValue;
     final progress = progressAsync.requireValue;
     final locations = locationsAsync.requireValue;
+    final achievements = achievementsAsync.requireValue;
     final active = _activeLocation(
       locations,
       strings.koreaMap,
@@ -60,6 +64,7 @@ class HomePage extends ConsumerWidget {
                   progress: progress,
                   locations: locations,
                   active: active,
+                  achievements: achievements,
                 );
                 final map = _StitchMapCanvas(
                   locations: locations,
@@ -96,19 +101,23 @@ class HomePage extends ConsumerWidget {
     String fallbackDescription,
   ) {
     for (final location in locations) {
-      if (location.status == LocationStatus.inProgress) return location;
+      if (location.isReleased && location.status == LocationStatus.inProgress) {
+        return location;
+      }
     }
-    return locations.isEmpty
-        ? Location(
-            id: 'gyeongbokgung',
-            name: fallbackName,
-            koreanName: '한국 지도',
-            city: 'KoreaQuest',
-            description: fallbackDescription,
-            status: LocationStatus.available,
-            rewardXp: 240,
-          )
-        : locations.first;
+    for (final location in locations) {
+      if (location.isReleased) return location;
+    }
+    return Location(
+      id: 'gyeongbokgung',
+      name: fallbackName,
+      koreanName: '한국 지도',
+      city: 'KoreaQuest',
+      description: fallbackDescription,
+      status: LocationStatus.available,
+      releaseStatus: LocationReleaseStatus.released,
+      rewardXp: 240,
+    );
   }
 }
 
@@ -118,12 +127,14 @@ class _JourneySidePanel extends StatelessWidget {
     required this.progress,
     required this.locations,
     required this.active,
+    required this.achievements,
   });
 
   final AppUser user;
   final UserProgress progress;
   final List<Location> locations;
   final Location active;
+  final List<Achievement> achievements;
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +203,7 @@ class _JourneySidePanel extends StatelessWidget {
           _SuggestionCard(location: location),
           const SizedBox(height: AppSpacing.md),
         ],
-        _BadgeCollection(progress: progress),
+        _BadgeCollection(achievements: achievements),
       ],
     );
   }
@@ -295,7 +306,9 @@ class _SuggestionCard extends StatelessWidget {
   Widget build(BuildContext context) => _Surface(
     padding: const EdgeInsets.all(AppSpacing.md),
     child: InkWell(
-      onTap: () => context.go('/journey/${location.id}'),
+      onTap: location.isReleased
+          ? () => context.go('/journey/${location.id}')
+          : null,
       borderRadius: BorderRadius.circular(24),
       child: Row(
         children: [
@@ -303,12 +316,14 @@ class _SuggestionCard extends StatelessWidget {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: _statusColor(location.status).withValues(alpha: .16),
+              color: _locationColor(location).withValues(alpha: .16),
               borderRadius: BorderRadius.circular(AppRadius.large),
             ),
             child: Icon(
-              _statusIcon(location.status),
-              color: _statusColor(location.status),
+              location.isReleased
+                  ? _statusIcon(location.status)
+                  : Icons.schedule_rounded,
+              color: _locationColor(location),
               size: 34,
             ),
           ),
@@ -342,8 +357,14 @@ class _SuggestionCard extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () => context.go('/journey/${location.id}'),
-            icon: const Icon(Icons.bookmark_add_rounded),
+            onPressed: location.isReleased
+                ? () => context.go('/journey/${location.id}')
+                : null,
+            icon: Icon(
+              location.isReleased
+                  ? Icons.bookmark_add_rounded
+                  : Icons.schedule_rounded,
+            ),
             color: AppColors.koreanRed,
           ),
         ],
@@ -353,9 +374,9 @@ class _SuggestionCard extends StatelessWidget {
 }
 
 class _BadgeCollection extends StatelessWidget {
-  const _BadgeCollection({required this.progress});
+  const _BadgeCollection({required this.achievements});
 
-  final UserProgress progress;
+  final List<Achievement> achievements;
 
   @override
   Widget build(BuildContext context) => DecoratedBox(
@@ -374,19 +395,20 @@ class _BadgeCollection extends StatelessWidget {
             style: const TextStyle(fontWeight: FontWeight.w900),
           ),
           const SizedBox(height: AppSpacing.md),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              for (final item in [
-                Icons.local_dining_rounded,
-                Icons.stadium_rounded,
-                Icons.train_rounded,
-              ])
-                _BadgeBubble(icon: item, unlocked: true),
-              for (var i = 0; i < 2; i++)
-                const _BadgeBubble(icon: Icons.lock_rounded, unlocked: false),
-            ],
-          ),
+          if (achievements.isEmpty)
+            const Text(
+              'Chưa nhận huy hiệu nào.',
+              style: TextStyle(color: AppColors.stitchMuted),
+            )
+          else
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: [
+                for (final achievement in achievements)
+                  _BadgeBubble(icon: achievement.icon),
+              ],
+            ),
         ],
       ),
     ),
@@ -400,63 +422,60 @@ class _StitchMapCanvas extends StatelessWidget {
   final Location active;
 
   @override
-  Widget build(BuildContext context) => Container(
-    constraints: const BoxConstraints(minHeight: 640),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(32),
-      border: Border.all(color: AppColors.borderSoft),
-      boxShadow: AppShadows.small,
-    ),
-    clipBehavior: Clip.antiAlias,
-    child: Stack(
-      children: [
-        const Positioned.fill(child: _KoreaMapBackdrop()),
-        Positioned(
-          top: AppSpacing.lg,
-          left: AppSpacing.lg,
-          child: _FilterPills(),
-        ),
-        const Positioned(
-          right: AppSpacing.lg,
-          bottom: 128,
-          child: _MapControls(),
-        ),
-        _MapMarker(
-          alignment: const Alignment(-.42, -.55),
-          label: appStrings(context).seoulCapital,
-          subtitle: appStrings(context).completed,
-          status: LocationStatus.completed,
-          icon: Icons.location_city_rounded,
-          onTap: () => context.go(
-            '/journey/${locations.isEmpty ? active.id : locations.first.id}',
+  Widget build(BuildContext context) {
+    final mapLocations = locations.take(3).toList(growable: false);
+    const positions = [
+      Alignment(-.42, -.55),
+      Alignment(-.52, .72),
+      Alignment(.58, .32),
+    ];
+    return Container(
+      constraints: const BoxConstraints(minHeight: 640),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: AppColors.borderSoft),
+        boxShadow: AppShadows.small,
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          const Positioned.fill(child: _KoreaMapBackdrop()),
+          Positioned(
+            top: AppSpacing.lg,
+            left: AppSpacing.lg,
+            child: _FilterPills(),
           ),
-        ),
-        _MapMarker(
-          alignment: const Alignment(-.52, .72),
-          label: active.name,
-          subtitle: appStrings(context).exploring,
-          status: LocationStatus.inProgress,
-          icon: Icons.spa_rounded,
-          emphasized: true,
-          onTap: () => context.go('/journey/${active.id}'),
-        ),
-        _MapMarker(
-          alignment: Alignment(.58, .32),
-          label: appStrings(context).busanCity,
-          subtitle: appStrings(context).locked,
-          status: LocationStatus.locked,
-          icon: Icons.lock_rounded,
-        ),
-        Positioned(
-          bottom: AppSpacing.lg,
-          left: 0,
-          right: 0,
-          child: Center(child: _CurrentStageCard(location: active)),
-        ),
-      ],
-    ),
-  );
+          const Positioned(
+            right: AppSpacing.lg,
+            bottom: 128,
+            child: _MapControls(),
+          ),
+          for (var index = 0; index < mapLocations.length; index++)
+            _MapMarker(
+              alignment: positions[index],
+              label: mapLocations[index].name,
+              subtitle: _locationStatusLabel(mapLocations[index]),
+              status: mapLocations[index].status,
+              releaseStatus: mapLocations[index].releaseStatus,
+              icon: mapLocations[index].isReleased
+                  ? _statusIcon(mapLocations[index].status)
+                  : Icons.schedule_rounded,
+              emphasized: mapLocations[index].id == active.id,
+              onTap: mapLocations[index].isReleased
+                  ? () => context.go('/journey/${mapLocations[index].id}')
+                  : null,
+            ),
+          Positioned(
+            bottom: AppSpacing.lg,
+            left: 0,
+            right: 0,
+            child: Center(child: _CurrentStageCard(location: active)),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _KoreaMapBackdrop extends StatelessWidget {
@@ -567,7 +586,7 @@ class _FilterPills extends StatelessWidget {
       children: [
         _MapFilter(label: appStrings(context).all, selected: true),
         _MapFilter(label: appStrings(context).done),
-        _MapFilter(label: appStrings(context).notOpened),
+        _MapFilter(label: appStrings(context).comingSoon),
       ],
     ),
   );
@@ -614,6 +633,7 @@ class _MapMarker extends StatelessWidget {
     required this.label,
     required this.subtitle,
     required this.status,
+    required this.releaseStatus,
     required this.icon,
     this.emphasized = false,
     this.onTap,
@@ -623,13 +643,16 @@ class _MapMarker extends StatelessWidget {
   final String label;
   final String subtitle;
   final LocationStatus status;
+  final LocationReleaseStatus releaseStatus;
   final IconData icon;
   final bool emphasized;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final color = _statusColor(status);
+    final color = releaseStatus.isReleased
+        ? _statusColor(status)
+        : AppColors.disabled;
     return Align(
       alignment: alignment,
       child: InkWell(
@@ -911,10 +934,9 @@ class _MiniTag extends StatelessWidget {
 }
 
 class _BadgeBubble extends StatelessWidget {
-  const _BadgeBubble({required this.icon, required this.unlocked});
+  const _BadgeBubble({required this.icon});
 
-  final IconData icon;
-  final bool unlocked;
+  final String icon;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -923,15 +945,11 @@ class _BadgeBubble extends StatelessWidget {
     decoration: BoxDecoration(
       color: Colors.white,
       shape: BoxShape.circle,
-      border: Border.all(
-        color: unlocked ? AppColors.completedGreen : AppColors.lockedGray,
-      ),
+      border: Border.all(color: AppColors.completedGreen),
       boxShadow: AppShadows.small,
     ),
-    child: Icon(
-      icon,
-      color: unlocked ? AppColors.completedGreen : AppColors.lockedGray,
-    ),
+    alignment: Alignment.center,
+    child: Text(icon, style: const TextStyle(fontSize: 24)),
   );
 }
 
@@ -991,12 +1009,22 @@ Color _statusColor(LocationStatus status) => switch (status) {
   LocationStatus.completed => AppColors.completedGreen,
   LocationStatus.inProgress => AppColors.koreanBlue,
   LocationStatus.available => AppColors.koreanRed,
-  LocationStatus.locked => AppColors.lockedGray,
 };
 
 IconData _statusIcon(LocationStatus status) => switch (status) {
   LocationStatus.completed => Icons.check_circle_rounded,
   LocationStatus.inProgress => Icons.explore_rounded,
   LocationStatus.available => Icons.temple_buddhist_rounded,
-  LocationStatus.locked => Icons.lock_rounded,
 };
+
+Color _locationColor(Location location) =>
+    location.isReleased ? _statusColor(location.status) : AppColors.disabled;
+
+String _locationStatusLabel(Location location) {
+  if (!location.isReleased) return 'Sắp ra mắt';
+  return switch (location.status) {
+    LocationStatus.completed => 'Đã hoàn thành',
+    LocationStatus.inProgress => 'Đang khám phá',
+    LocationStatus.available => 'Có thể khám phá',
+  };
+}

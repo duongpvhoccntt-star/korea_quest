@@ -1,5 +1,7 @@
 # Profile, Settings & Logout Implementation Plan
 
+> **Superseded (2026-10-08):** Các bước và test reset về `LocationStatus.locked` trong kế hoạch lịch sử này đã được ADR-0012 thay thế. Implementation hiện tại reset về chưa bắt đầu/available và giữ nguyên `release_status`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Implement full-featured Profile editing with device & cultural avatar selection, modern Grouped Cards Settings page with password change dialog, learning progress reset, and universal Logout confirmation across Header, Profile, and Settings.

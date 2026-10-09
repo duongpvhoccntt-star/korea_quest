@@ -12,7 +12,7 @@ class AchievementsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final strings = appStrings(context);
-    final achievements = ref.watch(achievementsProvider);
+    final achievements = ref.watch(earnedAchievementsProvider);
     return ModulePage(
       eyebrow: strings.milestones,
       title: strings.yourAchievements,
@@ -20,44 +20,51 @@ class AchievementsPage extends ConsumerWidget {
       child: achievements.when(
         loading: LoadingIndicator.new,
         error: (error, stack) => ErrorState(message: strings.loadBadgesError),
-        data: (items) => GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: items.length,
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 360,
-            childAspectRatio: 1.5,
-            crossAxisSpacing: AppSpacing.md,
-            mainAxisSpacing: AppSpacing.md,
-          ),
-          itemBuilder: (context, index) {
-            final item = items[index];
-            return Card(
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: Row(
-                  children: [
-                    Text(item.icon, style: const TextStyle(fontSize: 42)),
-                    const SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+        data: (items) => items.isEmpty
+            ? const EmptyState(
+                title: 'Chưa nhận huy hiệu nào',
+                message: 'Huy hiệu đã nhận sẽ xuất hiện tại đây.',
+              )
+            : GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: items.length,
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 360,
+                  childAspectRatio: 1.5,
+                  crossAxisSpacing: AppSpacing.md,
+                  mainAxisSpacing: AppSpacing.md,
+                ),
+                itemBuilder: (context, index) {
+                  final item = items[index];
+                  return Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      child: Row(
                         children: [
-                          Text(
-                            item.title,
-                            style: Theme.of(context).textTheme.titleMedium,
+                          Text(item.icon, style: const TextStyle(fontSize: 42)),
+                          const SizedBox(width: AppSpacing.md),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.title,
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium,
+                                ),
+                                Text(item.description),
+                              ],
+                            ),
                           ),
-                          Text(item.description),
                         ],
                       ),
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
-            );
-          },
-        ),
       ),
     );
   }

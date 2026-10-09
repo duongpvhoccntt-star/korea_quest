@@ -41,24 +41,28 @@ void main() {
     expect(withPreset.avatarBytes, isNull);
   });
 
-  test('resetUserProgress resets level, xp, and locks locations', () async {
+  test('resetUserProgress resets progress without locking locations', () async {
+    final releaseStatuses = [
+      for (final location in await repo.getLocations()) location.releaseStatus,
+    ];
     await repo.resetUserProgress();
     final progress = await repo.getUserProgress();
     expect(progress.level, 1);
     expect(progress.currentXp, 0);
 
     final locations = await repo.getLocations();
-    expect(locations.first.status, LocationStatus.available);
-    for (var i = 1; i < locations.length; i++) {
-      expect(locations[i].status, LocationStatus.locked);
-    }
-
-    final achievements = await repo.getAchievements();
     expect(
-      achievements.every((item) => item.status == AchievementStatus.locked),
+      locations.every((item) => item.status == LocationStatus.available),
       isTrue,
     );
-    final stamps = await repo.getPassportStamps();
-    expect(stamps.every((stamp) => !stamp.isEarned), isTrue);
+    expect(
+      locations.map((item) => item.releaseStatus),
+      orderedEquals(releaseStatuses),
+    );
+
+    final achievements = await repo.getEarnedAchievements();
+    expect(achievements, isEmpty);
+    final stamps = await repo.getEarnedPassportStamps();
+    expect(stamps, isEmpty);
   });
 }
