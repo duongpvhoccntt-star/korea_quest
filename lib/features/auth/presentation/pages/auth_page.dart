@@ -294,7 +294,7 @@ class _AuthPostcard extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final wide = constraints.maxWidth >= 900;
-          final visual = const _TravelVisualPanel();
+          final visual = _TravelVisualPanel(compact: !wide);
           if (!wide) {
             return Column(children: [visual, form]);
           }
@@ -312,60 +312,95 @@ class _AuthPostcard extends StatelessWidget {
 }
 
 class _TravelVisualPanel extends StatelessWidget {
-  const _TravelVisualPanel();
+  const _TravelVisualPanel({this.compact = false});
+
+  final bool compact;
 
   @override
   Widget build(BuildContext context) => Container(
-    constraints: const BoxConstraints(minHeight: 420),
-    padding: const EdgeInsets.all(AppSpacing.xl),
-    decoration: const BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [AppColors.skyLight, AppColors.palePink],
+    height: compact ? 210 : 640,
+    decoration: BoxDecoration(
+      image: DecorationImage(
+        image: const AssetImage('assets/images/auth_gyeongbokgung_mist.jpg'),
+        fit: BoxFit.cover,
+        alignment: compact ? Alignment.center : Alignment.centerRight,
       ),
     ),
     child: Stack(
+      fit: StackFit.expand,
       children: [
-        const Positioned(
-          right: -12,
-          top: 18,
-          child: _StampBadge(label: 'SEOUL', icon: Icons.local_florist),
-        ),
-        const Positioned(
-          left: -8,
-          bottom: 12,
-          child: _StampBadge(label: 'PASS', icon: Icons.confirmation_num),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _PillLabel(label: appStrings(context).travelTagline),
-            const SizedBox(height: AppSpacing.xxl),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  appStrings(context).continueKoreaJourney,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: AppColors.stitchText,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  appStrings(context).travelVisualDescription,
-                  style: const TextStyle(
-                    color: AppColors.stitchMuted,
-                    height: 1.6,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                const _AchievementPreview(),
-              ],
+        const DecoratedBox(
+          key: ValueKey('auth-korea-scenery'),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0x0DEF646B), Color(0x4DEF646B), Color(0xD9A83238)],
+              stops: [0, .52, 1],
             ),
-          ],
+          ),
+        ),
+        if (!compact)
+          const Positioned(
+            right: -12,
+            top: 18,
+            child: _StampBadge(label: 'SEOUL', icon: Icons.local_florist),
+          ),
+        if (!compact)
+          const Positioned(
+            left: -8,
+            bottom: 12,
+            child: _StampBadge(label: 'PASS', icon: Icons.confirmation_num),
+          ),
+        Padding(
+          padding: EdgeInsets.all(compact ? AppSpacing.md : AppSpacing.xl),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _PillLabel(label: appStrings(context).travelTagline),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    appStrings(context).continueKoreaJourney,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style:
+                        (compact
+                                ? Theme.of(context).textTheme.headlineSmall
+                                : Theme.of(context).textTheme.headlineMedium)
+                            ?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                              shadows: const [
+                                Shadow(
+                                  color: Color(0x66000000),
+                                  blurRadius: 12,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                  ),
+                  if (!compact) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    Text(
+                      appStrings(context).travelVisualDescription,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        height: 1.6,
+                        shadows: [
+                          Shadow(color: Color(0x66000000), blurRadius: 8),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    const _AchievementPreview(),
+                  ],
+                ],
+              ),
+            ],
+          ),
         ),
       ],
     ),
@@ -414,8 +449,9 @@ class _AuthFormPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final strings = appStrings(context);
+    final compact = MediaQuery.sizeOf(context).width < 600;
     return Padding(
-      padding: const EdgeInsets.all(AppSpacing.xl),
+      padding: EdgeInsets.all(compact ? AppSpacing.md : AppSpacing.xl),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 500),
@@ -423,7 +459,7 @@ class _AuthFormPanel extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _PillLabel(label: 'KoreaQuest Passport'),
+              const _AuthBrand(),
               const SizedBox(height: AppSpacing.sm),
               Text(
                 title,
@@ -439,24 +475,64 @@ class _AuthFormPanel extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.lg),
               if (!isForgot) ...[
-                SegmentedButton<AuthPageMode>(
-                  segments: [
-                    ButtonSegment(
-                      value: AuthPageMode.login,
-                      icon: Icon(Icons.login_rounded),
-                      label: Text(strings.signIn),
-                    ),
-                    ButtonSegment(
-                      value: AuthPageMode.register,
-                      icon: Icon(Icons.person_add_alt_1_rounded),
-                      label: Text(strings.register),
-                    ),
-                  ],
-                  selected: {mode},
-                  onSelectionChanged: isLoading
-                      ? null
-                      : (selection) => onModeChanged(selection.first),
-                ),
+                compact
+                    ? Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: isLoading
+                                  ? null
+                                  : () => onModeChanged(AuthPageMode.login),
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: mode == AuthPageMode.login
+                                    ? AppColors.palePink
+                                    : Colors.white,
+                                foregroundColor: AppColors.koreanRed,
+                                side: const BorderSide(
+                                  color: AppColors.borderSoft,
+                                ),
+                              ),
+                              child: Text(strings.signIn),
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.xs),
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: isLoading
+                                  ? null
+                                  : () => onModeChanged(AuthPageMode.register),
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: mode == AuthPageMode.register
+                                    ? AppColors.palePink
+                                    : Colors.white,
+                                foregroundColor: AppColors.koreanRed,
+                                side: const BorderSide(
+                                  color: AppColors.borderSoft,
+                                ),
+                              ),
+                              child: Text(strings.register),
+                            ),
+                          ),
+                        ],
+                      )
+                    : SegmentedButton<AuthPageMode>(
+                        segments: [
+                          ButtonSegment(
+                            value: AuthPageMode.login,
+                            icon: const Icon(Icons.login_rounded),
+                            label: Text(strings.signIn),
+                          ),
+                          ButtonSegment(
+                            value: AuthPageMode.register,
+                            icon: const Icon(Icons.person_add_alt_1_rounded),
+                            label: Text(strings.register),
+                          ),
+                        ],
+                        selected: {mode},
+                        onSelectionChanged: isLoading
+                            ? null
+                            : (selection) => onModeChanged(selection.first),
+                      ),
                 const SizedBox(height: AppSpacing.lg),
               ],
               if (isRegister) ...[
@@ -552,6 +628,26 @@ class _AuthFormPanel extends StatelessWidget {
   }
 }
 
+class _AuthBrand extends StatelessWidget {
+  const _AuthBrand();
+
+  @override
+  Widget build(BuildContext context) => Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Image.asset(
+        'assets/images/koreaquest_logo_mark.png',
+        key: const ValueKey('auth-koreaquest-logo'),
+        width: 64,
+        height: 64,
+        filterQuality: FilterQuality.high,
+      ),
+      const SizedBox(width: AppSpacing.sm),
+      const Flexible(child: _PillLabel(label: 'KoreaQuest Passport')),
+    ],
+  );
+}
+
 class _AuthErrorMessage extends StatelessWidget {
   const _AuthErrorMessage({required this.message});
 
@@ -611,11 +707,13 @@ class _QuickDemoSection extends StatelessWidget {
                 size: 20,
               ),
               const SizedBox(width: AppSpacing.xs),
-              Text(
-                appStrings(context).quickDemoAccounts,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+              Expanded(
+                child: Text(
+                  appStrings(context).quickDemoAccounts,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+                ),
               ),
             ],
           ),
