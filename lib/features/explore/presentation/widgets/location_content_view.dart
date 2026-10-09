@@ -2136,6 +2136,7 @@ class _QuizCardState extends State<_QuizCard> {
   late List<JsonMap> _orderedItems;
   QuizAnswerResult? _result;
   bool _submitting = false;
+  int _feedbackSequence = 0;
 
   @override
   void initState() {
@@ -2166,16 +2167,7 @@ class _QuizCardState extends State<_QuizCard> {
           if (kind == 'matching') _matching(),
           if (kind == 'ordering') _ordering(),
           const SizedBox(height: AppSpacing.md),
-          FilledButton.icon(
-            onPressed: _submitting ? null : _submit,
-            icon: _submitting
-                ? const SizedBox.square(
-                    dimension: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.check_rounded),
-            label: Text(appStrings(context).checkAnswer),
-          ),
+          _submitAction(context),
           if (_result != null) ...[
             const SizedBox(height: AppSpacing.md),
             _Card(
@@ -2226,6 +2218,33 @@ class _QuizCardState extends State<_QuizCard> {
                 style: const TextStyle(fontWeight: FontWeight.w700),
               ),
             ),
+          ),
+        ),
+    ],
+  );
+
+  Widget _submitAction(BuildContext context) => Stack(
+    clipBehavior: Clip.none,
+    alignment: Alignment.center,
+    children: [
+      FilledButton.icon(
+        onPressed: _submitting ? null : _submit,
+        icon: _submitting
+            ? const SizedBox.square(
+                dimension: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Icon(Icons.check_rounded),
+        label: Text(appStrings(context).checkAnswer),
+      ),
+      if (_result != null)
+        IgnorePointer(
+          child: _QuizFloatingFeedback(
+            key: ValueKey('quiz-feedback-$_feedbackSequence'),
+            isCorrect: _result!.isCorrect,
+            label: _result!.isCorrect
+                ? appStrings(context).correctAnswer
+                : appStrings(context).incorrectAnswer,
           ),
         ),
     ],
@@ -2313,7 +2332,10 @@ class _QuizCardState extends State<_QuizCard> {
     try {
       final result = await widget.onSubmit(answer);
       if (mounted) {
-        setState(() => _result = result);
+        setState(() {
+          _result = result;
+          _feedbackSequence++;
+        });
         unawaited(QuizFeedbackSound.play(isCorrect: result.isCorrect));
       }
     } on Object catch (error) {
@@ -2330,6 +2352,48 @@ class _QuizCardState extends State<_QuizCard> {
       if (mounted) setState(() => _submitting = false);
     }
   }
+}
+
+class _QuizFloatingFeedback extends StatelessWidget {
+  const _QuizFloatingFeedback({
+    required this.isCorrect,
+    required this.label,
+    super.key,
+  });
+
+  final bool isCorrect;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => TweenAnimationBuilder<double>(
+    tween: Tween(begin: 0, end: 1),
+    duration: const Duration(milliseconds: 900),
+    curve: Curves.easeOutCubic,
+    builder: (context, progress, child) => Transform.translate(
+      offset: Offset(0, -AppSpacing.xxl * progress),
+      child: Opacity(opacity: 1 - progress, child: child),
+    ),
+    child: DecoratedBox(
+      decoration: BoxDecoration(
+        color: isCorrect ? AppColors.green : AppColors.coralDark,
+        borderRadius: BorderRadius.circular(AppRadius.round),
+        boxShadow: AppShadows.small,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.xs,
+        ),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 String _fallback(String value, String fallback) =>

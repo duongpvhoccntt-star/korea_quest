@@ -105,6 +105,25 @@ void main() {
     ],
   });
 
+  const quizLocation = PublishedLocationDetail({
+    'id': 'quiz-sample',
+    'slug': 'quiz-sample',
+    'name': 'Quiz sample',
+    'city': 'Seoul',
+    'quiz': <Object?>[
+      <String, Object?>{
+        'id': 'quiz-1',
+        'category': 'Culture',
+        'kind': 'single_choice',
+        'prompt': 'Which answer is correct?',
+        'options': <Object?>[
+          <String, Object?>{'id': 'option-1', 'text': 'Correct option'},
+          <String, Object?>{'id': 'option-2', 'text': 'Other option'},
+        ],
+      },
+    ],
+  });
+
   Widget buildApp({
     required int stage,
     required ValueChanged<int> onStage,
@@ -193,6 +212,36 @@ void main() {
     expect(find.text('Khám phá'), findsNothing);
     expect(find.text('Tìm hiểu ý nghĩa'), findsNothing);
     expect(find.text('Mở bản đồ'), findsNothing);
+  });
+
+  testWidgets('shows floating feedback after quiz scoring', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: LocationContentView(
+              location: quizLocation,
+              currentStage: 8,
+              onStageSelected: (_) {},
+              onSubmitQuizAnswer: (_, _) async =>
+                  const QuizAnswerResult(isCorrect: true, explanation: 'Nice'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.ensureVisible(find.text('Correct option'));
+    await tester.tap(find.text('Correct option'));
+    await tester.tap(
+      find.ancestor(
+        of: find.byIcon(Icons.check_rounded),
+        matching: find.byType(FilledButton),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byKey(const ValueKey('quiz-feedback-1')), findsOneWidget);
   });
 
   testWidgets('renders the history heading and published milestone data', (
