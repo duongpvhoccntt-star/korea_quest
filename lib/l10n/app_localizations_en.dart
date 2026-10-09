@@ -639,6 +639,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkAnswer => 'Check answer';
 
   @override
+  String get listenRead => 'Listen';
+
+  @override
+  String get pauseReading => 'Pause';
+
+  @override
+  String get resumeReading => 'Resume';
+
+  @override
+  String get stopReading => 'Stop reading';
+
+  @override
   String get correctAnswer => 'Correct!';
 
   @override

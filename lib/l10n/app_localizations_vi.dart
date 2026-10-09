@@ -635,6 +635,18 @@ class AppLocalizationsVi extends AppLocalizations {
   String get checkAnswer => 'Kiểm tra đáp án';
 
   @override
+  String get listenRead => 'Nghe đọc';
+
+  @override
+  String get pauseReading => 'Tạm dừng';
+
+  @override
+  String get resumeReading => 'Tiếp tục';
+
+  @override
+  String get stopReading => 'Dừng đọc';
+
+  @override
   String get correctAnswer => 'Chính xác!';
 
   @override

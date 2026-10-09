@@ -610,6 +610,18 @@ class AppLocalizationsKo extends AppLocalizations {
   String get checkAnswer => '정답 확인';
 
   @override
+  String get listenRead => '듣기';
+
+  @override
+  String get pauseReading => '일시 정지';
+
+  @override
+  String get resumeReading => '계속 듣기';
+
+  @override
+  String get stopReading => '읽기 중지';
+
+  @override
   String get correctAnswer => '정답입니다!';
 
   @override

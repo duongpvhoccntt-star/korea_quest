@@ -1252,6 +1252,30 @@ abstract class AppLocalizations {
   /// **'Kiểm tra đáp án'**
   String get checkAnswer;
 
+  /// No description provided for @listenRead.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nghe đọc'**
+  String get listenRead;
+
+  /// No description provided for @pauseReading.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạm dừng'**
+  String get pauseReading;
+
+  /// No description provided for @resumeReading.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiếp tục'**
+  String get resumeReading;
+
+  /// No description provided for @stopReading.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dừng đọc'**
+  String get stopReading;
+
   /// No description provided for @correctAnswer.
   ///
   /// In vi, this message translates to:

@@ -10,6 +10,7 @@ import 'package:korea_quest/design_system/shadows/app_shadows.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/shared/widgets/youtube_player.dart';
 import 'package:korea_quest/features/explore/domain/published_location.dart';
+import 'package:korea_quest/features/explore/presentation/widgets/content_read_aloud_controls.dart';
 import 'package:korea_quest/features/explore/presentation/widgets/content_image_gallery.dart';
 import 'package:korea_quest/l10n/app_strings.dart';
 import 'package:url_launcher/link.dart';
@@ -607,6 +608,24 @@ class _Identity extends StatelessWidget {
               : location.longDescription,
           style: const TextStyle(height: 1.65),
         ),
+        const SizedBox(height: AppSpacing.md),
+        ContentReadAloudControls(
+          sessionId: 'overview-${location.id}',
+          text: _spokenText(
+            title: location.name,
+            description: location.longDescription.isEmpty
+                ? location.shortDescription
+                : location.longDescription,
+            details: [
+              (
+                appStrings(context).region,
+                _inline([location.city, location.region, location.country]),
+              ),
+              (appStrings(context).locationType, location.locationType),
+              (appStrings(context).englishName, location.englishName),
+            ],
+          ),
+        ),
         if (location.tags.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),
           Wrap(
@@ -1136,6 +1155,19 @@ class _HistoryCard extends StatelessWidget {
                   height: 1.55,
                 ),
               ),
+              const SizedBox(height: AppSpacing.md),
+              ContentReadAloudControls(
+                sessionId: 'history-$index',
+                text: _spokenText(
+                  title: title,
+                  eyebrow: period,
+                  description: _paragraphs([summary, longDescription]),
+                  details: [
+                    (appStrings(context).relatedPeople, relatedPeople),
+                    (appStrings(context).didYouKnow, funFact),
+                  ],
+                ),
+              ),
             ],
             if (categories.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.md),
@@ -1441,6 +1473,16 @@ class _ContentBody extends StatelessWidget {
         ),
       ],
       _DetailRows(entries: details),
+      const SizedBox(height: AppSpacing.md),
+      ContentReadAloudControls(
+        sessionId: 'content-$title-$eyebrow',
+        text: _spokenText(
+          title: title,
+          eyebrow: eyebrow,
+          description: description,
+          details: details,
+        ),
+      ),
     ],
   );
 }
@@ -1512,6 +1554,16 @@ class _FoodCard extends StatelessWidget {
                 ),
               ],
               _DetailRows(entries: details),
+              const SizedBox(height: AppSpacing.md),
+              ContentReadAloudControls(
+                sessionId: 'food-$title-$eyebrow',
+                text: _spokenText(
+                  title: title,
+                  eyebrow: eyebrow,
+                  description: description,
+                  details: details,
+                ),
+              ),
             ],
           ),
         ),
@@ -1604,6 +1656,17 @@ class _FunFactsStage extends StatelessWidget {
                           style: const TextStyle(
                             color: AppColors.stitchMuted,
                             height: 1.5,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        ContentReadAloudControls(
+                          sessionId: 'fun-fact-$index',
+                          text: _spokenText(
+                            title: _fallback(
+                              items[index].string('title'),
+                              'Fun Fact ${index + 1}',
+                            ),
+                            description: items[index].string('fact'),
                           ),
                         ),
                       ],
@@ -2617,6 +2680,18 @@ class _QuizAnswerEffectPainter extends CustomPainter {
 
 String _fallback(String value, String fallback) =>
     value.trim().isEmpty ? fallback : value;
+String _spokenText({
+  required String title,
+  required String description,
+  String eyebrow = '',
+  List<(String, String)> details = const <(String, String)>[],
+}) => _paragraphs([
+  title,
+  eyebrow,
+  description,
+  for (final detail in details)
+    if (detail.$2.trim().isNotEmpty) '${detail.$1}: ${detail.$2}',
+]);
 String _inline(Iterable<String> values) =>
     values.where((value) => value.trim().isNotEmpty).join(' · ');
 String _paragraphs(Iterable<String> values) =>
