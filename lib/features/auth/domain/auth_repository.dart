@@ -7,6 +7,8 @@ abstract class AuthRepository {
 
   Future<AuthUser> signIn({required String identity, required String password});
 
+  Future<AuthUser> signInAsGuest({required String name});
+
   Future<AuthUser> register({
     required String fullName,
     required String displayName,

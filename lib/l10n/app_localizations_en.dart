@@ -12,6 +12,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'KoreaQuest';
 
   @override
+  String get home => 'Home';
+
+  @override
   String get cultureAdventure => 'CULTURE ADVENTURE';
 
   @override
@@ -653,7 +656,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get startExploring => 'Start exploring';
+  String get startExploring => 'Start Exploring';
 
   @override
   String get journeyOpening => 'Journey introduction';
@@ -1194,4 +1197,43 @@ class AppLocalizationsEn extends AppLocalizations {
   String levelExplorer(int level) {
     return 'LEVEL $level · EXPLORER';
   }
+
+  @override
+  String get playAsGuest => 'Play as Guest';
+
+  @override
+  String get guestNamePrompt => 'Enter your nickname to explore Korea';
+
+  @override
+  String get guestNameLabel => 'Your Name / Nickname';
+
+  @override
+  String get guestNameHint => 'e.g. Min-woo, Sarah...';
+
+  @override
+  String get guestNameRequired => 'Please enter your name.';
+
+  @override
+  String get guestBadge => 'Guest';
+
+  @override
+  String guestCelebrationTitle(String name, String location) {
+    return 'Congratulations $name on completing $location!';
+  }
+
+  @override
+  String get guestCelebrationMessage =>
+      'You have earned XP and stamps in this journey! Register an official account to permanently save your progress, rewards, and passport stamps.';
+
+  @override
+  String get registerAndSaveProgress => 'Register & Save Progress';
+
+  @override
+  String get continueAsGuest => 'Maybe Later / Continue as Guest';
+
+  @override
+  String get orContinueAsGuest => 'Or continue without an account';
+
+  @override
+  String get upgradeToOfficialAccount => 'Register an official account';
 }

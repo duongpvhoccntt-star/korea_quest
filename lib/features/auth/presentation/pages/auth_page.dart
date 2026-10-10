@@ -15,14 +15,21 @@ import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/admin/presentation/providers/admin_providers.dart';
 import 'package:korea_quest/features/auth/domain/auth_models.dart';
 import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
+import 'package:korea_quest/features/auth/presentation/widgets/guest_name_dialog.dart';
 import 'package:korea_quest/l10n/app_strings.dart';
 
 enum AuthPageMode { register, login, forgotPassword }
 
 class AuthPage extends ConsumerStatefulWidget {
-  const AuthPage({required this.mode, this.redirectTo, super.key});
+  const AuthPage({
+    required this.mode,
+    this.prefilledName,
+    this.redirectTo,
+    super.key,
+  });
 
   final AuthPageMode mode;
+  final String? prefilledName;
   final String? redirectTo;
 
   @override
@@ -43,6 +50,14 @@ class _AuthPageState extends ConsumerState<AuthPage> {
   void initState() {
     super.initState();
     _mode = widget.mode;
+    final currentGuest = ref.read(authRepositoryProvider).currentUser;
+    final initialName =
+        widget.prefilledName ??
+        (currentGuest?.isGuest == true ? currentGuest?.displayName : null);
+    if (initialName != null && initialName.trim().isNotEmpty) {
+      _fullNameController.text = initialName.trim();
+      _displayNameController.text = initialName.trim();
+    }
   }
 
   @override
@@ -119,7 +134,9 @@ class _AuthPageState extends ConsumerState<AuthPage> {
             context,
             user.isAdmin ? strings.adminSignedIn : strings.signedIn,
           );
-          context.go(user.isAdmin ? '/admin' : (widget.redirectTo ?? '/explore'));
+          context.go(
+            user.isAdmin ? '/admin' : (widget.redirectTo ?? '/explore'),
+          );
         }
       }
     } catch (error) {
@@ -613,6 +630,48 @@ class _AuthFormPanel extends StatelessWidget {
                       : () => onModeChanged(AuthPageMode.login),
                   child: Text(strings.backToSignIn),
                 ),
+              if (!isForgot) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Row(
+                  children: [
+                    const Expanded(child: Divider(color: AppColors.borderSoft)),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xs,
+                        ),
+                        child: Text(
+                          strings.orContinueAsGuest,
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: AppColors.stitchMuted,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Expanded(child: Divider(color: AppColors.borderSoft)),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                OutlinedButton.icon(
+                  onPressed: isLoading
+                      ? null
+                      : () => showGuestNameDialog(context),
+                  icon: const Icon(Icons.person_pin_circle_outlined),
+                  label: Text(strings.playAsGuest),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(48, 48),
+                    side: const BorderSide(color: AppColors.coral),
+                    foregroundColor: AppColors.coral,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppRadius.medium),
+                    ),
+                  ),
+                ),
+              ],
               if (showDemoAccounts && mode == AuthPageMode.login) ...[
                 const SizedBox(height: AppSpacing.md),
                 _QuickDemoSection(

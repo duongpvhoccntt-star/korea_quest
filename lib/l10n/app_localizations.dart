@@ -106,6 +106,12 @@ abstract class AppLocalizations {
   /// **'KoreaQuest'**
   String get appTitle;
 
+  /// No description provided for @home.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trang chủ'**
+  String get home;
+
   /// No description provided for @cultureAdventure.
   ///
   /// In vi, this message translates to:
@@ -1267,7 +1273,7 @@ abstract class AppLocalizations {
   /// No description provided for @startExploring.
   ///
   /// In vi, this message translates to:
-  /// **'Bắt đầu khám phá'**
+  /// **'Vào khám phá ngay'**
   String get startExploring;
 
   /// No description provided for @journeyOpening.
@@ -2235,6 +2241,78 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'LEVEL {level} · NHÀ THÁM HIỂM'**
   String levelExplorer(int level);
+
+  /// No description provided for @playAsGuest.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chơi nhanh (Khách)'**
+  String get playAsGuest;
+
+  /// No description provided for @guestNamePrompt.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập tên của bạn để khám phá Hàn Quốc'**
+  String get guestNamePrompt;
+
+  /// No description provided for @guestNameLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tên của bạn / Nickname'**
+  String get guestNameLabel;
+
+  /// No description provided for @guestNameHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ví dụ: Minh Anh, Hans...'**
+  String get guestNameHint;
+
+  /// No description provided for @guestNameRequired.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vui lòng nhập tên của bạn.'**
+  String get guestNameRequired;
+
+  /// No description provided for @guestBadge.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khách'**
+  String get guestBadge;
+
+  /// No description provided for @guestCelebrationTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chúc mừng {name} đã hoàn thành {location}!'**
+  String guestCelebrationTitle(String name, String location);
+
+  /// No description provided for @guestCelebrationMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn đã tích lũy được điểm XP và trải nghiệm tuyệt vời! Hãy tạo tài khoản chính thức để lưu lại vĩnh viễn tiến trình, huy hiệu và dấu mộc của bạn nhé.'**
+  String get guestCelebrationMessage;
+
+  /// No description provided for @registerAndSaveProgress.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đăng ký & Lưu tiến trình'**
+  String get registerAndSaveProgress;
+
+  /// No description provided for @continueAsGuest.
+  ///
+  /// In vi, this message translates to:
+  /// **'Để sau / Tiếp tục khám phá'**
+  String get continueAsGuest;
+
+  /// No description provided for @orContinueAsGuest.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hoặc trải nghiệm ngay không cần tài khoản'**
+  String get orContinueAsGuest;
+
+  /// No description provided for @upgradeToOfficialAccount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đăng ký tài khoản chính thức'**
+  String get upgradeToOfficialAccount;
 }
 
 class _AppLocalizationsDelegate

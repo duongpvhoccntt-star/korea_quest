@@ -78,6 +78,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: AppRouteNames.register,
         builder: (context, state) => AuthPage(
           mode: AuthPageMode.register,
+          prefilledName: state.uri.queryParameters['name'],
           redirectTo: state.uri.queryParameters['redirect'],
         ),
       ),

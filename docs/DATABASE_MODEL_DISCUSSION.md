@@ -36,6 +36,7 @@ Phạm vi hiện tại bao gồm **Admin Content, public read model và progress
 | **Quản trị viên (Admin User)** | Người dùng Supabase Auth có UUID trong `admin_users` và được phép biên tập/xuất bản. | Nhà thám hiểm |
 | **Bản dịch nội dung (Content Translation)** | Lớp chữ hiển thị theo `vi`, `en` hoặc `ko` gắn với một Phiên bản nội dung; không nhân bản media, XP, cấu trúc hay đáp án đúng. | Bản sao Địa điểm |
 | **Bản nguồn (Source Content)** | Nội dung tiếng Việt chuẩn để tạo và kiểm tra độ mới của các Bản dịch nội dung. | Bản dịch đã duyệt |
+| **Tài khoản khách (Guest User)** | Phiên chơi nhanh chỉ yêu cầu tên hiển thị (`AuthUser.isGuest = true`), không bắt buộc email/mật khẩu; cho phép trải nghiệm nội dung và bảo toàn tiến trình khi nâng cấp. | Người dùng ẩn danh chưa đặt tên |
 
 ## 3. Tổng quan kiến trúc dữ liệu
 
@@ -518,11 +519,12 @@ Cập nhật ngày 2026-10-09:
 14. RPC validation tiếp tục giữ hợp đồng `text[]`; Flutter Admin làm giàu lỗi quiz bằng dữ liệu Bản nháp đã lưu và `AdminDiagnostic.itemIndex` để định vị chính xác mà không đổi hợp đồng database.
 15. Card Lịch sử, Điểm đến, Trải nghiệm và Ẩm thực dùng gallery tối đa 10 ảnh, chỉ hiển thị một ảnh tại một thời điểm. Ba loại đầu có thể dùng một video YouTube thay thế; public payload giữ các trường media ảnh đầu tiên để tương thích ngược, còn bản dịch chỉ lưu alt theo đúng chỉ số ảnh.
 16. Edge Function không được lưu phản hồi Gemini chỉ sao chép Bản nguồn. Prompt phải chỉ rõ nguồn/đích; output sai ngôn ngữ được retry tối đa một lần và bị từ chối nếu vẫn không đạt.
-17. XP và Level là server-authoritative. Flutter không tự cộng thưởng; ledger dùng `(user_id, reference_key)` để chống cộng lặp và Level được suy ra từ XP tích lũy cùng `level_definitions`.
-18. Công thức MVP là +2 hoàn thành Câu hỏi, +8 nếu đúng, +20 hoàn thành Chặng, +50 hoàn thành Địa điểm. Làm lại được phép nhưng không nhận lại cùng phần thưởng.
-19. Hộ chiếu riêng tư mặc định; share link dùng token hash, có thể tạo lại/thu hồi và read model công khai không trả email/họ tên pháp lý.
-20. Dấu mộc giữ ownership/ngày nhận theo Location nhưng lấy tên, mô tả và artwork từ revision mới nhất để sửa nội dung được phản ánh đồng nhất.
-21. Level/Huy hiệu hỗ trợ `vi`/`en`/`ko` với fallback tiếng Việt; seed MVP gồm 8 Level và 8 Huy hiệu.
+17. Tài khoản khách (Guest User): Hỗ trợ phiên khách cục bộ (`AuthUser.isGuest = true`) không bắt buộc email/mật khẩu, chỉ cần tên hiển thị. Khách có thể khám phá và nhận XP; sau khi hoàn thành một Địa điểm (hoặc chặng Tổng kết), ứng dụng kích hoạt hộp thoại vinh danh và gợi ý chuyển đổi sang tài khoản chính thức mà không làm mất tiến trình đã đạt được.
+18. XP và Level là server-authoritative. Flutter không tự cộng thưởng; ledger dùng `(user_id, reference_key)` để chống cộng lặp và Level được suy ra từ XP tích lũy cùng `level_definitions`.
+19. Công thức MVP là +2 hoàn thành Câu hỏi, +8 nếu đúng, +20 hoàn thành Chặng, +50 hoàn thành Địa điểm. Làm lại được phép nhưng không nhận lại cùng phần thưởng.
+20. Hộ chiếu riêng tư mặc định; share link dùng token hash, có thể tạo lại/thu hồi và read model công khai không trả email/họ tên pháp lý.
+21. Dấu mộc giữ ownership/ngày nhận theo Location nhưng lấy tên, mô tả và artwork từ revision mới nhất để sửa nội dung được phản ánh đồng nhất.
+22. Level/Huy hiệu hỗ trợ `vi`/`en`/`ko` với fallback tiếng Việt; seed MVP gồm 8 Level và 8 Huy hiệu.
 
 ## 15. Các điểm cần nhóm thảo luận
 

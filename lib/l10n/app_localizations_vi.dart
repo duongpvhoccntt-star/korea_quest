@@ -12,6 +12,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get appTitle => 'KoreaQuest';
 
   @override
+  String get home => 'Trang chủ';
+
+  @override
   String get cultureAdventure => 'HÀNH TRÌNH VĂN HÓA';
 
   @override
@@ -650,7 +653,7 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get startExploring => 'Bắt đầu khám phá';
+  String get startExploring => 'Vào khám phá ngay';
 
   @override
   String get journeyOpening => 'Mở đầu hành trình';
@@ -1194,4 +1197,43 @@ class AppLocalizationsVi extends AppLocalizations {
   String levelExplorer(int level) {
     return 'LEVEL $level · NHÀ THÁM HIỂM';
   }
+
+  @override
+  String get playAsGuest => 'Chơi nhanh (Khách)';
+
+  @override
+  String get guestNamePrompt => 'Nhập tên của bạn để khám phá Hàn Quốc';
+
+  @override
+  String get guestNameLabel => 'Tên của bạn / Nickname';
+
+  @override
+  String get guestNameHint => 'Ví dụ: Minh Anh, Hans...';
+
+  @override
+  String get guestNameRequired => 'Vui lòng nhập tên của bạn.';
+
+  @override
+  String get guestBadge => 'Khách';
+
+  @override
+  String guestCelebrationTitle(String name, String location) {
+    return 'Chúc mừng $name đã hoàn thành $location!';
+  }
+
+  @override
+  String get guestCelebrationMessage =>
+      'Bạn đã tích lũy được điểm XP và trải nghiệm tuyệt vời! Hãy tạo tài khoản chính thức để lưu lại vĩnh viễn tiến trình, huy hiệu và dấu mộc của bạn nhé.';
+
+  @override
+  String get registerAndSaveProgress => 'Đăng ký & Lưu tiến trình';
+
+  @override
+  String get continueAsGuest => 'Để sau / Tiếp tục khám phá';
+
+  @override
+  String get orContinueAsGuest => 'Hoặc trải nghiệm ngay không cần tài khoản';
+
+  @override
+  String get upgradeToOfficialAccount => 'Đăng ký tài khoản chính thức';
 }

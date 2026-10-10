@@ -9,6 +9,7 @@ import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/explore/domain/published_location.dart';
 import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
 import 'package:korea_quest/features/explore/presentation/providers/location_content_providers.dart';
+import 'package:korea_quest/features/explore/presentation/widgets/guest_registration_prompt_dialog.dart';
 import 'package:korea_quest/features/explore/presentation/widgets/location_content_view.dart';
 import 'package:korea_quest/l10n/app_strings.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
@@ -56,9 +57,18 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
     });
   }
 
-  void _openStage(int nextStage) {
+  void _openStage(int nextStage, [String locationName = '']) {
     _scrollToTop();
     if (nextStage == 0) {
+      final user = ref.read(authRepositoryProvider).currentUser;
+      if (user?.isGuest == true) {
+        showGuestRegistrationPromptDialog(
+          context,
+          locationName: locationName,
+          guestName: user!.displayName,
+        );
+        return;
+      }
       context.go('/explore');
       return;
     }
@@ -85,7 +95,7 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
     return result;
   }
 
-  Future<void> _completeStage(int stageNumber) async {
+  Future<void> _completeStage(int stageNumber, String locationName) async {
     if (ref.read(authRepositoryProvider).currentUser == null) {
       _openLogin();
       return;
@@ -100,7 +110,7 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
     if (!mounted) return;
     _refreshGameplay();
     _showReward(reward);
-    _openStage(stageNumber == 9 ? 0 : stageNumber + 1);
+    _openStage(stageNumber == 9 ? 0 : stageNumber + 1, locationName);
   }
 
   void _openLogin() {
@@ -185,7 +195,7 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
                       child: LocationContentView(
                         location: item,
                         currentStage: stage,
-                        onStageSelected: _openStage,
+                        onStageSelected: (next) => _openStage(next, item.name),
                         onSubmitQuizAnswer: _submitQuiz,
                         showJourneyStepper: false,
                         showStageBody: false,
@@ -198,7 +208,7 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
                   pinned: true,
                   delegate: _JourneyStepperHeaderDelegate(
                     currentStage: stage,
-                    onStageSelected: _openStage,
+                    onStageSelected: (next) => _openStage(next, item.name),
                   ),
                 ),
                 SliverToBoxAdapter(
@@ -211,8 +221,9 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
                       child: LocationContentView(
                         location: item,
                         currentStage: stage,
-                        onStageSelected: _openStage,
-                        onStageCompleted: _completeStage,
+                        onStageSelected: (next) => _openStage(next, item.name),
+                        onStageCompleted: (nextStage) =>
+                            _completeStage(nextStage, item.name),
                         onSubmitQuizAnswer: _submitQuiz,
                         showLocationHeader: false,
                         showJourneyStepper: false,

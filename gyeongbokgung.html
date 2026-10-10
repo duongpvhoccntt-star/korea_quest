@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#8C2D2D">
+  <meta name="description" content="Trang giới thiệu về Cung điện Gyeongbokgung (Cảnh Phúc Cung) - Trái tim lịch sử và biểu tượng văn hóa triều đại Joseon.">
+  <title>Cung điện Gyeongbokgung (Cảnh Phúc Cung) — Di sản triều đại Joseon</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Noto+Serif+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       TRADITIONAL KOREAN AESTHETIC STYLE SYSTEM (DANCHEONG PALETTE & CLEAN UX)
+       ========================================================================== */
+    :root {
+      --bg-cream: #FAF7F0; /* Hanji Paper Cream */
+      --bg-white: #FFFFFF;
+      --text-main: #2A2E33; /* Dark Charcoal */
+      --text-muted: #5A6065;
+      --primary-red: #8C2D2D; /* Dancheong Crimson Red */
+      --primary-teal: #1F5952; /* Dancheong Pine Teal */
+      --accent-gold: #C2964C; /* Imperial Gold */
+      --border-color: #E2DAC8;
+      --border-light: #EFEBE0;
+      
+      --max-width: 900px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+      background-color: var(--bg-cream);
+      color: var(--text-main);
+      line-height: 1.8;
+      padding: 0 0 60px 0;
+      position: relative;
+    }
+
+    /* Hanji texture effect */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.15;
+      z-index: -1;
+      background-image: radial-gradient(#B5AA90 1.2px, transparent 1.2px);
+      background-size: 32px 32px;
+    }
+
+    .container {
+      width: min(calc(100% - 40px), var(--max-width));
+      margin: 0 auto;
+    }
+
+    /* Typography */
+    h1, h2, h3, h4, .serif-text {
+      font-family: 'Noto Serif KR', Georgia, serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.4;
+    }
+
+    /* Top banner stamp line */
+    .top-bar-decorator {
+      height: 6px;
+      background: linear-gradient(90deg, var(--primary-red) 33.3%, var(--accent-gold) 33.3%, var(--accent-gold) 66.6%, var(--primary-teal) 66.6%);
+      width: 100%;
+    }
+
+    /* Header styling */
+    .site-header {
+      padding: 50px 0 30px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 40px;
+    }
+
+    .site-header .emblem-seal {
+      width: 60px;
+      height: 60px;
+      border: 3px double var(--primary-red);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--primary-red);
+      font-family: 'Noto Serif KR', serif;
+      font-size: 22px;
+      font-weight: 900;
+      margin: 0 auto 15px;
+      transform: rotate(-5deg);
+    }
+    .site-header .emblem-seal::after {
+      content: "景福";
+    }
+
+    .site-header h1 {
+      font-size: clamp(28px, 4.5vw, 42px);
+      color: var(--primary-red);
+      margin-bottom: 8px;
+    }
+
+    .site-header p {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--primary-teal);
+      font-weight: 700;
+    }
+
+    /* Article layout */
+    .article-layout {
+      background-color: var(--bg-white);
+      padding: 50px;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(181, 170, 144, 0.15);
+      border: 1px solid var(--border-color);
+    }
+
+    @media (max-width: 600px) {
+      .article-layout {
+        padding: 24px 16px;
+      }
+      .site-header {
+        padding: 30px 0 20px;
+      }
+    }
+
+    /* Image displays (Max 2 images requested) */
+    .hero-photo-wrapper {
+      margin-bottom: 40px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .hero-photo-wrapper img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .image-caption {
+      background-color: var(--bg-cream);
+      padding: 12px 20px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+      font-style: italic;
+    }
+
+    .intro-paragraph {
+      font-size: 17px;
+      color: var(--text-main);
+      line-height: 1.8;
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px dashed var(--border-color);
+      text-align: justify;
+    }
+
+    /* Sections styling */
+    .section-block {
+      margin-bottom: 50px;
+    }
+
+    .section-title {
+      font-size: 26px;
+      color: var(--primary-red);
+      margin-bottom: 24px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--primary-red);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title::before {
+      content: "◆";
+      font-size: 16px;
+      color: var(--accent-gold);
+    }
+
+    /* Timeline Styling */
+    .timeline-list {
+      list-style: none;
+      position: relative;
+      padding-left: 24px;
+      border-left: 2px solid var(--border-color);
+      display: grid;
+      gap: 30px;
+    }
+
+    .timeline-item {
+      position: relative;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -31px;
+      top: 8px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: var(--primary-red);
+      border: 3px solid var(--bg-white);
+    }
+
+    .timeline-time {
+      font-family: 'Noto Serif KR', serif;
+      font-weight: 700;
+      color: var(--primary-teal);
+      font-size: 16px;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+
+    .timeline-header {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .timeline-desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      text-align: justify;
+    }
+
+    /* Architecture styling */
+    .architecture-list {
+      display: grid;
+      gap: 36px;
+    }
+
+    .arch-item {
+      background-color: var(--bg-cream);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 24px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .arch-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(181, 170, 144, 0.1);
+    }
+
+    .arch-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .arch-title {
+      font-size: 20px;
+      color: var(--primary-teal);
+    }
+
+    .arch-title-kr {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 14px;
+      color: var(--primary-red);
+      font-weight: 600;
+    }
+
+    .arch-detail {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .arch-detail strong {
+      color: var(--text-main);
+    }
+
+    .arch-desc {
+      font-size: 14.5px;
+      text-align: justify;
+      border-top: 1px dashed var(--border-color);
+      padding-top: 12px;
+      color: var(--text-main);
+    }
+
+    /* Body break photo (2nd image) */
+    .body-photo-wrapper {
+      margin: 40px 0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .body-photo-wrapper img {
+      width: 100%;
+      height: 350px;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Experience Grid */
+    .experience-list {
+      display: grid;
+      gap: 24px;
+    }
+
+    .exp-item {
+      display: flex;
+      gap: 20px;
+      background-color: var(--bg-white);
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 24px;
+    }
+
+    .exp-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .exp-icon {
+      font-size: 28px;
+      background-color: var(--bg-cream);
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      border: 1px solid var(--border-color);
+    }
+
+    .exp-content h4 {
+      font-size: 17px;
+      color: var(--primary-teal);
+      margin-bottom: 6px;
+    }
+
+    .exp-content p {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      text-align: justify;
+    }
+
+    @media (max-width: 600px) {
+      .exp-item {
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+
+    /* Practical Guide cards */
+    .guide-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .guide-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .guide-card {
+      background-color: var(--bg-cream);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .guide-card h4 {
+      font-size: 16px;
+      color: var(--primary-red);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .guide-card p {
+      font-size: 14px;
+      color: var(--text-main);
+    }
+
+    .guide-card strong {
+      color: var(--primary-teal);
+    }
+
+    /* Quiz styling */
+    .quiz-list {
+      display: grid;
+      gap: 25px;
+    }
+
+    .quiz-card {
+      background-color: var(--bg-cream);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 24px;
+    }
+
+    .quiz-q-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
+
+    .quiz-opts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 600px) {
+      .quiz-opts {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .quiz-opt {
+      background-color: var(--bg-white);
+      border: 1px solid var(--border-light);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .quiz-action-row {
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .quiz-ans-btn {
+      background-color: var(--primary-teal);
+      color: var(--bg-white);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .quiz-ans-btn:hover {
+      background-color: #17423D;
+    }
+
+    .quiz-explanation-box {
+      display: none;
+      margin-top: 14px;
+      padding: 14px 18px;
+      background-color: #E6EFEF;
+      border-left: 4px solid var(--primary-teal);
+      border-radius: 0 6px 6px 0;
+      font-size: 14px;
+      color: var(--text-main);
+    }
+
+    .quiz-explanation-box strong {
+      color: var(--primary-red);
+    }
+
+    /* Footer stamp */
+    .site-footer {
+      margin-top: 50px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 30px;
+      text-align: center;
+      font-size: 12.5px;
+      color: var(--text-light);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar-decorator"></div>
+
+  <header class="site-header">
+    <div class="container">
+      <div class="emblem-seal"></div>
+      <h1>Cung điện Gyeongbokgung</h1>
+      <p>Cảnh Phúc Cung • 경복궁 • Triều Đại Joseon</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <article class="article-layout">
+
+      <!-- Hình ảnh 1: Toàn cảnh Gyeongbokgung -->
+      <div class="hero-photo-wrapper">
+        <img src="https://images.unsplash.com/photo-1578637387939-43c525550085?auto=format&fit=crop&w=1200&q=80" alt="Toàn cảnh Cần Chính Điện thuộc cung điện Gyeongbokgung">
+        <div class="image-caption">Hình 1: Cần Chính Điện (Geunjeongjeon) - Trung tâm vương triều Joseon hướng nhìn ra dãy núi Bugaksan huyền thoại</div>
+      </div>
+
+      <p class="intro-paragraph">
+        Cung điện Gyeongbokgung được coi là "Trái tim của Seoul" và mang giá trị lịch sử vô cùng to lớn đối với dân tộc Hàn Quốc. Được khởi công xây dựng vào cuối thế kỷ 14, cung điện không chỉ là công trình hoàng gia đồ sộ nhất mà còn là nơi lưu dấu những tinh hoa nghệ thuật, học thuật cùng những chương thăng trầm hiển hách nhất của vương triều Joseon cổ xưa.
+      </p>
+
+      <!-- PHẦN 1: Lịch sử hình thành và những biến cố -->
+      <section class="section-block">
+        <h2 class="section-title">1. Lịch sử hình thành & Những biến cố thăng trầm</h2>
+        
+        <div class="timeline-list">
+          <div class="timeline-item">
+            <span class="timeline-time">Năm 1395</span>
+            <h3 class="timeline-header">Khởi công xây dựng</h3>
+            <p class="timeline-desc">
+              Cung điện được xây dựng chỉ 3 năm sau khi Vương triều Joseon được thành lập bởi Vua Taejo (Thái Tổ). Danh thần Sambong Jeong Do-jeon là người đặt tên cho cung điện là Gyeongbok (Cảnh Phúc - 景福), lấy từ câu "Quân tử vạn niên,介尔景福" trong Kinh Thi, mang nghĩa ước nguyện nhà vua và hoàng tộc sẽ mang lại vô vàn hạnh phúc, thái bình cho muôn dân.
+            </p>
+          </div>
+
+          <div class="timeline-item">
+            <span class="timeline-time">Thế kỷ 15</span>
+            <h3 class="timeline-header">Thời hoàng kim rực rỡ</h3>
+            <p class="timeline-desc">
+              Dưới triều Vua Sejong Đại đế (thế kỷ 15), Gyeongbokgung trở thành nơi hội tụ của tri thức. Chính tại đây, chữ viết Hangeul ra đời, cùng với đó là sự phát triển của thiên văn học, đồng hồ nước (Jagyeongnu), đồng hồ mặt trời (Angbuilgu).
+            </p>
+          </div>
+
+          <div class="timeline-item">
+            <span class="timeline-time">Năm 1592</span>
+            <h3 class="timeline-header">Thảm họa chiến tranh Imjin</h3>
+            <p class="timeline-desc">
+              Khi quân Nhật Bản xâm lược Triều Tiên (Chiến tranh Imjin), toàn bộ cung điện bị thiêu rụi hoàn toàn và bị bỏ hoang suốt hơn 270 năm.
+            </p>
+          </div>
+
+          <div class="timeline-item">
+            <span class="timeline-time">Năm 1867</span>
+            <h3 class="timeline-header">Đại tái thiết phục sinh</h3>
+            <p class="timeline-desc">
+              Dưới sự chủ trì của Nhiếp chính vương Heungseon Daewongun (thời Vua Gojong), cung điện được khôi phục quy mô với 7.225 phòng và hơn 500 tòa nhà.
+            </p>
+          </div>
+
+          <div class="timeline-item">
+            <span class="timeline-time">1910 - Nay</span>
+            <h3 class="timeline-header">Thời kỳ thuộc địa & Dự án phục dựng</h3>
+            <p class="timeline-desc">
+              Trong giai đoạn Nhật Bản chiếm đóng (1910–1945), 90% các công trình kiến trúc bị phá hủy để xây dựng Tòa nhà Phủ Toàn quyền Nhật Bản ngay trên trục chính. Từ năm 1990 đến nay, Hàn Quốc triển khai kế hoạch phục dựng qua nhiều giai đoạn nhằm đưa Gyeongbokgung trở lại đúng hình dáng nguyên bản.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- PHẦN 2: Các công trình kiến trúc tiêu biểu -->
+      <section class="section-block">
+        <h2 class="section-title">2. Các công trình kiến trúc trọng yếu</h2>
+        
+        <div class="architecture-list">
+          
+          <!-- Cần Chính Điện -->
+          <div class="arch-item">
+            <div class="arch-title-row">
+              <h3 class="arch-title">Cần Chính Điện</h3>
+              <span class="arch-title-kr">Geunjeongjeon - 근정전</span>
+            </div>
+            <p class="arch-detail"><strong>Chức năng:</strong> Là chính điện tráng lệ nhất, nơi diễn ra các buổi đại lễ quốc gia như Lễ đăng quang của các vị vua, lễ thiết triều, ban hành sắc lệnh và tiếp đón các sứ thần nước ngoài.</p>
+            <p class="arch-desc"><strong>Đặc điểm kiến trúc:</strong> Điện được xây trên bệ đá hai tầng (Woldae) với các lan can chạm khắc tượng Tứ Tượng (Thanh Long, Bạch Hổ, Chu Tước, Huyền Vũ) và 12 con giáp. Phía trước điện là khoảng sân rộng lát đá thô (Deumbuk-dol) chống lóa mắt cùng 2 hàng "Phẩm giai thạch" (품계석) đánh dấu vị trí đứng của các văn võ quan lại từ Nhất phẩm đến Cửu phẩm.</p>
+          </div>
+
+          <!-- Khánh Hội Lâu -->
+          <div class="arch-item">
+            <div class="arch-title-row">
+              <h3 class="arch-title">Khánh Hội Lâu</h3>
+              <span class="arch-title-kr">Gyeonghoeru - 경회루</span>
+            </div>
+            <p class="arch-detail"><strong>Chức năng:</strong> Là tòa lầu hai tầng nằm trên một hồ nước nhân tạo hình chữ nhật lớn, dành cho các buổi yến tiệc hoàng gia, tiếp đãi sứ thần phương xa và tổ chức nghi lễ cầu mưa khi có hạn hán.</p>
+            <p class="arch-desc"><strong>Đặc điểm kiến trúc:</strong> Lầu được nâng đỡ bởi 48 cột đá chạm khắc hoa văn (24 cột vuông bên ngoài đại diện cho đất/quẻ âm, 24 cột tròn bên trong đại diện cho trời/quẻ dương). Từ đây nhìn ra có thể thu trọn cảnh núi Bugaksan và hồ nước soi bóng tuyệt đẹp.</p>
+          </div>
+
+          <!-- Hình ảnh 2: Khánh Hội Lâu hoặc Đình Hyangwonjeong -->
+          <div class="body-photo-wrapper">
+            <img src="https://images.unsplash.com/photo-1548115184-bc6544d06a58?auto=format&fit=crop&w=1200&q=80" alt="Khánh Hội Lâu soi bóng bên hồ nước nhân tạo">
+            <div class="image-caption">Hình 2: Khánh Hội Lâu (Gyeonghoeru) nổi bật trên mặt hồ nước tĩnh lặng yên bình</div>
+          </div>
+
+          <!-- Hương Viễn Đình -->
+          <div class="arch-item">
+            <div class="arch-title-row">
+              <h3 class="arch-title">Hương Viễn Đình</h3>
+              <span class="arch-title-kr">Hyangwonjeong - 향원정</span>
+            </div>
+            <p class="arch-detail"><strong>Chức năng:</strong> Ngôi đình lục giác hai tầng nằm gọn trên một đảo nhỏ giữa hồ sen Hyangwonji, phía Bắc cung điện.</p>
+            <p class="arch-desc"><strong>Đặc điểm kiến trúc:</strong> Đây là khu vực nghỉ ngơi, vãn cảnh tĩnh mịch của Nhà vua và Hoàng hậu. Đình nối với đất liền bằng cây cầu gỗ mang tên Chwihyanggyo (Túy Hương Kiều). Khung cảnh xung quanh đình đặc biệt lãng mạn vào mùa thu khi lá phong chuyển sang sắc đỏ và vàng.</p>
+          </div>
+
+          <!-- Quang Hóa Môn -->
+          <div class="arch-item">
+            <div class="arch-title-row">
+              <h3 class="arch-title">Quang Hóa Môn & Lễ Đổi Gác</h3>
+              <span class="arch-title-kr">Gwanghwamun - 광화문</span>
+            </div>
+            <p class="arch-detail"><strong>Gwanghwamun:</strong> Cổng chính phía Nam của cung điện, gồm 3 vòm cửa đá (vòm chính giữa dành riêng cho Vua) và mái vòm gỗ 2 tầng phía trên.</p>
+            <p class="arch-desc"><strong>Nghi lễ Đổi gác (Sumungjang - 수문장):</strong> Nghi thức tái hiện sinh động hoạt động gác cổng thời Joseon với lính gác mặc trang phục truyền thống đầy màu sắc, mang vũ khí xưa và di chuyển theo tiếng trống nghi lễ. Diễn ra vào lúc 10:00 và 14:00 hàng ngày (mỗi ca kéo dài khoảng 20 phút, nghỉ vào Thứ Ba).</p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- PHẦN 3: Những trải nghiệm văn hóa đặc biệt -->
+      <section class="section-block">
+        <h2 class="section-title">3. Những trải nghiệm độc đáo khi đến tham quan</h2>
+        
+        <div class="experience-list">
+          
+          <div class="exp-item">
+            <div class="exp-icon">👘</div>
+            <div class="exp-content">
+              <h4>Miễn phí vé vào cổng khi mặc Hanbok</h4>
+              <p>Du khách (cả nam và nữ) mặc trang phục Hanbok truyền thống sẽ được đi thẳng qua cổng soát vé hoàn toàn free.</p>
+            </div>
+          </div>
+
+          <div class="exp-item">
+            <div class="exp-icon">🔥</div>
+            <div class="exp-content">
+              <h4>Hệ thống sưởi sàn Ondol cổ xưa</h4>
+              <p>Khi tham quan các gian phòng nghỉ như Khang Ninh Điện (Gangnyeongjeon) hay Giao Thái Điện (Gyotaejeon), bạn sẽ thấy nghệ thuật dẫn nhiệt qua nền nhà độc đáo của người Triều Tiên cổ xưa giúp làm ấm phòng vào những ngày mùa đông.</p>
+            </div>
+          </div>
+
+          <div class="exp-item">
+            <div class="exp-icon">🏛️</div>
+            <div class="exp-content">
+              <h4>Ghé thăm 2 Bảo tàng lớn trong khuôn viên</h4>
+              <p>Bao gồm <strong>Bảo tàng Cố cung Quốc gia (National Palace Museum of Korea)</strong> trưng bày hiện vật hoàng gia, đồ dùng của các vị vua Joseon và <strong>Bảo tàng Dân gian Quốc gia (National Folk Museum of Korea)</strong> nơi tái hiện sinh động đời sống sinh hoạt dân gian của người Hàn qua các thời kỳ lịch sử.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- PHẦN 4: Hướng dẫn tham quan thực tế -->
+      <section class="section-block">
+        <h2 class="section-title">4. Hướng dẫn tham quan thực tế</h2>
+        
+        <div class="guide-grid">
+          
+          <div class="guide-card">
+            <h4>📍 Địa chỉ</h4>
+            <p>161 Sajik-ro, Jongno-gu, Seoul.</p>
+          </div>
+
+          <div class="guide-card">
+            <h4>🚇 Phương tiện di chuyển</h4>
+            <p><strong>Tàu điện ngầm (Subway):</strong> Line 3 – Ga Gyeongbokgung (Cổng ra 5) hoặc Line 5 – Ga Gwanghwamun (Cổng ra 2).</p>
+          </div>
+
+          <div class="guide-card">
+            <h4>⏰ Thời gian mở cửa</h4>
+            <p><strong>09:00 – 17:00 / 18:30</strong> (Tùy theo các tháng cụ thể). Đóng cửa cố định vào <strong>Thứ Ba hàng tuần</strong>.</p>
+          </div>
+
+          <div class="guide-card">
+            <h4>🍂 Thời điểm đẹp nhất</h4>
+            <p>
+              <strong>Mùa thu (Cuối tháng 10 - giữa tháng 11):</strong> Toàn bộ khuôn viên ngập sắc lá đỏ lá vàng tuyệt đẹp.<br>
+              <strong>Mùa xuân (Tháng 3 - Tháng 4):</strong> Hoa anh đào nở rộ bên các hồ nước và mái đao cổ kính.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- PHẦN 5: Bộ câu hỏi trắc nghiệm ôn tập văn hóa -->
+      <section class="section-block">
+        <h2 class="section-title">5. Bộ câu hỏi trắc nghiệm ôn tập văn hóa</h2>
+        
+        <div class="quiz-list">
+          
+          <!-- Câu 1 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title"><strong>Câu 1:</strong> Tên gọi "Gyeongbok" (Cảnh Phúc) của cung điện do ai đặt và mang ý nghĩa gì?</div>
+            <div class="quiz-opts">
+              <div class="quiz-opt">A. Vua Taejo đặt – Ý nghĩa: "Cung điện của Mặt Trời"</div>
+              <div class="quiz-opt">B. Danh thần Jeong Do-jeon đặt – Ý nghĩa: "Cầu mong Vua và Hoàng tộc nhận được nhiều phúc lành"</div>
+              <div class="quiz-opt">C. Vua Sejong đặt – Ý nghĩa: "Nơi chữ viết ra đời"</div>
+              <div class="quiz-opt">D. Nhiếp chính vương Daewongun đặt – Ý nghĩa: "Sự trở lại của triều đại"</div>
+            </div>
+            <div class="quiz-action-row">
+              <button class="quiz-ans-btn" id="btn-1" onclick="toggleAnswer(1)">Xem đáp án & giải thích</button>
+            </div>
+            <div class="quiz-explanation-box" id="explanation-1">
+              Đáp án đúng: <strong>B</strong><br>
+              <em>Giải thích:</em> Danh thần Sambong Jeong Do-jeon là người đặt tên cho cung điện là Gyeongbok (Cảnh Phúc - 景福), lấy từ câu "Quân tử vạn niên,介尔景福" trong Kinh Thi, mang nghĩa ước nguyện nhà vua và hoàng tộc sẽ mang lại vô vàn hạnh phúc, thái bình cho muôn dân.
+            </div>
+          </div>
+
+          <!-- Câu 2 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title"><strong>Câu 2:</strong> Cung điện Gyeongbokgung được hoàn thành vào thời kỳ nào?</div>
+            <div class="quiz-opts">
+              <div class="quiz-opt">A. Khởi công năm 1395, dưới thời Vua Taejo (Thái Tổ)</div>
+              <div class="quiz-opt">B. Khởi công năm 1592, trong chiến tranh Imjin</div>
+              <div class="quiz-opt">C. Khởi công năm 1867, dưới thời Vua Gojong</div>
+              <div class="quiz-opt">D. Khởi công năm 1910, thời kỳ thuộc địa</div>
+            </div>
+            <div class="quiz-action-row">
+              <button class="quiz-ans-btn" id="btn-2" onclick="toggleAnswer(2)">Xem đáp án & giải thích</button>
+            </div>
+            <div class="quiz-explanation-box" id="explanation-2">
+              Đáp án đúng: <strong>A</strong><br>
+              <em>Giải thích:</em> Cung điện được xây dựng và hoàn thành vào thời kỳ khởi lập triều đại (khởi công năm 1395), chỉ 3 năm sau khi Vương triều Joseon được thành lập bởi Vua Taejo.
+            </div>
+          </div>
+
+          <!-- Câu 3 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title"><strong>Câu 3:</strong> Đâu là CỔNG CHÍNH phía Nam của Cung điện Gyeongbokgung, nơi diễn ra nghi lễ Đổi gác nổi tiếng?</div>
+            <div class="quiz-opts">
+              <div class="quiz-opt">A. Hưng Lễ Môn (Heungnyemun)</div>
+              <div class="quiz-opt">B. Quang Hóa Môn (Gwanghwamun)</div>
+              <div class="quiz-opt">C. Kiến Xuân Môn (Geanchunmun)</div>
+              <div class="quiz-opt">D. Thần Vũ Môn (Sinmumun)</div>
+            </div>
+            <div class="quiz-action-row">
+              <button class="quiz-ans-btn" id="btn-3" onclick="toggleAnswer(3)">Xem đáp án & giải thích</button>
+            </div>
+            <div class="quiz-explanation-box" id="explanation-3">
+              Đáp án đúng: <strong>B</strong><br>
+              <em>Giải thích:</em> Quang Hóa Môn (Gwanghwamun) là cổng chính phía Nam của cung điện Gyeongbokgung, là biểu tượng lịch sử ngự trị tại trung tâm Seoul.
+            </div>
+          </div>
+
+          <!-- Câu 4 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title"><strong>Câu 4:</strong> Nếu bạn đến Cung điện Gyeongbokgung vào lúc 10:00 sáng hoặc 14:00 chiều tại khu vực cổng chính, bạn sẽ có cơ hội xem trải nghiệm du lịch đặc sắc nào?</div>
+            <div class="quiz-opts">
+              <div class="quiz-opt">A. Múa quạt truyền thống của hoàng hậu</div>
+              <div class="quiz-opt">B. Nghi lễ Đổi gác của Vệ binh Hoàng gia (Sumungjang)</div>
+              <div class="quiz-opt">C. Bán đấu giá cổ vật thời Joseon</div>
+              <div class="quiz-opt">D. Lễ diễu hành ngựa của Nhà vua</div>
+            </div>
+            <div class="quiz-action-row">
+              <button class="quiz-ans-btn" id="btn-4" onclick="toggleAnswer(4)">Xem đáp án & giải thích</button>
+            </div>
+            <div class="quiz-explanation-box" id="explanation-4">
+              Đáp án đúng: <strong>B</strong><br>
+              <em>Giải thích:</em> Nghi lễ Đổi gác (Sumungjang) tái hiện sinh động hoạt động gác cổng thời Joseon được tổ chức cố định lúc 10:00 và 14:00 hàng ngày (nghỉ thứ Ba).
+            </div>
+          </div>
+
+          <!-- Câu 5 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title"><strong>Câu 5:</strong> Du khách khi ghé thăm Gyeongbokgung có thể nhận được ưu đãi trải nghiệm đặc biệt nào sau đây?</div>
+            <div class="quiz-opts">
+              <div class="quiz-opt">A. Được tặng bản đồ bằng chữ Hangeul cổ</div>
+              <div class="quiz-opt">B. Miễn phí vé vào cửa nếu mặc trang phục truyền thống Hanbok</div>
+              <div class="quiz-opt">C. Được ăn trưa miễn phí tại nhà bếp hoàng gia</div>
+              <div class="quiz-opt">D. Được đi tàu điện ngầm miễn phí đến cung điện</div>
+            </div>
+            <div class="quiz-action-row">
+              <button class="quiz-ans-btn" id="btn-5" onclick="toggleAnswer(5)">Xem đáp án & giải thích</button>
+            </div>
+            <div class="quiz-explanation-box" id="explanation-5">
+              Đáp án đúng: <strong>B</strong><br>
+              <em>Giải thích:</em> Trải nghiệm văn hóa đặc sắc tại đây quy định du khách mặc trang phục Hanbok truyền thống (cả nam và nữ) sẽ được miễn vé vào cổng hoàn toàn.
+            </div>
+          </div>
+
+          <!-- Câu 6 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title"><strong>Câu 6:</strong> Công trình tráng lệ nào là nơi diễn ra các buổi đại lễ quốc gia, lễ đăng quang của Vua và tiếp đón các sứ thần nước ngoài?</div>
+            <div class="quiz-opts">
+              <div class="quiz-opt">A. Khánh Hội Lâu (Gyeonghoeru)</div>
+              <div class="quiz-opt">B. Hương Viễn Đình (Hyangwonjeong)</div>
+              <div class="quiz-opt">C. Cần Chính Điện (Geunjeongjeon)</div>
+              <div class="quiz-opt">D. Tư Chính Điện (Sajeongjeon)</div>
+            </div>
+            <div class="quiz-action-row">
+              <button class="quiz-ans-btn" id="btn-6" onclick="toggleAnswer(6)">Xem đáp án & giải thích</button>
+            </div>
+            <div class="quiz-explanation-box" id="explanation-6">
+              Đáp án đúng: <strong>C</strong><br>
+              <em>Giải thích:</em> Cần Chính Điện (Geunjeongjeon) là chính điện tráng lệ và tối cao nhất trong toàn bộ quần thể kiến trúc cung điện Gyeongbokgung.
+            </div>
+          </div>
+
+          <!-- Câu 7 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title"><strong>Câu 7:</strong> Khi đứng ở sân Cần Chính Điện, bạn sẽ thấy những hàng đá nhỏ cắm trên sân. Những tảng đá này có tên là "Phẩm giai thạch" dùng để làm gì?</div>
+            <div class="quiz-opts">
+              <div class="quiz-opt">A. Để buộc dây lều khi trời mưa</div>
+              <div class="quiz-opt">B. Để đánh dấu vị trí đứng của các quan lại theo thứ bậc từ Nhất phẩm đến Cửu phẩm</div>
+              <div class="quiz-opt">C. Để đo chiều cao của các binh lính</div>
+              <div class="quiz-opt">D. Để trang trí phong thủy theo ngũ hành</div>
+            </div>
+            <div class="quiz-action-row">
+              <button class="quiz-ans-btn" id="btn-7" onclick="toggleAnswer(7)">Xem đáp án & giải thích</button>
+            </div>
+            <div class="quiz-explanation-box" id="explanation-7">
+              Đáp án đúng: <strong>B</strong><br>
+              <em>Giải thích:</em> Phía trước sân của Cần Chính Điện có cắm 2 hàng đá gọi là "Phẩm giai thạch" (품계석) dùng để ghi rõ vị trí đứng chầu của các văn võ quan lại từ Nhất phẩm đến Cửu phẩm.
+            </div>
+          </div>
+
+          <!-- Câu 8 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title"><strong>Câu 8:</strong> Tòa lầu hai tầng nằm trên hồ nước nhân tạo lớn, chuyên dùng làm nơi Vua tổ chức yến tiệc hoàng gia và tiếp sứ thần là công trình nào?</div>
+            <div class="quiz-opts">
+              <div class="quiz-opt">A. Khánh Hội Lâu (Gyeonghoeru)</div>
+              <div class="quiz-opt">B. Hương Viễn Đình (Hyangwonjeong)</div>
+              <div class="quiz-opt">C. Khang Ninh Điện (Gangnyeongjeon)</div>
+              <div class="quiz-opt">D. Giao Thái Điện (Gyotaejeon)</div>
+            </div>
+            <div class="quiz-action-row">
+              <button class="quiz-ans-btn" id="btn-8" onclick="toggleAnswer(8)">Xem đáp án & giải thích</button>
+            </div>
+            <div class="quiz-explanation-box" id="explanation-8">
+              Đáp án đúng: <strong>A</strong><br>
+              <em>Giải thích:</em> Khánh Hội Lâu (Gyeonghoeru) là tòa lầu 2 tầng nổi trên hồ sen nhân tạo rộng lớn, điểm tổ chức các dạ yến triều đình trọng đại.
+            </div>
+          </div>
+
+          <!-- Câu 9 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title"><strong>Câu 9:</strong> Ngôi đình hình lục giác thơ mộng nằm trên một hòn đảo nhỏ giữa hồ sen ở phía Bắc cung điện, cực kỳ nổi tiếng để chụp ảnh mùa thu là gì?</div>
+            <div class="quiz-opts">
+              <div class="quiz-opt">A. Khánh Hội Lâu (Gyeonghoeru)</div>
+              <div class="quiz-opt">B. Hương Viễn Đình (Hyangwonjeong)</div>
+              <div class="quiz-opt">C. Tập Thanh Đường (Jipcheongdang)</div>
+              <div class="quiz-opt">D. Hàm Hoà Đường (Hamhwadang)</div>
+            </div>
+            <div class="quiz-action-row">
+              <button class="quiz-ans-btn" id="btn-9" onclick="toggleAnswer(9)">Xem đáp án & giải thích</button>
+            </div>
+            <div class="quiz-explanation-box" id="explanation-9">
+              Đáp án đúng: <strong>B</strong><br>
+              <em>Giải thích:</em> Hương Viễn Đình (Hyangwonjeong) là ngôi đình lục giác nhỏ thanh nhã tọa lạc ở phía Bắc cung điện, nối bằng cầu gỗ Chwihyanggyo cổ kính.
+            </div>
+          </div>
+
+          <!-- Câu 10 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title"><strong>Câu 10:</strong> Vị vua vĩ đại nào của Triều Tiên đã tạo ra bảng chữ cái Hangeul và nhiều phát minh khoa học ngay tại Cung điện Gyeongbokgung?</div>
+            <div class="quiz-opts">
+              <div class="quiz-opt">A. Vua Taejo</div>
+              <div class="quiz-opt">B. Vua Gojong</div>
+              <div class="quiz-opt">C. Vua Sejong Đại đế</div>
+              <div class="quiz-opt">D. Vua Yeonsangun</div>
+            </div>
+            <div class="quiz-action-row">
+              <button class="quiz-ans-btn" id="btn-10" onclick="toggleAnswer(10)">Xem đáp án & giải thích</button>
+            </div>
+            <div class="quiz-explanation-box" id="explanation-10">
+              Đáp án đúng: <strong>C</strong><br>
+              <em>Giải thích:</em> Vua Sejong Đại đế là vị vua nổi danh đã khai sinh ra chữ viết Hangeul và thúc đẩy khoa học kỹ thuật phát triển tại Cảnh Phúc Cung vào thế kỷ 15.
+            </div>
+          </div>
+
+          <!-- Câu 11 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title"><strong>Câu 11:</strong> Trong lịch sử, Cung điện Gyeongbokgung từng bị thiêu rụi hoàn toàn vào năm 1592 và bị bỏ hoang suốt hơn 270 năm do sự kiện gì?</div>
+            <div class="quiz-opts">
+              <div class="quiz-opt">A. Trận động đất lớn ở vùng Seoul</div>
+              <div class="quiz-opt">B. Chiến tranh Imjin (Nhật Bản xâm lược Triều Tiên)</div>
+              <div class="quiz-opt">C. Cuộc khởi nghĩa của nông dân</div>
+              <div class="quiz-opt">D. Hỏa hoạn do sét đánh vào chính điện</div>
+            </div>
+            <div class="quiz-action-row">
+              <button class="quiz-ans-btn" id="btn-11" onclick="toggleAnswer(11)">Xem đáp án & giải thích</button>
+            </div>
+            <div class="quiz-explanation-box" id="explanation-11">
+              Đáp án đúng: <strong>B</strong><br>
+              <em>Giải thích:</em> Thảm họa chiến tranh Nhâm Thìn (Imjin War) năm 1592 khi quân Nhật xâm lược đã thiêu rụi toàn bộ cung điện và bị hoang phế hơn 270 năm.
+            </div>
+          </div>
+
+          <!-- Câu 12 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title"><strong>Câu 12:</strong> Mùa nào trong năm được du khách đánh giá là thời điểm chụp ảnh và ngắm cảnh lãng mạn nhất tại Gyeongbokgung nhờ lá phong chuyển màu đỏ vàng?</div>
+            <div class="quiz-opts">
+              <div class="quiz-opt">A. Mùa xuân (Tháng 3 - 4)</div>
+              <div class="quiz-opt">B. Mùa hè (Tháng 6 - 7)</div>
+              <div class="quiz-opt">C. Mùa thu (Tháng 10 - 11)</div>
+              <div class="quiz-opt">D. Mùa đông (Tháng 1 - 2)</div>
+            </div>
+            <div class="quiz-action-row">
+              <button class="quiz-ans-btn" id="btn-12" onclick="toggleAnswer(12)">Xem đáp án & giải thích</button>
+            </div>
+            <div class="quiz-explanation-box" id="explanation-12">
+              Đáp án đúng: <strong>C</strong><br>
+              <em>Giải thích:</em> Mùa thu (Cuối tháng 10 - giữa tháng 11) là thời khắc lãng mạn nhất khi lá phong và bạch quả đồng loạt đổi sang sắc đỏ vàng rực rỡ khắp cung điện.
+            </div>
+          </div>
+
+          <!-- Câu 13 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title"><strong>Câu 13:</strong> Bạn muốn đi tàu điện ngầm (Seoul Subway) đến tham quan Cung điện Gyeongbokgung nhanh nhất. Bạn nên xuống ở tuyến tàu và ga nào?</div>
+            <div class="quiz-opts">
+              <div class="quiz-opt">A. Tàu điện ngầm Line 1 – Ga Seoul Station</div>
+              <div class="quiz-opt">B. Tàu điện ngầm Line 3 – Ga Gyeongbokgung (Cổng ra 5)</div>
+              <div class="quiz-opt">C. Tàu điện ngầm Line 2 – Ga Hongdae</div>
+              <div class="quiz-opt">D. Tàu điện ngầm Line 4 – Ga Myeongdong</div>
+            </div>
+            <div class="quiz-action-row">
+              <button class="quiz-ans-btn" id="btn-13" onclick="toggleAnswer(13)">Xem đáp án & giải thích</button>
+            </div>
+            <div class="quiz-explanation-box" id="explanation-13">
+              Đáp án đúng: <strong>B</strong><br>
+              <em>Giải thích:</em> Xuống ga Gyeongbokgung (Line 3, Cửa ra số 5) là lối đi trực tiếp dẫn thẳng vào sân trong của cung điện vô cùng thuận tiện.
+            </div>
+          </div>
+
+          <!-- Câu 14 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title"><strong>Câu 14:</strong> Nếu bạn lên kế hoạch du lịch đến Gyeongbokgung, bạn cần lưu ý Cung điện ĐÓNG CỬA định kỳ vào ngày nào trong tuần?</div>
+            <div class="quiz-opts">
+              <div class="quiz-opt">A. Thứ Hai</div>
+              <div class="quiz-opt">B. Thứ Ba</div>
+              <div class="quiz-opt">C. Thứ Bảy</div>
+              <div class="quiz-opt">D. Chủ Nhật</div>
+            </div>
+            <div class="quiz-action-row">
+              <button class="quiz-ans-btn" id="btn-14" onclick="toggleAnswer(14)">Xem đáp án & giải thích</button>
+            </div>
+            <div class="quiz-explanation-box" id="explanation-14">
+              Đáp án đúng: <strong>B</strong><br>
+              <em>Giải thích:</em> Cung điện Gyeongbokgung luôn đóng cửa đóng cửa định kỳ vào ngày Thứ Ba hàng tuần để phục vụ công tác bảo tồn, dọn dẹp di sản.
+            </div>
+          </div>
+
+          <!-- Câu 15 -->
+          <div class="quiz-card">
+            <div class="quiz-q-title"><strong>Câu 15:</strong> Bên trong khuôn viên Cung điện Gyeongbokgung có 2 bảo tàng lớn nào mà du khách có thể ghé thăm miễn phí cùng vé vào cổng?</div>
+            <div class="quiz-opts">
+              <div class="quiz-opt">A. Bảo tàng Lịch sử Seoul & Bảo tàng MTR</div>
+              <div class="quiz-opt">B. Bảo tàng Cố cung Quốc gia & Bảo tàng Dân gian Quốc gia Hàn Quốc</div>
+              <div class="quiz-opt">C. Bảo tàng Nghệ thuật Hiện đại & Bảo tàng Chiến tranh</div>
+              <div class="quiz-opt">D. Bảo tàng Hanbok & Bảo tàng Ẩm thực</div>
+            </div>
+            <div class="quiz-action-row">
+              <button class="quiz-ans-btn" id="btn-15" onclick="toggleAnswer(15)">Xem đáp án & giải thích</button>
+            </div>
+            <div class="quiz-explanation-box" id="explanation-15">
+              Đáp án đúng: <strong>B</strong><br>
+              <em>Giải thích:</em> Hai bảo tàng lớn nằm ngay trong khuôn viên cung điện là Bảo tàng Cố cung Quốc gia và Bảo tàng Dân gian Quốc gia Hàn Quốc.
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Footer Stamp -->
+      <footer class="site-footer">
+        <p>© 2026 Trang tài liệu văn hóa Cung điện Gyeongbokgung (Cảnh Phúc Cung).</p>
+        <p>Thực hiện với phong cách Hàn Quốc truyền thống thanh tao.</p>
+      </footer>
+
+    </article>
+  </main>
+
+  <!-- Script for accordion toggle -->
+  <script>
+    function toggleAnswer(id) {
+      const expBox = document.getElementById('explanation-' + id);
+      const btn = document.getElementById('btn-' + id);
+      if (expBox.style.display === 'block') {
+        expBox.style.display = 'none';
+        btn.textContent = 'Xem đáp án & giải thích';
+      } else {
+        expBox.style.display = 'block';
+        btn.textContent = 'Ẩn đáp án & giải thích';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -175,8 +175,8 @@ void main() {
       buildApp(stage: 1, onStage: (stage) => selectedStage = stage),
     );
 
-    await tester.ensureVisible(find.text('Bắt đầu khám phá'));
-    await tester.tap(find.text('Bắt đầu khám phá'));
+    await tester.ensureVisible(find.text('Vào khám phá ngay'));
+    await tester.tap(find.text('Vào khám phá ngay'));
     expect(selectedStage, 2);
   });
 

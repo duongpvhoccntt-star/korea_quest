@@ -84,7 +84,7 @@ void main() {
     );
     expect(find.text('2 địa điểm'), findsOneWidget);
     expect(
-      find.widgetWithText(FilledButton, 'Bắt đầu khám phá'),
+      find.widgetWithText(FilledButton, 'Vào khám phá ngay'),
       findsOneWidget,
     );
     expect(find.text('Không thể đọc dữ liệu hành trình.'), findsNothing);

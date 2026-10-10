@@ -69,6 +69,24 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<AuthUser> signInAsGuest({required String name}) async {
+    final trimmed = name.trim();
+    if (trimmed.isEmpty) {
+      throw const AuthException('Vui lòng nhập tên của bạn.');
+    }
+    final guestUser = AuthUser(
+      id: 'guest-${DateTime.now().millisecondsSinceEpoch}',
+      usernameOrEmail: 'guest@koreaquest.local',
+      displayName: trimmed,
+      role: UserRole.user,
+      isGuest: true,
+    );
+    _currentUser = guestUser;
+    _userController.add(_currentUser);
+    return guestUser;
+  }
+
+  @override
   Future<AuthUser> register({
     required String fullName,
     required String displayName,

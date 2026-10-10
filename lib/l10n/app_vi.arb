@@ -1,6 +1,7 @@
 {
   "@@locale": "vi",
   "appTitle": "KoreaQuest",
+  "home": "Trang chủ",
   "cultureAdventure": "HÀNH TRÌNH VĂN HÓA",
   "explore": "Khám phá",
   "passport": "Hộ chiếu",
@@ -15,7 +16,16 @@
   "openNavigation": "Mở điều hướng",
   "openAccountMenu": "Mở menu tài khoản",
   "levelWithXp": "Cấp {level} · {xp} XP",
-  "@levelWithXp": {"placeholders": {"level": {"type": "int"}, "xp": {"type": "int"}}},
+  "@levelWithXp": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      },
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
   "language": "Ngôn ngữ",
   "languageDescription": "Ứng dụng tự nhận ngôn ngữ thiết bị và ghi nhớ lựa chọn của bạn.",
   "vietnamese": "Tiếng Việt",
@@ -54,23 +64,53 @@
   "searchLocationsHint": "Tìm địa điểm, thành phố hoặc trải nghiệm...",
   "locationList": "Danh sách địa điểm",
   "loadMapError": "Không thể tải bản đồ địa điểm: {error}",
-  "@loadMapError": {"placeholders": {"error": {"type": "String"}}},
+  "@loadMapError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "noMatchingLocations": "Không có địa điểm phù hợp",
   "changeSearchOrFilter": "Thử đổi từ khóa tìm kiếm hoặc bộ lọc để xem thêm địa điểm trên bản đồ.",
   "chooseLocation": "Chọn {name}",
-  "@chooseLocation": {"placeholders": {"name": {"type": "String"}}},
+  "@chooseLocation": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "durationUpdating": "Đang cập nhật thời lượng",
   "minutes": "{count} phút",
-  "@minutes": {"placeholders": {"count": {"type": "int"}}},
+  "@minutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "journeyBadge": "Huy hiệu hành trình",
   "saveToJourney": "Lưu vào hành trình",
   "publishedLocationsWaiting": "{count} địa điểm đã xuất bản đang chờ bạn khám phá.",
-  "@publishedLocationsWaiting": {"placeholders": {"count": {"type": "int"}}},
+  "@publishedLocationsWaiting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "content": "Nội dung",
   "readyToExplore": "Sẵn sàng để khám phá",
   "publishedLocations": "Địa điểm đã xuất bản",
   "locationCount": "{count} địa điểm",
-  "@locationCount": {"placeholders": {"count": {"type": "int"}}},
+  "@locationCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "zoomIn": "Phóng to",
   "zoomOut": "Thu nhỏ",
   "resetMap": "Đặt lại bản đồ",
@@ -115,7 +155,16 @@
   "administrator": "Quản trị viên",
   "student": "Học viên",
   "roleLine": "{name} · Vai trò: {role}",
-  "@roleLine": {"placeholders": {"name": {"type": "String"}, "role": {"type": "String"}}},
+  "@roleLine": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      }
+    }
+  },
   "accountPassword": "Mật khẩu tài khoản",
   "changePassword": "Đổi mật khẩu",
   "experienceOptions": "Tùy chọn trải nghiệm",
@@ -203,13 +252,34 @@
   "travel": "Du lịch",
   "backToKoreaMap": "Trở về bản đồ Hàn Quốc",
   "stageProgress": "Chặng {current}/9",
-  "@stageProgress": {"placeholders": {"current": {"type": "int"}}},
+  "@stageProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      }
+    }
+  },
   "saveLocation": "Lưu địa điểm",
   "stageLabel": "Chặng {number}: {label}",
-  "@stageLabel": {"placeholders": {"number": {"type": "int"}, "label": {"type": "String"}}},
+  "@stageLabel": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      },
+      "label": {
+        "type": "String"
+      }
+    }
+  },
   "continueTo": "Tiếp tục đến {stage}",
-  "@continueTo": {"placeholders": {"stage": {"type": "String"}}},
-  "startExploring": "Bắt đầu khám phá",
+  "@continueTo": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "startExploring": "Vào khám phá ngay",
   "journeyOpening": "Mở đầu hành trình",
   "generalInformation": "Thông tin chung",
   "region": "Khu vực",
@@ -229,7 +299,13 @@
   "correctAnswer": "Chính xác!",
   "incorrectAnswer": "Chưa chính xác, nhưng nhiệm vụ vẫn được hoàn thành.",
   "quizScoringError": "Không thể chấm quiz: {error}",
-  "@quizScoringError": {"placeholders": {"error": {"type": "String"}}},
+  "@quizScoringError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "journeyOpeningDescription": "Khởi đầu hành trình khám phá địa điểm này.",
   "overviewDescription": "Thông tin nhận diện, mô tả, bản đồ và những điểm đáng chú ý.",
   "historyDescription": "Khám phá những dấu ấn thời gian và câu chuyện văn hóa tạo nên bức tranh đa sắc của quá khứ.",
@@ -243,13 +319,31 @@
   "noFunFacts": "Chưa có fun fact để hiển thị.",
   "noQuiz": "Chưa có câu hỏi quiz để hiển thị.",
   "taskRewards": "{count} nhiệm vụ · +20 XP khi chính xác · +5 XP khi hoàn thành",
-  "@taskRewards": {"placeholders": {"count": {"type": "int"}}},
+  "@taskRewards": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "editProfile": "Chỉnh sửa hồ sơ",
   "profileOf": "Hồ sơ của {name}",
-  "@profileOf": {"placeholders": {"name": {"type": "String"}}},
+  "@profileOf": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "backToProfile": "Quay lại hồ sơ",
   "xpToNextLevel": "Còn {xp} XP để lên cấp tiếp theo",
-  "@xpToNextLevel": {"placeholders": {"xp": {"type": "int"}}},
+  "@xpToNextLevel": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
   "journeyOverview": "Tổng quan hành trình",
   "availableToExplore": "Có thể khám phá",
   "learningStreak": "Chuỗi ngày học",
@@ -278,7 +372,13 @@
   "adventureMap": "Bản đồ phiêu lưu",
   "currentJourney": "Hành trình hiện tại",
   "percentComplete": "{percent}% hoàn thành",
-  "@percentComplete": {"placeholders": {"percent": {"type": "int"}}},
+  "@percentComplete": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
   "journeyLearning": "Khám phá theo hành trình",
   "journeyLearningDesc": "Không học rời rạc, luôn có mục tiêu tiếp theo",
   "earnXp": "Tích XP & lên cấp",
@@ -309,15 +409,45 @@
   "confirm": "Xác nhận",
   "errorOccurred": "Đã có lỗi xảy ra",
   "avatarOf": "Ảnh đại diện của {name}",
-  "@avatarOf": {"placeholders": {"name": {"type": "String"}}},
+  "@avatarOf": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "xpProgress": "{current} trên {next} XP",
-  "@xpProgress": {"placeholders": {"current": {"type": "int"}, "next": {"type": "int"}}},
+  "@xpProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "next": {
+        "type": "int"
+      }
+    }
+  },
   "nextLevel": "{xp} XP · Cấp {level}",
-  "@nextLevel": {"placeholders": {"xp": {"type": "int"}, "level": {"type": "int"}}},
+  "@nextLevel": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      },
+      "level": {
+        "type": "int"
+      }
+    }
+  },
   "featuredDescription": "Những điểm đáng chú ý tại địa điểm đang xem.",
   "noFeatured": "Chưa có điểm đến nổi bật để hiển thị.",
   "destinationNumber": "Điểm đến {number}",
-  "@destinationNumber": {"placeholders": {"number": {"type": "int"}}},
+  "@destinationNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "address": "Địa chỉ",
   "activities": "Hoạt động",
   "categories": "Danh mục",
@@ -325,14 +455,26 @@
   "cultureDescription": "Nguồn gốc, dấu hiệu nhận biết và gợi ý ứng xử.",
   "noCulture": "Chưa có trải nghiệm văn hóa để hiển thị.",
   "experienceNumber": "Trải nghiệm {number}",
-  "@experienceNumber": {"placeholders": {"number": {"type": "int"}}},
+  "@experienceNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "originMeaning": "Nguồn gốc & ý nghĩa",
   "recognizableFeatures": "Dấu hiệu nhận biết",
   "relatedExperience": "Trải nghiệm liên quan",
   "cuisineDescription": "Món ăn, nguyên liệu, hương vị và nơi trải nghiệm.",
   "noCuisine": "Chưa có nội dung ẩm thực để hiển thị.",
   "foodNumber": "Món ăn {number}",
-  "@foodNumber": {"placeholders": {"number": {"type": "int"}}},
+  "@foodNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "specialFeature": "Điểm đặc biệt",
   "experiencePlaces": "Nơi trải nghiệm",
   "exploreLocation": "Địa điểm khám phá",
@@ -341,7 +483,13 @@
   "sourceLink": "Liên kết nguồn",
   "viewMediaSource": "Xem nguồn media",
   "historicalMilestone": "Mốc lịch sử {number}",
-  "@historicalMilestone": {"placeholders": {"number": {"type": "int"}}},
+  "@historicalMilestone": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "collapse": "Thu gọn",
   "openStatus": "đang mở",
   "viewedStatus": "đã xem",
@@ -359,14 +507,29 @@
   "previousImage": "Ảnh trước",
   "nextImage": "Ảnh tiếp theo",
   "imagePosition": "Ảnh {current} trên {total}",
-  "@imagePosition": {"placeholders": {"current": {"type": "int"}, "total": {"type": "int"}}},
+  "@imagePosition": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "areaMap": "Bản đồ khu vực",
   "moveUp": "Đưa lên",
   "checkInStageDescription": "Xem hình ảnh, video và những lát cắt lịch sử quan trọng trước khi trả lời câu hỏi mở màn.",
   "cultureStageDescription": "Hiểu nghi lễ, kiến trúc và câu chuyện đời sống qua nhiệm vụ tương tác ngắn.",
   "vocabularyStageDescription": "Ghi nhớ từ mới theo đúng bối cảnh và hoàn tất thử thách cuối để nhận dấu mộc.",
   "loadLocationContentError": "Không thể tải nội dung địa điểm: {error}",
-  "@loadLocationContentError": {"placeholders": {"error": {"type": "String"}}},
+  "@loadLocationContentError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "locationNotFound": "Không tìm thấy địa điểm",
   "locationNotPublished": "Địa điểm này chưa được xuất bản hoặc đang được cập nhật.",
   "changeAvatar": "Đổi ảnh đại diện",
@@ -375,7 +538,13 @@
   "discoverNow": "Khám phá ngay",
   "openOnYoutube": "Mở trên YouTube",
   "openVideoOnYoutube": "Mở video {label} trên YouTube",
-  "@openVideoOnYoutube": {"placeholders": {"label": {"type": "String"}}},
+  "@openVideoOnYoutube": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
   "invalidYoutube": "Liên kết YouTube không hợp lệ.",
   "invalidYoutubeEmbed": "Liên kết YouTube không hợp lệ hoặc không thể nhúng.",
   "chooseAvatar": "HOẶC CHỌN NHÂN VẬT ĐẠI DIỆN",
@@ -386,5 +555,33 @@
   "seoulCapital": "Thủ đô Seoul",
   "busanCity": "Thành phố Busan",
   "levelExplorer": "LEVEL {level} · NHÀ THÁM HIỂM",
-  "@levelExplorer": {"placeholders": {"level": {"type": "int"}}}
+  "@levelExplorer": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "playAsGuest": "Chơi nhanh (Khách)",
+  "guestNamePrompt": "Nhập tên của bạn để khám phá Hàn Quốc",
+  "guestNameLabel": "Tên của bạn / Nickname",
+  "guestNameHint": "Ví dụ: Minh Anh, Hans...",
+  "guestNameRequired": "Vui lòng nhập tên của bạn.",
+  "guestBadge": "Khách",
+  "guestCelebrationTitle": "Chúc mừng {name} đã hoàn thành {location}!",
+  "@guestCelebrationTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "location": {
+        "type": "String"
+      }
+    }
+  },
+  "guestCelebrationMessage": "Bạn đã tích lũy được điểm XP và trải nghiệm tuyệt vời! Hãy tạo tài khoản chính thức để lưu lại vĩnh viễn tiến trình, huy hiệu và dấu mộc của bạn nhé.",
+  "registerAndSaveProgress": "Đăng ký & Lưu tiến trình",
+  "continueAsGuest": "Để sau / Tiếp tục khám phá",
+  "orContinueAsGuest": "Hoặc trải nghiệm ngay không cần tài khoản",
+  "upgradeToOfficialAccount": "Đăng ký tài khoản chính thức"
 }

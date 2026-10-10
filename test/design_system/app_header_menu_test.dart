@@ -33,7 +33,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Trang chủ'), findsNothing);
+    expect(find.text('Trang chủ'), findsOneWidget);
     expect(find.text('Khám phá'), findsOneWidget);
 
     await tester.tap(find.byTooltip('Mở menu tài khoản'));

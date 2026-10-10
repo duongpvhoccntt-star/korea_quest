@@ -128,5 +128,21 @@ void main() {
         throwsA(isA<AuthException>()),
       );
     });
+
+    test('signInAsGuest throws AuthException when name is empty', () async {
+      expect(
+        () => repository.signInAsGuest(name: '   '),
+        throwsA(isA<AuthException>()),
+      );
+    });
+
+    test('signInAsGuest creates an AuthUser with isGuest = true', () async {
+      final user = await repository.signInAsGuest(name: 'Minh Anh');
+      expect(user.displayName, equals('Minh Anh'));
+      expect(user.isGuest, isTrue);
+      expect(user.role, equals(UserRole.user));
+      expect(repository.currentUser?.displayName, equals('Minh Anh'));
+      expect(repository.currentUser?.isGuest, isTrue);
+    });
   });
 }
