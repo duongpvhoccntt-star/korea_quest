@@ -59,8 +59,8 @@ class SystemStatePage extends StatelessWidget {
                 const SizedBox(height: AppSpacing.lg),
                 PrimaryButton(
                   label: strings.backHome,
-                  icon: Icons.home_outlined,
-                  onPressed: () => context.go('/home'),
+                  icon: Icons.explore_outlined,
+                  onPressed: () => context.go('/explore'),
                 ),
               ],
             ),

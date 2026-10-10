@@ -64,8 +64,9 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
     final path = GoRouterState.of(context).uri.path;
     final authUser = ref.watch(authUserStreamProvider).value;
     final isGuest = authUser == null;
+    final isGuestMode = ref.watch(guestModeProvider);
+    final canAccessApp = !isGuest || isGuestMode;
     final destinations = [
-      (strings.home, isGuest ? '/' : '/home'),
       (strings.explore, '/explore'),
       (strings.passport, '/passport'),
       (strings.achievements, '/achievements'),
@@ -86,7 +87,9 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
             height: preferredSize.height,
             child: Row(
               children: [
-                _BrandLockup(onTap: () => context.go('/')),
+                _BrandLockup(
+                  onTap: () => context.go(canAccessApp ? '/explore' : '/'),
+                ),
                 const Spacer(),
                 const _LanguageMenu(),
                 const SizedBox(width: AppSpacing.xs),
@@ -438,7 +441,7 @@ class AppFooter extends StatelessWidget {
               title: appStrings(context).explore,
               links: [
                 (appStrings(context).locations, '/explore'),
-                (appStrings(context).journey, '/home'),
+                (appStrings(context).journey, '/explore'),
                 (appStrings(context).badges, '/achievements'),
               ],
             ),
