@@ -12,6 +12,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appTitle => 'KoreaQuest';
 
   @override
+  String get home => '홈';
+
+  @override
   String get cultureAdventure => '한국 문화 탐험';
 
   @override

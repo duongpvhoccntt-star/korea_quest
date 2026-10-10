@@ -12,6 +12,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get appTitle => 'KoreaQuest';
 
   @override
+  String get home => 'Trang chủ';
+
+  @override
   String get cultureAdventure => 'HÀNH TRÌNH VĂN HÓA';
 
   @override

@@ -12,6 +12,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'KoreaQuest';
 
   @override
+  String get home => 'Home';
+
+  @override
   String get cultureAdventure => 'CULTURE ADVENTURE';
 
   @override

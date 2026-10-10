@@ -106,6 +106,12 @@ abstract class AppLocalizations {
   /// **'KoreaQuest'**
   String get appTitle;
 
+  /// No description provided for @home.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trang chủ'**
+  String get home;
+
   /// No description provided for @cultureAdventure.
   ///
   /// In vi, this message translates to:

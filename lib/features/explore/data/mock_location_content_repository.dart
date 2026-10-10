@@ -43,7 +43,8 @@ class MockLocationContentRepository implements LocationContentRepository {
         'url': _thumbUrl,
         'credit': _thumbCredit,
         'source_url': _thumbSourceUrl,
-        'alt': 'Điện Geunjeongjeon nhìn chính diện trong khuôn viên Gyeongbokgung',
+        'alt':
+            'Điện Geunjeongjeon nhìn chính diện trong khuôn viên Gyeongbokgung',
       },
     ],
   };
@@ -116,10 +117,22 @@ class MockLocationContentRepository implements LocationContentRepository {
     'stamp_image_url':
         'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Joseongukwangjiin_%28The_Seal_of_the_King_of_Joseon%2C_1776-1876%29.svg/512px-Joseongukwangjiin_%28The_Seal_of_the_King_of_Joseon%2C_1776-1876%29.svg.png',
     'quick_facts': <dynamic>[
-      <String, dynamic>{'label': 'Hoàn thành lần đầu', 'value': '1395, dưới thời vua Taejo'},
-      <String, dynamic>{'label': 'Ý nghĩa tên gọi', 'value': 'Cung điện được ban nhiều phúc lành'},
-      <String, dynamic>{'label': 'Địa chỉ', 'value': '161 Sajik-ro, Jongno-gu, Seoul'},
-      <String, dynamic>{'label': 'Ga gần nhất', 'value': 'Gyeongbokgung Station, tuyến 3, cửa ra 5'},
+      <String, dynamic>{
+        'label': 'Hoàn thành lần đầu',
+        'value': '1395, dưới thời vua Taejo',
+      },
+      <String, dynamic>{
+        'label': 'Ý nghĩa tên gọi',
+        'value': 'Cung điện được ban nhiều phúc lành',
+      },
+      <String, dynamic>{
+        'label': 'Địa chỉ',
+        'value': '161 Sajik-ro, Jongno-gu, Seoul',
+      },
+      <String, dynamic>{
+        'label': 'Ga gần nhất',
+        'value': 'Gyeongbokgung Station, tuyến 3, cửa ra 5',
+      },
     ],
     'history': <dynamic>[
       <String, dynamic>{
@@ -132,7 +145,8 @@ class MockLocationContentRepository implements LocationContentRepository {
             'Gyeongbokgung được xây trong những năm đầu của triều Joseon để làm trung tâm hoàng gia và chính sự. Vị trí đặt cung tuân theo quan niệm phong thủy: có núi Bugaksan ở phía sau và dòng nước ở phía trước.',
         'related_people': 'Vua Taejo',
         'categories': <dynamic>['khởi dựng', 'triều Joseon'],
-        'fun_fact': 'Tên cung gắn với ý niệm về phúc lành và thịnh vượng của vương triều mới.',
+        'fun_fact':
+            'Tên cung gắn với ý niệm về phúc lành và thịnh vượng của vương triều mới.',
         'media': <String, dynamic>{
           'kind': 'image',
           'url': _thumbUrl,
@@ -140,7 +154,12 @@ class MockLocationContentRepository implements LocationContentRepository {
           'source_url': _thumbSourceUrl,
           'alt': 'Điện Geunjeongjeon trong cung điện chính của Joseon',
           'images': <dynamic>[
-            <String, dynamic>{'url': _thumbUrl, 'credit': _thumbCredit, 'source_url': _thumbSourceUrl, 'alt': 'Điện Geunjeongjeon'},
+            <String, dynamic>{
+              'url': _thumbUrl,
+              'credit': _thumbCredit,
+              'source_url': _thumbSourceUrl,
+              'alt': 'Điện Geunjeongjeon',
+            },
           ],
         },
       },
@@ -154,7 +173,8 @@ class MockLocationContentRepository implements LocationContentRepository {
             'Cuộc chiến Imjin bắt đầu năm 1592 đã làm thay đổi sâu sắc Seoul và đời sống triều đình Joseon. Các công trình của Gyeongbokgung bị thiêu hủy.',
         'related_people': null,
         'categories': <dynamic>['chiến tranh', 'biến cố'],
-        'fun_fact': 'Sajeongjeon từng bị cháy, được dựng lại và công trình hiện tại có từ năm 1867.',
+        'fun_fact':
+            'Sajeongjeon từng bị cháy, được dựng lại và công trình hiện tại có từ năm 1867.',
         'media': <String, dynamic>{
           'kind': 'image',
           'url': _thumbUrl,
@@ -162,7 +182,12 @@ class MockLocationContentRepository implements LocationContentRepository {
           'source_url': _thumbSourceUrl,
           'alt': 'Kiến trúc phục dựng của Gyeongbokgung ngày nay',
           'images': <dynamic>[
-            <String, dynamic>{'url': _thumbUrl, 'credit': _thumbCredit, 'source_url': _thumbSourceUrl, 'alt': 'Gyeongbokgung'},
+            <String, dynamic>{
+              'url': _thumbUrl,
+              'credit': _thumbCredit,
+              'source_url': _thumbSourceUrl,
+              'alt': 'Gyeongbokgung',
+            },
           ],
         },
       },
@@ -176,7 +201,8 @@ class MockLocationContentRepository implements LocationContentRepository {
             'Đợt phục dựng năm 1867 đưa Gyeongbokgung trở lại vai trò trung tâm biểu tượng của vương triều. Dưới thời vua Gojong và sự chỉ đạo của Heungseon Daewongun, nhiều hạng mục chính được dựng lại.',
         'related_people': 'Vua Gojong; Heungseon Daewongun',
         'categories': <dynamic>['phục dựng', 'kiến trúc'],
-        'fun_fact': 'Sajeongjeon là nguồn tư liệu quý về cấu trúc và bố cục cung điện vào năm 1867.',
+        'fun_fact':
+            'Sajeongjeon là nguồn tư liệu quý về cấu trúc và bố cục cung điện vào năm 1867.',
         'media': <String, dynamic>{
           'kind': 'image',
           'url': _thumbUrl,
@@ -184,7 +210,12 @@ class MockLocationContentRepository implements LocationContentRepository {
           'source_url': _thumbSourceUrl,
           'alt': 'Mặt tiền điện chính được tái thiết thế kỷ mười chín',
           'images': <dynamic>[
-            <String, dynamic>{'url': _thumbUrl, 'credit': _thumbCredit, 'source_url': _thumbSourceUrl, 'alt': 'Gyeongbokgung 1867'},
+            <String, dynamic>{
+              'url': _thumbUrl,
+              'credit': _thumbCredit,
+              'source_url': _thumbSourceUrl,
+              'alt': 'Gyeongbokgung 1867',
+            },
           ],
         },
       },
@@ -198,15 +229,22 @@ class MockLocationContentRepository implements LocationContentRepository {
             'Công tác phục hồi hiện đại nhằm khôi phục dần các công trình, tuyến không gian và ý nghĩa lịch sử của cung.',
         'related_people': null,
         'categories': <dynamic>['bảo tồn', 'hiện đại'],
-        'fun_fact': 'Gwanghwamun từng bị di dời trong thời thuộc địa trước khi được trả lại vị trí nguyên gốc.',
+        'fun_fact':
+            'Gwanghwamun từng bị di dời trong thời thuộc địa trước khi được trả lại vị trí nguyên gốc.',
         'media': <String, dynamic>{
           'kind': 'image',
           'url': _thumbUrl,
           'credit': _thumbCredit,
           'source_url': _thumbSourceUrl,
-          'alt': 'Geunjeongjeon là điểm tham quan trung tâm trong Gyeongbokgung hiện nay',
+          'alt':
+              'Geunjeongjeon là điểm tham quan trung tâm trong Gyeongbokgung hiện nay',
           'images': <dynamic>[
-            <String, dynamic>{'url': _thumbUrl, 'credit': _thumbCredit, 'source_url': _thumbSourceUrl, 'alt': 'Gyeongbokgung modern'},
+            <String, dynamic>{
+              'url': _thumbUrl,
+              'credit': _thumbCredit,
+              'source_url': _thumbSourceUrl,
+              'alt': 'Gyeongbokgung modern',
+            },
           ],
         },
       },
@@ -222,8 +260,12 @@ class MockLocationContentRepository implements LocationContentRepository {
         'long_description':
             'Gwanghwamun là điểm bắt đầu phù hợp để đọc cấu trúc toàn cung. Từ đây, người tham quan có thể nhận ra trục thẳng nối cổng chính với Heungnyemun, Geunjeongmun và điện Geunjeongjeon.',
         'address': 'Phía nam Gyeongbokgung, 161 Sajik-ro, Jongno-gu, Seoul',
-        'activities': <dynamic>['Quan sát trục cung điện', 'Chụp ảnh từ quảng trường'],
-        'fun_fact': 'Gwanghwamun được hoàn thành phục dựng tại vị trí nguyên gốc vào năm 2010.',
+        'activities': <dynamic>[
+          'Quan sát trục cung điện',
+          'Chụp ảnh từ quảng trường',
+        ],
+        'fun_fact':
+            'Gwanghwamun được hoàn thành phục dựng tại vị trí nguyên gốc vào năm 2010.',
         'categories': <dynamic>['cổng', 'nghi lễ'],
         'media': <String, dynamic>{
           'kind': 'image',
@@ -232,7 +274,12 @@ class MockLocationContentRepository implements LocationContentRepository {
           'source_url': _thumbSourceUrl,
           'alt': 'Trục chính hướng tới điện Geunjeongjeon',
           'images': <dynamic>[
-            <String, dynamic>{'url': _thumbUrl, 'credit': _thumbCredit, 'source_url': _thumbSourceUrl, 'alt': 'Gwanghwamun'},
+            <String, dynamic>{
+              'url': _thumbUrl,
+              'credit': _thumbCredit,
+              'source_url': _thumbSourceUrl,
+              'alt': 'Gwanghwamun',
+            },
           ],
         },
       },
@@ -246,7 +293,10 @@ class MockLocationContentRepository implements LocationContentRepository {
         'long_description':
             'Geunjeongjeon nằm ở trung tâm khu vực chính triều và là công trình biểu trưng rõ nhất cho quyền lực hoàng gia. Công trình được công nhận là Quốc bảo số 223.',
         'address': 'Khu chính triều, Gyeongbokgung, Seoul',
-        'activities': <dynamic>['Quan sát bia phẩm giai', 'Tìm hiểu nghi lễ triều đình'],
+        'activities': <dynamic>[
+          'Quan sát bia phẩm giai',
+          'Tìm hiểu nghi lễ triều đình',
+        ],
         'fun_fact': 'Geunjeongjeon là Quốc bảo số 223 của Hàn Quốc.',
         'categories': <dynamic>['chính điện', 'quốc lễ'],
         'media': <String, dynamic>{
@@ -256,7 +306,12 @@ class MockLocationContentRepository implements LocationContentRepository {
           'source_url': _thumbSourceUrl,
           'alt': 'Mặt tiền điện Geunjeongjeon và sân đá nghi lễ',
           'images': <dynamic>[
-            <String, dynamic>{'url': _thumbUrl, 'credit': _thumbCredit, 'source_url': _thumbSourceUrl, 'alt': 'Geunjeongjeon'},
+            <String, dynamic>{
+              'url': _thumbUrl,
+              'credit': _thumbCredit,
+              'source_url': _thumbSourceUrl,
+              'alt': 'Geunjeongjeon',
+            },
           ],
         },
       },
@@ -271,16 +326,23 @@ class MockLocationContentRepository implements LocationContentRepository {
             'Gyeonghoeru cho thấy một khía cạnh khác của hoàng cung: không gian tiếp đãi, lễ nghi và thưởng cảnh. Lầu là Quốc bảo số 224.',
         'address': 'Phía tây khu chính triều, Gyeongbokgung, Seoul',
         'activities': <dynamic>['Ngắm hồ', 'Quan sát kiến trúc lầu'],
-        'fun_fact': 'Gyeonghoeru được xem là một trong các góc nhìn đẹp nhất của cung quanh năm.',
+        'fun_fact':
+            'Gyeonghoeru được xem là một trong các góc nhìn đẹp nhất của cung quanh năm.',
         'categories': <dynamic>['lầu', 'mặt nước'],
         'media': <String, dynamic>{
           'kind': 'image',
           'url': _thumbUrl,
           'credit': _thumbCredit,
           'source_url': _thumbSourceUrl,
-          'alt': 'Điện Geunjeongjeon, một công trình tiêu biểu trong cùng quần thể',
+          'alt':
+              'Điện Geunjeongjeon, một công trình tiêu biểu trong cùng quần thể',
           'images': <dynamic>[
-            <String, dynamic>{'url': _thumbUrl, 'credit': _thumbCredit, 'source_url': _thumbSourceUrl, 'alt': 'Gyeonghoeru'},
+            <String, dynamic>{
+              'url': _thumbUrl,
+              'credit': _thumbCredit,
+              'source_url': _thumbSourceUrl,
+              'alt': 'Gyeonghoeru',
+            },
           ],
         },
       },
@@ -295,7 +357,8 @@ class MockLocationContentRepository implements LocationContentRepository {
             'Ở khu vực phía bắc, Hyangwonjeong đem lại nhịp điệu thư thái khác với sân nghi lễ. Đình lục giác nằm trên đảo nhỏ giữa hồ vuông nhân tạo.',
         'address': 'Khu phía bắc Gyeongbokgung, Seoul',
         'activities': <dynamic>['Quan sát cảnh quan', 'Chụp ảnh theo mùa'],
-        'fun_fact': 'Hyangwonjeong được thiết kế theo hình lục giác và nổi tiếng nhờ tỷ lệ thanh thoát.',
+        'fun_fact':
+            'Hyangwonjeong được thiết kế theo hình lục giác và nổi tiếng nhờ tỷ lệ thanh thoát.',
         'categories': <dynamic>['đình', 'cảnh quan'],
         'media': <String, dynamic>{
           'kind': 'image',
@@ -304,7 +367,12 @@ class MockLocationContentRepository implements LocationContentRepository {
           'source_url': _thumbSourceUrl,
           'alt': 'Điện Geunjeongjeon trong quần thể Gyeongbokgung',
           'images': <dynamic>[
-            <String, dynamic>{'url': _thumbUrl, 'credit': _thumbCredit, 'source_url': _thumbSourceUrl, 'alt': 'Hyangwonjeong'},
+            <String, dynamic>{
+              'url': _thumbUrl,
+              'credit': _thumbCredit,
+              'source_url': _thumbSourceUrl,
+              'alt': 'Hyangwonjeong',
+            },
           ],
         },
       },
@@ -319,7 +387,11 @@ class MockLocationContentRepository implements LocationContentRepository {
         'long_description':
             'Nghi lễ đổi gác hoàng gia là một cách sinh động để tiếp cận lịch sử thay vì chỉ đọc bảng giới thiệu.',
         'origin_meaning': 'Tái hiện hoạt động canh gác tại cổng hoàng cung',
-        'recognizable_features': <dynamic>['Trang phục lính gác', 'Đội hình nghi lễ', 'Nhạc hiệu'],
+        'recognizable_features': <dynamic>[
+          'Trang phục lính gác',
+          'Đội hình nghi lễ',
+          'Nhạc hiệu',
+        ],
         'dos': <dynamic>['Kiểm tra lịch trong ngày', 'Đứng sau vạch hướng dẫn'],
         'donts': <dynamic>['Không chặn lối đi', 'Không chạm đạo cụ'],
         'related_experience': 'Tìm hiểu Gwanghwamun trước khi xem nghi lễ',
@@ -330,7 +402,12 @@ class MockLocationContentRepository implements LocationContentRepository {
           'source_url': _thumbSourceUrl,
           'alt': 'Không gian nghi lễ trước điện Geunjeongjeon',
           'images': <dynamic>[
-            <String, dynamic>{'url': _thumbUrl, 'credit': _thumbCredit, 'source_url': _thumbSourceUrl, 'alt': 'Nghi lễ đổi gác'},
+            <String, dynamic>{
+              'url': _thumbUrl,
+              'credit': _thumbCredit,
+              'source_url': _thumbSourceUrl,
+              'alt': 'Nghi lễ đổi gác',
+            },
           ],
         },
       },
@@ -343,27 +420,57 @@ class MockLocationContentRepository implements LocationContentRepository {
         'long_description':
             'Hanbok là trang phục truyền thống Hàn Quốc, thường được du khách thuê ở khu vực gần Gyeongbokgung để kết hợp với chuyến tham quan.',
         'origin_meaning': 'Trải nghiệm trang phục truyền thống Hàn Quốc',
-        'recognizable_features': <dynamic>['Jeogori', 'Chima hoặc baji', 'Màu sắc truyền thống'],
+        'recognizable_features': <dynamic>[
+          'Jeogori',
+          'Chima hoặc baji',
+          'Màu sắc truyền thống',
+        ],
         'dos': <dynamic>['Xem quy định hanbok', 'Đi giày thoải mái'],
-        'donts': <dynamic>['Không leo lên công trình', 'Không cản lối khách khác'],
-        'related_experience': 'Kết hợp với hành trình chụp ảnh và học về nghi lễ',
+        'donts': <dynamic>[
+          'Không leo lên công trình',
+          'Không cản lối khách khác',
+        ],
+        'related_experience':
+            'Kết hợp với hành trình chụp ảnh và học về nghi lễ',
         'media': <String, dynamic>{
           'kind': 'image',
           'url': _thumbUrl,
           'credit': _thumbCredit,
           'source_url': _thumbSourceUrl,
-          'alt': 'Điện Geunjeongjeon là bối cảnh phổ biến khi tham quan Gyeongbokgung',
+          'alt':
+              'Điện Geunjeongjeon là bối cảnh phổ biến khi tham quan Gyeongbokgung',
           'images': <dynamic>[
-            <String, dynamic>{'url': _thumbUrl, 'credit': _thumbCredit, 'source_url': _thumbSourceUrl, 'alt': 'Hanbok tại cung'},
+            <String, dynamic>{
+              'url': _thumbUrl,
+              'credit': _thumbCredit,
+              'source_url': _thumbSourceUrl,
+              'alt': 'Hanbok tại cung',
+            },
           ],
         },
       },
     ],
     'culture_guidelines': <dynamic>[
-      <String, dynamic>{'kind': 'do', 'content': 'Đi theo lối được mở và quan sát biển hướng dẫn tại từng khu vực.'},
-      <String, dynamic>{'kind': 'do', 'content': 'Giữ âm lượng vừa phải để tôn trọng không gian di sản và các đoàn tham quan.'},
-      <String, dynamic>{'kind': 'dont', 'content': 'Không chạm, leo trèo hoặc đặt đạo cụ lên cấu kiện kiến trúc.'},
-      <String, dynamic>{'kind': 'dont', 'content': 'Không ném tiền, thức ăn hoặc vật dụng xuống hồ và vườn cảnh.'},
+      <String, dynamic>{
+        'kind': 'do',
+        'content':
+            'Đi theo lối được mở và quan sát biển hướng dẫn tại từng khu vực.',
+      },
+      <String, dynamic>{
+        'kind': 'do',
+        'content':
+            'Giữ âm lượng vừa phải để tôn trọng không gian di sản và các đoàn tham quan.',
+      },
+      <String, dynamic>{
+        'kind': 'dont',
+        'content':
+            'Không chạm, leo trèo hoặc đặt đạo cụ lên cấu kiện kiến trúc.',
+      },
+      <String, dynamic>{
+        'kind': 'dont',
+        'content':
+            'Không ném tiền, thức ăn hoặc vật dụng xuống hồ và vườn cảnh.',
+      },
     ],
     'foods': <dynamic>[
       <String, dynamic>{
@@ -376,12 +483,17 @@ class MockLocationContentRepository implements LocationContentRepository {
             'Bibimbap là món cơm trộn với nhiều thành phần được sắp riêng trước khi ăn. Sự đa dạng màu sắc khiến món ăn phù hợp để giới thiệu nguyên tắc cân bằng nguyên liệu trong ẩm thực Hàn Quốc.',
         'ingredients': <dynamic>['cơm', 'rau củ', 'gochujang', 'trứng'],
         'flavors': <dynamic>['cay nhẹ', 'mặn ngọt', 'tươi'],
-        'special_feature': 'Người ăn tự trộn các thành phần để điều chỉnh hương vị.',
-        'experience_places': <dynamic>['Nhà hàng khu Jongno', 'Khu Gwanghwamun'],
+        'special_feature':
+            'Người ăn tự trộn các thành phần để điều chỉnh hương vị.',
+        'experience_places': <dynamic>[
+          'Nhà hàng khu Jongno',
+          'Khu Gwanghwamun',
+        ],
         'image_url': _thumbUrl,
         'image_credit': _thumbCredit,
         'image_source_url': _thumbSourceUrl,
-        'image_alt': 'Kiến trúc Gyeongbokgung, điểm tham quan gần khu ẩm thực Jongno',
+        'image_alt':
+            'Kiến trúc Gyeongbokgung, điểm tham quan gần khu ẩm thực Jongno',
       },
       <String, dynamic>{
         'id': 'food-2',
@@ -393,12 +505,17 @@ class MockLocationContentRepository implements LocationContentRepository {
             'Tteokbokki dùng bánh gạo mềm nấu trong sốt đỏ có gochujang, thường ăn kèm chả cá, hành lá hoặc trứng.',
         'ingredients': <dynamic>['bánh gạo', 'gochujang', 'chả cá', 'hành lá'],
         'flavors': <dynamic>['cay', 'ngọt', 'đậm đà'],
-        'special_feature': 'Độ cay và nguyên liệu ăn kèm thay đổi theo từng quán.',
-        'experience_places': <dynamic>['Quán ăn khu Jongno', 'Chợ và phố ẩm thực Seoul'],
+        'special_feature':
+            'Độ cay và nguyên liệu ăn kèm thay đổi theo từng quán.',
+        'experience_places': <dynamic>[
+          'Quán ăn khu Jongno',
+          'Chợ và phố ẩm thực Seoul',
+        ],
         'image_url': _thumbUrl,
         'image_credit': _thumbCredit,
         'image_source_url': _thumbSourceUrl,
-        'image_alt': 'Gyeongbokgung, điểm xuất phát cho hành trình ẩm thực tại Seoul',
+        'image_alt':
+            'Gyeongbokgung, điểm xuất phát cho hành trình ẩm thực tại Seoul',
       },
       <String, dynamic>{
         'id': 'food-3',
@@ -411,7 +528,10 @@ class MockLocationContentRepository implements LocationContentRepository {
         'ingredients': <dynamic>['thanh yên', 'mứt yuja', 'nước ấm'],
         'flavors': <dynamic>['thơm', 'ngọt', 'chua nhẹ'],
         'special_feature': 'Mứt yuja có thể được pha nóng hoặc lạnh tùy mùa.',
-        'experience_places': <dynamic>['Quán trà khu Bukchon', 'Quán cà phê quanh Gwanghwamun'],
+        'experience_places': <dynamic>[
+          'Quán trà khu Bukchon',
+          'Quán cà phê quanh Gwanghwamun',
+        ],
         'image_url': _thumbUrl,
         'image_credit': _thumbCredit,
         'image_source_url': _thumbSourceUrl,
@@ -423,7 +543,8 @@ class MockLocationContentRepository implements LocationContentRepository {
         'id': 'ff-1',
         'title': 'Ý nghĩa tên cung',
         'category': 'Ngôn ngữ',
-        'fact': 'Gyeongbokgung thường được diễn giải là cung điện được ban nhiều phúc lành, phản ánh kỳ vọng thịnh vượng của triều Joseon mới.',
+        'fact':
+            'Gyeongbokgung thường được diễn giải là cung điện được ban nhiều phúc lành, phản ánh kỳ vọng thịnh vượng của triều Joseon mới.',
         'icon_name': 'auto_awesome',
         'unlock_after_stage': 1,
       },
@@ -431,7 +552,8 @@ class MockLocationContentRepository implements LocationContentRepository {
         'id': 'ff-2',
         'title': 'Quốc bảo trong cung',
         'category': 'Di sản',
-        'fact': 'Geunjeongjeon và Gyeonghoeru đều là Quốc bảo; Hyangwonjeong cũng được công nhận giá trị cao trong hệ thống di sản Hàn Quốc.',
+        'fact':
+            'Geunjeongjeon và Gyeonghoeru đều là Quốc bảo; Hyangwonjeong cũng được công nhận giá trị cao trong hệ thống di sản Hàn Quốc.',
         'icon_name': 'account_balance',
         'unlock_after_stage': 3,
       },
@@ -439,7 +561,8 @@ class MockLocationContentRepository implements LocationContentRepository {
         'id': 'ff-3',
         'title': 'Sân đá có thứ bậc',
         'category': 'Nghi lễ',
-        'fact': 'Trước Geunjeongjeon có các bia đá chỉ vị trí đứng của quan lại, giúp trật tự phẩm cấp hiện diện ngay trong kiến trúc.',
+        'fact':
+            'Trước Geunjeongjeon có các bia đá chỉ vị trí đứng của quan lại, giúp trật tự phẩm cấp hiện diện ngay trong kiến trúc.',
         'icon_name': 'format_list_numbered',
         'unlock_after_stage': 4,
       },
@@ -447,7 +570,8 @@ class MockLocationContentRepository implements LocationContentRepository {
         'id': 'ff-4',
         'title': 'Đình trên đảo nhỏ',
         'category': 'Cảnh quan',
-        'fact': 'Hyangwonjeong là đình lục giác nằm trên đảo giữa hồ nhân tạo, thể hiện cách cung điện kết nối kiến trúc với mặt nước.',
+        'fact':
+            'Hyangwonjeong là đình lục giác nằm trên đảo giữa hồ nhân tạo, thể hiện cách cung điện kết nối kiến trúc với mặt nước.',
         'icon_name': 'water',
         'unlock_after_stage': 6,
       },
@@ -458,7 +582,8 @@ class MockLocationContentRepository implements LocationContentRepository {
         'category': 'Lịch sử',
         'kind': 'single_choice',
         'prompt': 'Gyeongbokgung được hoàn thành lần đầu vào năm nào?',
-        'explanation': 'Gyeongbokgung được hoàn thành vào năm 1395 dưới thời vua Taejo, sau khi triều Joseon mới thành lập và chọn nơi đây làm cung điện chính.',
+        'explanation':
+            'Gyeongbokgung được hoàn thành vào năm 1395 dưới thời vua Taejo, sau khi triều Joseon mới thành lập và chọn nơi đây làm cung điện chính.',
         'options': <dynamic>[
           <String, dynamic>{'id': 'q1-a', 'text': '1392', 'is_correct': false},
           <String, dynamic>{'id': 'q1-b', 'text': '1395', 'is_correct': true},
@@ -471,25 +596,60 @@ class MockLocationContentRepository implements LocationContentRepository {
         'category': 'Kiến trúc',
         'kind': 'single_choice',
         'prompt': 'Cổng chính phía nam của Gyeongbokgung có tên là gì?',
-        'explanation': 'Gwanghwamun là cổng chính phía nam, mở đầu trục nghi lễ đi qua các cổng nội cung tới điện Geunjeongjeon.',
+        'explanation':
+            'Gwanghwamun là cổng chính phía nam, mở đầu trục nghi lễ đi qua các cổng nội cung tới điện Geunjeongjeon.',
         'options': <dynamic>[
-          <String, dynamic>{'id': 'q2-a', 'text': 'Gwanghwamun', 'is_correct': true},
-          <String, dynamic>{'id': 'q2-b', 'text': 'Heungnyemun', 'is_correct': false},
-          <String, dynamic>{'id': 'q2-c', 'text': 'Geunjeongmun', 'is_correct': false},
-          <String, dynamic>{'id': 'q2-d', 'text': 'Sinmumun', 'is_correct': false},
+          <String, dynamic>{
+            'id': 'q2-a',
+            'text': 'Gwanghwamun',
+            'is_correct': true,
+          },
+          <String, dynamic>{
+            'id': 'q2-b',
+            'text': 'Heungnyemun',
+            'is_correct': false,
+          },
+          <String, dynamic>{
+            'id': 'q2-c',
+            'text': 'Geunjeongmun',
+            'is_correct': false,
+          },
+          <String, dynamic>{
+            'id': 'q2-d',
+            'text': 'Sinmumun',
+            'is_correct': false,
+          },
         ],
       },
       <String, dynamic>{
         'id': '00000000-0000-4000-8000-000000000303',
         'category': 'Văn hóa',
         'kind': 'single_choice',
-        'prompt': 'Công trình nào là chính điện tổ chức quốc lễ và tiếp sứ thần?',
-        'explanation': 'Geunjeongjeon là chính điện tráng lệ nhất của cung. Lễ đăng quang, buổi chầu quan lại và tiếp đón sứ thần nước ngoài từng diễn ra tại đây.',
+        'prompt':
+            'Công trình nào là chính điện tổ chức quốc lễ và tiếp sứ thần?',
+        'explanation':
+            'Geunjeongjeon là chính điện tráng lệ nhất của cung. Lễ đăng quang, buổi chầu quan lại và tiếp đón sứ thần nước ngoài từng diễn ra tại đây.',
         'options': <dynamic>[
-          <String, dynamic>{'id': 'q3-a', 'text': 'Geunjeongjeon', 'is_correct': true},
-          <String, dynamic>{'id': 'q3-b', 'text': 'Gyeonghoeru', 'is_correct': false},
-          <String, dynamic>{'id': 'q3-c', 'text': 'Hyangwonjeong', 'is_correct': false},
-          <String, dynamic>{'id': 'q3-d', 'text': 'Sajeongjeon', 'is_correct': false},
+          <String, dynamic>{
+            'id': 'q3-a',
+            'text': 'Geunjeongjeon',
+            'is_correct': true,
+          },
+          <String, dynamic>{
+            'id': 'q3-b',
+            'text': 'Gyeonghoeru',
+            'is_correct': false,
+          },
+          <String, dynamic>{
+            'id': 'q3-c',
+            'text': 'Hyangwonjeong',
+            'is_correct': false,
+          },
+          <String, dynamic>{
+            'id': 'q3-d',
+            'text': 'Sajeongjeon',
+            'is_correct': false,
+          },
         ],
       },
       <String, dynamic>{
@@ -497,12 +657,29 @@ class MockLocationContentRepository implements LocationContentRepository {
         'category': 'Văn hóa',
         'kind': 'single_choice',
         'prompt': 'Gyeonghoeru chủ yếu gắn với hoạt động nào của hoàng gia?',
-        'explanation': 'Gyeonghoeru là lầu dùng cho yến tiệc lớn và tiếp sứ thần. Công trình bên hồ cho thấy không gian tiếp đãi trang trọng của hoàng gia Joseon.',
+        'explanation':
+            'Gyeonghoeru là lầu dùng cho yến tiệc lớn và tiếp sứ thần. Công trình bên hồ cho thấy không gian tiếp đãi trang trọng của hoàng gia Joseon.',
         'options': <dynamic>[
-          <String, dynamic>{'id': 'q4-a', 'text': 'Yến tiệc và tiếp sứ thần', 'is_correct': true},
-          <String, dynamic>{'id': 'q4-b', 'text': 'Nơi ở của quân lính', 'is_correct': false},
-          <String, dynamic>{'id': 'q4-c', 'text': 'Kho lương của cung', 'is_correct': false},
-          <String, dynamic>{'id': 'q4-d', 'text': 'Trường học hoàng gia', 'is_correct': false},
+          <String, dynamic>{
+            'id': 'q4-a',
+            'text': 'Yến tiệc và tiếp sứ thần',
+            'is_correct': true,
+          },
+          <String, dynamic>{
+            'id': 'q4-b',
+            'text': 'Nơi ở của quân lính',
+            'is_correct': false,
+          },
+          <String, dynamic>{
+            'id': 'q4-c',
+            'text': 'Kho lương của cung',
+            'is_correct': false,
+          },
+          <String, dynamic>{
+            'id': 'q4-d',
+            'text': 'Trường học hoàng gia',
+            'is_correct': false,
+          },
         ],
       },
       <String, dynamic>{
@@ -510,12 +687,29 @@ class MockLocationContentRepository implements LocationContentRepository {
         'category': 'Kiến trúc',
         'kind': 'single_choice',
         'prompt': 'Đình lục giác trên đảo nhỏ giữa hồ là công trình nào?',
-        'explanation': 'Hyangwonjeong là đình lục giác trên đảo nhỏ giữa hồ nhân tạo. Nơi đây từng phục vụ nghỉ ngơi cho nhà vua và hoàng gia.',
+        'explanation':
+            'Hyangwonjeong là đình lục giác trên đảo nhỏ giữa hồ nhân tạo. Nơi đây từng phục vụ nghỉ ngơi cho nhà vua và hoàng gia.',
         'options': <dynamic>[
-          <String, dynamic>{'id': 'q5-a', 'text': 'Hyangwonjeong', 'is_correct': true},
-          <String, dynamic>{'id': 'q5-b', 'text': 'Gyeonghoeru', 'is_correct': false},
-          <String, dynamic>{'id': 'q5-c', 'text': 'Gwanghwamun', 'is_correct': false},
-          <String, dynamic>{'id': 'q5-d', 'text': 'Gangnyeongjeon', 'is_correct': false},
+          <String, dynamic>{
+            'id': 'q5-a',
+            'text': 'Hyangwonjeong',
+            'is_correct': true,
+          },
+          <String, dynamic>{
+            'id': 'q5-b',
+            'text': 'Gyeonghoeru',
+            'is_correct': false,
+          },
+          <String, dynamic>{
+            'id': 'q5-c',
+            'text': 'Gwanghwamun',
+            'is_correct': false,
+          },
+          <String, dynamic>{
+            'id': 'q5-d',
+            'text': 'Gangnyeongjeon',
+            'is_correct': false,
+          },
         ],
       },
     ],
@@ -525,10 +719,12 @@ class MockLocationContentRepository implements LocationContentRepository {
       'ticket_price':
           'Người lớn 19–64 tuổi: 3.000 KRW; một số nhóm đủ điều kiện, gồm khách mặc hanbok đầy đủ, được miễn phí.',
       'recommended_duration': 'Khoảng 2 giờ cho lộ trình các công trình chính.',
-      'best_time_to_visit': 'Buổi sáng hoặc chiều mát; tránh thứ Ba vì cung đóng cửa định kỳ.',
+      'best_time_to_visit':
+          'Buổi sáng hoặc chiều mát; tránh thứ Ba vì cung đóng cửa định kỳ.',
       'accessibility_info':
           'Có lối tiếp cận, nhà vệ sinh phù hợp, bãi đỗ xe và điểm thuê xe lăn hoặc xe đẩy gần Heungnyemun.',
-      'official_source_url': 'https://english.visitseoul.net/attractions/gyeongbokgung%20palace_/73',
+      'official_source_url':
+          'https://english.visitseoul.net/attractions/gyeongbokgung%20palace_/73',
       'last_verified_at': '2026-09-27',
       'visitor_notes': <dynamic>[
         'Cung đóng cửa vào thứ Ba; giờ mở cửa và hoạt động đặc biệt có thể thay đổi, hãy kiểm tra nguồn chính thức trước chuyến đi.',
@@ -539,21 +735,25 @@ class MockLocationContentRepository implements LocationContentRepository {
         <String, dynamic>{
           'mode': 'metro',
           'title': 'Tàu điện ngầm tuyến 3',
-          'instructions': 'Xuống ga Gyeongbokgung, đi ra cửa 5 và đi bộ khoảng 492 mét đến cung điện.',
-          'tip': 'Đây là lựa chọn thuận tiện cho lối vào chính; kiểm tra chỉ dẫn tại ga.',
+          'instructions':
+              'Xuống ga Gyeongbokgung, đi ra cửa 5 và đi bộ khoảng 492 mét đến cung điện.',
+          'tip':
+              'Đây là lựa chọn thuận tiện cho lối vào chính; kiểm tra chỉ dẫn tại ga.',
           'is_recommended': true,
         },
         <String, dynamic>{
           'mode': 'metro',
           'title': 'Tàu điện ngầm tuyến 5',
-          'instructions': 'Xuống ga Gwanghwamun, đi ra cửa 2 và đi bộ khoảng 471 mét.',
+          'instructions':
+              'Xuống ga Gwanghwamun, đi ra cửa 2 và đi bộ khoảng 471 mét.',
           'tip': 'Phù hợp khi kết hợp tham quan quảng trường Gwanghwamun.',
           'is_recommended': false,
         },
         <String, dynamic>{
           'mode': 'walk',
           'title': 'Đi bộ từ Bukchon',
-          'instructions': 'Đi bộ theo tuyến phố phù hợp từ Bukchon Hanok Village đến khu Gyeongbokgung.',
+          'instructions':
+              'Đi bộ theo tuyến phố phù hợp từ Bukchon Hanok Village đến khu Gyeongbokgung.',
           'tip': 'Chọn giày thoải mái vì có nhiều sân đá và quãng đường đi bộ.',
           'is_recommended': false,
         },
@@ -571,8 +771,9 @@ class MockLocationContentRepository implements LocationContentRepository {
   @override
   Future<List<PublishedLocationSummary>> listPublishedLocations({
     String locale = 'vi',
-  }) async =>
-      [PublishedLocationSummary.fromJson(Map<String, dynamic>.from(_summary))];
+  }) async => [
+    PublishedLocationSummary.fromJson(Map<String, dynamic>.from(_summary)),
+  ];
 
   @override
   Future<PublishedLocationDetail?> getPublishedLocation(
@@ -595,7 +796,9 @@ class MockLocationContentRepository implements LocationContentRepository {
       if (question.string('id') == questionId) {
         final options = question.mapList('options');
         final selectedId = answer['selected_option_id']?.toString() ?? '';
-        final selected = options.where((o) => o.string('id') == selectedId).firstOrNull;
+        final selected = options
+            .where((o) => o.string('id') == selectedId)
+            .firstOrNull;
         final isCorrect = selected?['is_correct'] == true;
         final explanation = question.string('explanation');
         return QuizAnswerResult(isCorrect: isCorrect, explanation: explanation);

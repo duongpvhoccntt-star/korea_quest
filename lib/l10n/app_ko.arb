@@ -1,6 +1,7 @@
 {
   "@@locale": "ko",
   "appTitle": "KoreaQuest",
+  "home": "홈",
   "cultureAdventure": "한국 문화 탐험",
   "explore": "탐험",
   "passport": "여권",
