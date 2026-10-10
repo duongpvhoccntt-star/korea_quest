@@ -1151,51 +1151,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get uploadFromDevice => 'Upload from device';
 
   @override
-  String get configureGemini => 'Configure Gemini AI';
-
-  @override
-  String get selectedModel => 'Selected model:';
-
-  @override
-  String get saveSettings => 'Save settings';
-
-  @override
-  String get aiVoiceCommand => 'AI commands';
-
-  @override
-  String get apiKeySettings => 'API key settings';
-
-  @override
-  String get testLabel => 'Test:';
-
-  @override
-  String get openProfileNow => 'Open profile now';
-
-  @override
   String get discoverNow => 'Discover now';
-
-  @override
-  String get profileCommandCalled => 'Called: navigateToProfile';
-
-  @override
-  String get aiCommandHint => 'Enter a command (e.g. \"Go to my profile\")...';
-
-  @override
-  String get callingGemini => 'Calling Gemini...';
-
-  @override
-  String get sendToAi => 'Send command to AI';
-
-  @override
-  String functionCallComplete(String calls) {
-    return 'Function Calling: $calls → Page opened!';
-  }
-
-  @override
-  String get hideRawJson => 'Hide raw JSON';
-
-  @override
-  String get showRawJson => 'View raw JSON from Gemini';
 
   @override
   String get openOnYoutube => 'Open on YouTube';

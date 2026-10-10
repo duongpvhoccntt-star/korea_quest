@@ -1151,51 +1151,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get uploadFromDevice => 'Tải ảnh từ máy tính';
 
   @override
-  String get configureGemini => 'Cấu hình Gemini AI';
-
-  @override
-  String get selectedModel => 'Model đang chọn:';
-
-  @override
-  String get saveSettings => 'Lưu cài đặt';
-
-  @override
-  String get aiVoiceCommand => 'AI Lệnh thoại';
-
-  @override
-  String get apiKeySettings => 'Cài đặt API Key';
-
-  @override
-  String get testLabel => 'Thử nghiệm:';
-
-  @override
-  String get openProfileNow => 'Mở Hồ sơ ngay';
-
-  @override
   String get discoverNow => 'Khám phá ngay';
-
-  @override
-  String get profileCommandCalled => 'Đã gọi: navigateToProfile';
-
-  @override
-  String get aiCommandHint => 'Nhập lệnh (vd: \"Chuyển sang trang hồ sơ\")...';
-
-  @override
-  String get callingGemini => 'Đang gọi Gemini...';
-
-  @override
-  String get sendToAi => 'Gửi lệnh tới AI';
-
-  @override
-  String functionCallComplete(String calls) {
-    return 'Function Calling: $calls → Đã chuyển trang!';
-  }
-
-  @override
-  String get hideRawJson => 'Ẩn JSON thô';
-
-  @override
-  String get showRawJson => 'Xem JSON thô từ Gemini';
 
   @override
   String get openOnYoutube => 'Mở trên YouTube';

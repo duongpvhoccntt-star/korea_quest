@@ -1099,51 +1099,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get uploadFromDevice => '기기에서 이미지 업로드';
 
   @override
-  String get configureGemini => 'Gemini AI 설정';
-
-  @override
-  String get selectedModel => '선택한 모델:';
-
-  @override
-  String get saveSettings => '설정 저장';
-
-  @override
-  String get aiVoiceCommand => 'AI 명령';
-
-  @override
-  String get apiKeySettings => 'API 키 설정';
-
-  @override
-  String get testLabel => '테스트:';
-
-  @override
-  String get openProfileNow => '프로필 바로 열기';
-
-  @override
   String get discoverNow => '지금 탐험';
-
-  @override
-  String get profileCommandCalled => '호출됨: navigateToProfile';
-
-  @override
-  String get aiCommandHint => '명령 입력 (예: \"프로필로 이동\")...';
-
-  @override
-  String get callingGemini => 'Gemini 호출 중...';
-
-  @override
-  String get sendToAi => 'AI에 명령 보내기';
-
-  @override
-  String functionCallComplete(String calls) {
-    return 'Function Calling: $calls → 페이지를 열었습니다!';
-  }
-
-  @override
-  String get hideRawJson => '원본 JSON 숨기기';
-
-  @override
-  String get showRawJson => 'Gemini 원본 JSON 보기';
 
   @override
   String get openOnYoutube => 'YouTube에서 열기';
