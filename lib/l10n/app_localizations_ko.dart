@@ -571,7 +571,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get startExploring => '탐험 시작';
+  String get startExploring => '탐험 시작하기';
 
   @override
   String get journeyOpening => '여정 시작';
@@ -1133,4 +1133,43 @@ class AppLocalizationsKo extends AppLocalizations {
   String levelExplorer(int level) {
     return '레벨 $level · 탐험가';
   }
+
+  @override
+  String get playAsGuest => '게스트로 플레이';
+
+  @override
+  String get guestNamePrompt => '한국 탐험을 시작할 이름을 입력하세요';
+
+  @override
+  String get guestNameLabel => '이름 / 닉네임';
+
+  @override
+  String get guestNameHint => '예: 민우, 지수...';
+
+  @override
+  String get guestNameRequired => '이름을 입력해주세요.';
+
+  @override
+  String get guestBadge => '게스트';
+
+  @override
+  String guestCelebrationTitle(String name, String location) {
+    return '$name님, $location 탐험 완료를 축하합니다!';
+  }
+
+  @override
+  String get guestCelebrationMessage =>
+      '이번 여정에서 XP와 스탬프를 획득했습니다! 진행 상황과 보상을 영구 보관하려면 정식 계정으로 가입하세요.';
+
+  @override
+  String get registerAndSaveProgress => '가입하고 진행 상황 저장';
+
+  @override
+  String get continueAsGuest => '나중에 하기 / 게스트로 계속';
+
+  @override
+  String get orContinueAsGuest => '또는 계정 없이 바로 체험하기';
+
+  @override
+  String get upgradeToOfficialAccount => '정식 계정으로 가입';
 }

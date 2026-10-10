@@ -50,8 +50,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         '/forgot-password',
         '/admin',
       };
-      final isGuest = ref.read(authRepositoryProvider).currentUser == null;
-      if (isGuest && !publicPaths.contains(state.uri.path)) {
+      final isUnauthenticated =
+          ref.read(authRepositoryProvider).currentUser == null;
+      if (isUnauthenticated && !publicPaths.contains(state.uri.path)) {
         return '/login';
       }
       return null;
@@ -67,8 +68,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/register',
         name: AppRouteNames.register,
-        builder: (context, state) =>
-            const AuthPage(mode: AuthPageMode.register),
+        builder: (context, state) => AuthPage(
+          mode: AuthPageMode.register,
+          prefilledName: state.uri.queryParameters['name'],
+        ),
       ),
       GoRoute(
         path: '/login',

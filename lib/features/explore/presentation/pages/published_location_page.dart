@@ -6,7 +6,9 @@ import 'package:korea_quest/design_system/components/app_feedback.dart';
 import 'package:korea_quest/design_system/components/app_scroll_view.dart';
 import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
+import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
 import 'package:korea_quest/features/explore/presentation/providers/location_content_providers.dart';
+import 'package:korea_quest/features/explore/presentation/widgets/guest_registration_prompt_dialog.dart';
 import 'package:korea_quest/features/explore/presentation/widgets/location_content_view.dart';
 import 'package:korea_quest/l10n/app_strings.dart';
 
@@ -53,9 +55,18 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
     });
   }
 
-  void _openStage(int nextStage) {
+  void _openStage(int nextStage, [String locationName = '']) {
     _scrollToTop();
     if (nextStage == 0) {
+      final user = ref.read(authRepositoryProvider).currentUser;
+      if (user?.isGuest == true) {
+        showGuestRegistrationPromptDialog(
+          context,
+          locationName: locationName,
+          guestName: user!.displayName,
+        );
+        return;
+      }
       context.go('/explore');
       return;
     }
@@ -114,7 +125,7 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
                       child: LocationContentView(
                         location: item,
                         currentStage: stage,
-                        onStageSelected: _openStage,
+                        onStageSelected: (next) => _openStage(next, item.name),
                         onSubmitQuizAnswer: (questionId, answer) => ref
                             .read(locationContentRepositoryProvider)
                             .submitQuizAnswer(
@@ -135,7 +146,7 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
                   pinned: true,
                   delegate: _JourneyStepperHeaderDelegate(
                     currentStage: stage,
-                    onStageSelected: _openStage,
+                    onStageSelected: (next) => _openStage(next, item.name),
                   ),
                 ),
                 SliverToBoxAdapter(
@@ -148,7 +159,7 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
                       child: LocationContentView(
                         location: item,
                         currentStage: stage,
-                        onStageSelected: _openStage,
+                        onStageSelected: (next) => _openStage(next, item.name),
                         onSubmitQuizAnswer: (questionId, answer) => ref
                             .read(locationContentRepositoryProvider)
                             .submitQuizAnswer(

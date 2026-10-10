@@ -179,7 +179,7 @@
   "saveLocation": "Save destination",
   "stageLabel": "Stage {number}: {label}",
   "continueTo": "Continue to {stage}",
-  "startExploring": "Start exploring",
+  "startExploring": "Start Exploring",
   "journeyOpening": "Journey introduction",
   "generalInformation": "General information",
   "region": "Region",
@@ -354,5 +354,27 @@
   "demoEmailHint": "Email or admin (demo mode)",
   "seoulCapital": "Seoul capital",
   "busanCity": "Busan",
-  "levelExplorer": "LEVEL {level} · EXPLORER"
+  "levelExplorer": "LEVEL {level} · EXPLORER",
+  "playAsGuest": "Play as Guest",
+  "guestNamePrompt": "Enter your nickname to explore Korea",
+  "guestNameLabel": "Your Name / Nickname",
+  "guestNameHint": "e.g. Min-woo, Sarah...",
+  "guestNameRequired": "Please enter your name.",
+  "guestBadge": "Guest",
+  "guestCelebrationTitle": "Congratulations {name} on completing {location}!",
+  "@guestCelebrationTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "location": {
+        "type": "String"
+      }
+    }
+  },
+  "guestCelebrationMessage": "You have earned XP and stamps in this journey! Register an official account to permanently save your progress, rewards, and passport stamps.",
+  "registerAndSaveProgress": "Register & Save Progress",
+  "continueAsGuest": "Maybe Later / Continue as Guest",
+  "orContinueAsGuest": "Or continue without an account",
+  "upgradeToOfficialAccount": "Register an official account"
 }

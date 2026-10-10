@@ -15,6 +15,7 @@ import 'package:korea_quest/design_system/shadows/app_shadows.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/shared/models/domain_models.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
+import 'package:korea_quest/features/auth/presentation/widgets/guest_name_dialog.dart';
 import 'package:korea_quest/l10n/app_strings.dart';
 
 class LandingPage extends ConsumerStatefulWidget {
@@ -216,6 +217,11 @@ class _HeroCopy extends StatelessWidget {
           PrimaryButton(
             label: appStrings(context).startJourney,
             onPressed: () => context.go('/register'),
+          ),
+          SecondaryButton(
+            label: appStrings(context).playAsGuest,
+            icon: Icons.person_pin_circle_outlined,
+            onPressed: () => showGuestNameDialog(context),
           ),
           SecondaryButton(
             label: appStrings(context).howItWorks,

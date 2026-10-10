@@ -2215,45 +2215,45 @@ class _QuizCardState extends State<_QuizCard> {
       clipBehavior: Clip.none,
       children: [
         _Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _Chip(
-            label: _fallback(widget.question.string('category'), kind),
-            icon: Icons.psychology_alt_rounded,
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            widget.question.string('prompt'),
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(color: AppColors.stitchText),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          if (kind == 'single_choice' || kind == 'true_false') _options(),
-          if (kind == 'matching') _matching(),
-          if (kind == 'ordering') _ordering(),
-          const SizedBox(height: AppSpacing.md),
-          _submitAction(context),
-          if (_result != null) ...[
-            const SizedBox(height: AppSpacing.md),
-            _Card(
-              color: _result!.isCorrect
-                  ? AppColors.mint.withValues(alpha: .45)
-                  : AppColors.palePink.withValues(alpha: .5),
-              child: _InfoRow(
-                icon: _result!.isCorrect
-                    ? Icons.check_circle_rounded
-                    : Icons.info_rounded,
-                label: _result!.isCorrect
-                    ? appStrings(context).correctAnswer
-                    : appStrings(context).incorrectAnswer,
-                value: _result!.explanation,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _Chip(
+                label: _fallback(widget.question.string('category'), kind),
+                icon: Icons.psychology_alt_rounded,
               ),
-            ),
-          ],
-        ],
-      ),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                widget.question.string('prompt'),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(color: AppColors.stitchText),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              if (kind == 'single_choice' || kind == 'true_false') _options(),
+              if (kind == 'matching') _matching(),
+              if (kind == 'ordering') _ordering(),
+              const SizedBox(height: AppSpacing.md),
+              _submitAction(context),
+              if (_result != null) ...[
+                const SizedBox(height: AppSpacing.md),
+                _Card(
+                  color: _result!.isCorrect
+                      ? AppColors.mint.withValues(alpha: .45)
+                      : AppColors.palePink.withValues(alpha: .5),
+                  child: _InfoRow(
+                    icon: _result!.isCorrect
+                        ? Icons.check_circle_rounded
+                        : Icons.info_rounded,
+                    label: _result!.isCorrect
+                        ? appStrings(context).correctAnswer
+                        : appStrings(context).incorrectAnswer,
+                    value: _result!.explanation,
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
         if (_result != null)
           Positioned.fill(
@@ -2270,8 +2270,7 @@ class _QuizCardState extends State<_QuizCard> {
 
   Widget _options() => Column(
     children: [
-      for (final option in widget.question.mapList('options'))
-        _option(option),
+      for (final option in widget.question.mapList('options')) _option(option),
     ],
   );
 
@@ -2544,10 +2543,7 @@ class _QuizOptionFeedbackFrame extends StatelessWidget {
 }
 
 class _QuizResultMarker extends StatelessWidget {
-  const _QuizResultMarker({
-    required this.isCorrect,
-    required this.sequence,
-  });
+  const _QuizResultMarker({required this.isCorrect, required this.sequence});
 
   final bool isCorrect;
   final int sequence;
@@ -2558,7 +2554,8 @@ class _QuizResultMarker extends StatelessWidget {
     tween: Tween(begin: 0, end: 1),
     duration: const Duration(milliseconds: 460),
     curve: Curves.easeOutBack,
-    builder: (context, scale, child) => Transform.scale(scale: scale, child: child),
+    builder: (context, scale, child) =>
+        Transform.scale(scale: scale, child: child),
     child: Icon(
       isCorrect ? Icons.check_circle_rounded : Icons.close_rounded,
       color: isCorrect ? AppColors.green : AppColors.coral,
@@ -2606,7 +2603,9 @@ class _QuizAnswerEffectPainter extends CustomPainter {
 
   void _paintCelebration(Canvas canvas, Size size) {
     final origin = Offset(size.width / 2, size.height * .48);
-    final burstProgress = Curves.easeOut.transform((progress / .72).clamp(0, 1));
+    final burstProgress = Curves.easeOut.transform(
+      (progress / .72).clamp(0, 1),
+    );
     final fade = (1 - progress).clamp(0.0, 1.0);
     const colors = [
       AppColors.gold,
@@ -2619,25 +2618,34 @@ class _QuizAnswerEffectPainter extends CustomPainter {
 
     for (var index = 0; index < 36; index++) {
       final angle = math.pi * 2 * index / 36;
-      final distance = (size.shortestSide * (.22 + (index % 5) * .035)) *
-          burstProgress;
-      final position = origin +
+      final distance =
+          (size.shortestSide * (.22 + (index % 5) * .035)) * burstProgress;
+      final position =
+          origin +
           Offset(math.cos(angle) * distance, math.sin(angle) * distance);
-      particlePaint.color = colors[index % colors.length].withValues(alpha: fade);
+      particlePaint.color = colors[index % colors.length].withValues(
+        alpha: fade,
+      );
       canvas.drawCircle(position, 2 + index % 3, particlePaint);
     }
 
     for (var index = 0; index < 30; index++) {
       final x = size.width * ((index * 37 % 100) / 100);
-      final y = size.height * (.12 + progress * .74) +
+      final y =
+          size.height * (.12 + progress * .74) +
           math.sin(progress * math.pi + index) * AppSpacing.sm;
       canvas.save();
       canvas.translate(x, y);
       canvas.rotate(progress * math.pi * (index.isEven ? 2 : -2));
-      particlePaint.color =
-          colors[(index + 1) % colors.length].withValues(alpha: fade);
+      particlePaint.color = colors[(index + 1) % colors.length].withValues(
+        alpha: fade,
+      );
       canvas.drawRect(
-        Rect.fromCenter(center: Offset.zero, width: AppSpacing.xs, height: AppSpacing.sm),
+        Rect.fromCenter(
+          center: Offset.zero,
+          width: AppSpacing.xs,
+          height: AppSpacing.sm,
+        ),
         particlePaint,
       );
       canvas.restore();

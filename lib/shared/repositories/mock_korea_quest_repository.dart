@@ -123,6 +123,16 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
     return _currentUser;
   }
 
+  void setGuestDisplayName(String name) {
+    final trimmed = name.trim();
+    if (trimmed.isNotEmpty) {
+      _currentUser = _currentUser.copyWith(
+        displayName: trimmed,
+        fullName: trimmed,
+      );
+    }
+  }
+
   @override
   Future<UserProgress> getUserProgress() async => _currentProgress;
 

@@ -5,6 +5,8 @@ import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_buttons.dart';
 import 'package:korea_quest/design_system/components/app_feedback.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
+import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
+import 'package:korea_quest/features/explore/presentation/widgets/guest_registration_prompt_dialog.dart';
 import 'package:korea_quest/shared/models/domain_models.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
 import 'package:korea_quest/shared/widgets/module_page.dart';
@@ -46,8 +48,25 @@ class JourneyPage extends ConsumerWidget {
       title: stageName,
       description:
           'Khung nhiệm vụ cho ${location.name}. Logic trả lời và chấm điểm sẽ được hoàn thiện ở phase feature.',
-      actionLabel: stage == null ? 'Bắt đầu Check-in' : 'Đi chặng tiếp theo',
-      onAction: () => context.go(_nextPath(stage)),
+      actionLabel: stage == null
+          ? 'Bắt đầu Check-in'
+          : (stage == JourneyStage.summary
+                ? 'Hoàn thành hành trình'
+                : 'Đi chặng tiếp theo'),
+      onAction: () {
+        if (stage == JourneyStage.summary) {
+          final user = ref.read(authRepositoryProvider).currentUser;
+          if (user?.isGuest == true) {
+            showGuestRegistrationPromptDialog(
+              context,
+              locationName: location.name,
+              guestName: user!.displayName,
+            );
+            return;
+          }
+        }
+        context.go(_nextPath(stage));
+      },
       child: Column(
         children: [
           for (final mission in missions)

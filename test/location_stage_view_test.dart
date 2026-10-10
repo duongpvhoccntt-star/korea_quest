@@ -175,8 +175,8 @@ void main() {
       buildApp(stage: 1, onStage: (stage) => selectedStage = stage),
     );
 
-    await tester.ensureVisible(find.text('Bắt đầu khám phá'));
-    await tester.tap(find.text('Bắt đầu khám phá'));
+    await tester.ensureVisible(find.text('Vào khám phá ngay'));
+    await tester.tap(find.text('Vào khám phá ngay'));
     expect(selectedStage, 2);
   });
 
@@ -257,8 +257,10 @@ void main() {
               location: quizLocation,
               currentStage: 8,
               onStageSelected: (_) {},
-              onSubmitQuizAnswer: (_, _) async =>
-                  const QuizAnswerResult(isCorrect: false, explanation: 'Try again'),
+              onSubmitQuizAnswer: (_, _) async => const QuizAnswerResult(
+                isCorrect: false,
+                explanation: 'Try again',
+              ),
             ),
           ),
         ),

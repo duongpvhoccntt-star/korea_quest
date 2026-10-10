@@ -76,16 +76,21 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
     final showXp = width >= ResponsiveBreakpoints.wide;
     final path = GoRouterState.of(context).uri.path;
     final authUser = ref.watch(authUserStreamProvider).value;
-    final isGuest = authUser == null;
+    final isUnauthenticated = authUser == null;
+    final isGuestUser = authUser?.isGuest == true;
     final destinations = [
-      (strings.home, isGuest ? '/' : '/home'),
+      (strings.home, isUnauthenticated ? '/' : '/home'),
       (strings.explore, '/explore'),
       (strings.passport, '/passport'),
       (strings.achievements, '/achievements'),
       (strings.profile, '/profile'),
     ];
-    final user = isGuest ? null : ref.watch(currentUserProvider).value;
-    final progress = isGuest ? null : ref.watch(userProgressProvider).value;
+    final user = isUnauthenticated
+        ? null
+        : ref.watch(currentUserProvider).value;
+    final progress = isUnauthenticated
+        ? null
+        : ref.watch(userProgressProvider).value;
 
     return Material(
       color: AppColors.cream.withValues(alpha: .96),
@@ -116,7 +121,7 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                       ),
                     ),
                   const SizedBox(width: AppSpacing.sm),
-                  if (isGuest) ...[
+                  if (isUnauthenticated) ...[
                     TextButton(
                       onPressed: () => context.go('/login'),
                       child: Text(strings.signIn),
@@ -164,12 +169,41 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                user?.displayName ?? authUser.displayName,
-                                style: const TextStyle(
-                                  color: AppColors.stitchText,
-                                  fontWeight: FontWeight.w800,
-                                ),
+                              Row(
+                                children: [
+                                  Text(
+                                    user?.displayName ?? authUser.displayName,
+                                    style: const TextStyle(
+                                      color: AppColors.stitchText,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                  if (isGuestUser) ...[
+                                    const SizedBox(width: AppSpacing.xs),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 2,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.coral.withValues(
+                                          alpha: 0.12,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          AppRadius.round,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        strings.guestBadge,
+                                        style: const TextStyle(
+                                          color: AppColors.coral,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ],
                               ),
                               Text(
                                 authUser.usernameOrEmail,
@@ -194,6 +228,17 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                           ),
                         ),
                         const PopupMenuDivider(),
+                        if (isGuestUser) ...[
+                          PopupMenuItem(
+                            value: '/register',
+                            child: _AccountMenuItem(
+                              icon: Icons.card_membership_rounded,
+                              label: strings.upgradeToOfficialAccount,
+                              color: AppColors.coral,
+                            ),
+                          ),
+                          const PopupMenuDivider(),
+                        ],
                         PopupMenuItem(
                           value: '/profile',
                           child: _AccountMenuItem(
@@ -237,7 +282,7 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                           value: destination.$2,
                           child: Text(destination.$1),
                         ),
-                      if (isGuest) ...[
+                      if (isUnauthenticated) ...[
                         const PopupMenuDivider(),
                         PopupMenuItem(
                           value: '/login',
@@ -248,6 +293,15 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                           child: Text(strings.startJourney),
                         ),
                       ] else ...[
+                        if (isGuestUser)
+                          PopupMenuItem(
+                            value: '/register',
+                            child: _AccountMenuItem(
+                              icon: Icons.card_membership_rounded,
+                              label: strings.upgradeToOfficialAccount,
+                              color: AppColors.coral,
+                            ),
+                          ),
                         PopupMenuItem(
                           value: '/settings',
                           child: Text(strings.settings),
