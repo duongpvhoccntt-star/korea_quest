@@ -145,9 +145,11 @@ class XPProgressBar extends StatelessWidget {
                 const SizedBox(width: 8),
                 Flexible(
                   child: Text(
-                    appStrings(
-                      context,
-                    ).nextLevel(progress.nextLevelXp, progress.level + 1),
+                    progress.isMaxLevel
+                        ? appStrings(context).maxLevelReached
+                        : appStrings(
+                            context,
+                          ).nextLevel(progress.nextLevelXp, progress.level + 1),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.end,

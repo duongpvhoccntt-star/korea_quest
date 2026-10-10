@@ -124,10 +124,11 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
   }
 
   @override
-  Future<UserProgress> getUserProgress() async => _currentProgress;
+  Future<UserProgress> getUserProgress({String locale = 'vi'}) async =>
+      _currentProgress;
 
   @override
-  Future<void> resetUserProgress() async {
+  Future<void> resetUserProgress({String locale = 'vi'}) async {
     _progressReset = true;
     _currentProgress = const UserProgress(
       level: 1,
@@ -270,11 +271,14 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
   }
 
   @override
-  Future<List<Achievement>> getEarnedAchievements() async =>
-      _progressReset ? const [] : achievements;
+  Future<List<Achievement>> getEarnedAchievements({
+    String locale = 'vi',
+  }) async => _progressReset ? const [] : achievements;
 
   @override
-  Future<List<PassportStamp>> getEarnedPassportStamps() async => _progressReset
+  Future<List<PassportStamp>> getEarnedPassportStamps({
+    String locale = 'vi',
+  }) async => _progressReset
       ? const []
       : [
           PassportStamp(
@@ -299,4 +303,24 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
             earnedDate: DateTime(2026, 8, 9),
           ),
         ];
+
+  @override
+  Future<String> regeneratePassportShareLink() async => 'demo-passport';
+
+  @override
+  Future<void> revokePassportShareLink() async {}
+
+  @override
+  Future<SharedPassport?> getSharedPassport(
+    String token, {
+    String locale = 'vi',
+  }) async {
+    if (token != 'demo-passport') return null;
+    return SharedPassport(
+      displayName: _currentUser.displayName,
+      progress: _currentProgress,
+      stamps: await getEarnedPassportStamps(locale: locale),
+      achievements: await getEarnedAchievements(locale: locale),
+    );
+  }
 }

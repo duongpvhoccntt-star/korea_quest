@@ -242,6 +242,37 @@ class AppLocalizationsVi extends AppLocalizations {
   String get loadPassportError => 'Không thể tải hộ chiếu.';
 
   @override
+  String get noPassportStamps => 'Chưa nhận dấu mộc nào';
+
+  @override
+  String get noPassportStampsDescription =>
+      'Dấu mộc đã nhận sẽ xuất hiện tại đây.';
+
+  @override
+  String get sharePassport => 'Chia sẻ hộ chiếu';
+
+  @override
+  String get revokePassportLink => 'Thu hồi liên kết';
+
+  @override
+  String get passportLinkCreated => 'Liên kết hộ chiếu đã được tạo';
+
+  @override
+  String get copyLink => 'Sao chép liên kết';
+
+  @override
+  String sharedPassportTitle(String name) {
+    return 'Hộ chiếu của $name';
+  }
+
+  @override
+  String get sharedPassportNotFound =>
+      'Liên kết hộ chiếu không tồn tại hoặc đã bị thu hồi.';
+
+  @override
+  String get maxLevelReached => 'Đã đạt cấp tối đa';
+
+  @override
   String get milestones => 'Cột mốc';
 
   @override
@@ -253,6 +284,32 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get loadBadgesError => 'Không thể tải huy hiệu.';
+
+  @override
+  String get noAchievements => 'Chưa nhận huy hiệu nào';
+
+  @override
+  String get noAchievementsDescription =>
+      'Huy hiệu và tiến độ sẽ xuất hiện tại đây.';
+
+  @override
+  String get allAchievements => 'Tất cả';
+
+  @override
+  String get earnedAchievements => 'Đã nhận';
+
+  @override
+  String get lockedAchievements => 'Chưa nhận';
+
+  @override
+  String achievementProgress(int current, int target) {
+    return '$current/$target';
+  }
+
+  @override
+  String earnedOn(String date) {
+    return 'Nhận ngày $date';
+  }
 
   @override
   String get forbiddenTitle => 'Bạn chưa có quyền truy cập';

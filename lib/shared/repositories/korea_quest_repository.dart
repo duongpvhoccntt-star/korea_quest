@@ -11,12 +11,18 @@ abstract interface class KoreaQuestRepository {
     String? avatarPreset,
     Uint8List? avatarBytes,
   });
-  Future<UserProgress> getUserProgress();
-  Future<void> resetUserProgress();
+  Future<UserProgress> getUserProgress({String locale = 'vi'});
+  Future<void> resetUserProgress({String locale = 'vi'});
   Future<List<Location>> getLocations();
   Future<Location?> getLocation(String id);
   Future<JourneyProgress> getJourney(String locationId);
   Future<List<Mission>> getMissions(String locationId);
-  Future<List<Achievement>> getEarnedAchievements();
-  Future<List<PassportStamp>> getEarnedPassportStamps();
+  Future<List<Achievement>> getEarnedAchievements({String locale = 'vi'});
+  Future<List<PassportStamp>> getEarnedPassportStamps({String locale = 'vi'});
+  Future<String> regeneratePassportShareLink();
+  Future<void> revokePassportShareLink();
+  Future<SharedPassport?> getSharedPassport(
+    String token, {
+    String locale = 'vi',
+  });
 }

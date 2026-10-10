@@ -98,15 +98,48 @@ class PublishedLocationDetail {
 }
 
 class QuizAnswerResult {
-  const QuizAnswerResult({required this.isCorrect, required this.explanation});
+  const QuizAnswerResult({
+    required this.isCorrect,
+    required this.explanation,
+    this.reward,
+  });
 
   factory QuizAnswerResult.fromJson(JsonMap json) => QuizAnswerResult(
     isCorrect: json['is_correct'] == true,
     explanation: json.string('explanation'),
+    reward: json['reward'] is Map
+        ? GameplayReward.fromJson(json.jsonObject('reward'))
+        : null,
   );
 
   final bool isCorrect;
   final String explanation;
+  final GameplayReward? reward;
+}
+
+class GameplayReward {
+  const GameplayReward({
+    required this.awardedXp,
+    required this.alreadyAwarded,
+    required this.stampAwarded,
+    required this.newAchievementTitles,
+  });
+
+  factory GameplayReward.fromJson(JsonMap json) => GameplayReward(
+    awardedXp: json.intOrNull('awarded_xp') ?? 0,
+    alreadyAwarded: json['already_awarded'] == true,
+    stampAwarded: json['stamp_awarded'] == true,
+    newAchievementTitles: json
+        .mapList('new_achievements')
+        .map((item) => item.string('title'))
+        .where((title) => title.isNotEmpty)
+        .toList(growable: false),
+  );
+
+  final int awardedXp;
+  final bool alreadyAwarded;
+  final bool stampAwarded;
+  final List<String> newAchievementTitles;
 }
 
 extension JsonMapRead on JsonMap {

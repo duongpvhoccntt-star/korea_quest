@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(73);
+select plan(83);
 
 select has_type(
   'public',
@@ -210,8 +210,66 @@ select has_function(
 select has_function(
   'public',
   'resolve_shared_passport',
-  array['text'],
+  array['text', 'text'],
   'privacy-filtered passport resolver exists'
+);
+select has_column(
+  'public',
+  'level_definitions',
+  'title_i18n',
+  'level titles support vi, en, and ko'
+);
+select has_column(
+  'public',
+  'achievement_definitions',
+  'title_i18n',
+  'achievement titles are localized'
+);
+select has_column(
+  'public',
+  'achievement_definitions',
+  'description_i18n',
+  'achievement descriptions are localized'
+);
+select has_function(
+  'public',
+  'get_my_progress',
+  array['text'],
+  'server-authoritative progress read RPC exists'
+);
+select has_function(
+  'public',
+  'get_my_achievements',
+  array['text'],
+  'achievement collection read RPC exists'
+);
+select has_function(
+  'public',
+  'get_my_passport',
+  array['text'],
+  'private passport read RPC exists'
+);
+select has_function(
+  'public',
+  'complete_location_stage',
+  array['text', 'integer', 'text'],
+  'idempotent stage completion RPC exists'
+);
+select has_function(
+  'public',
+  'reset_my_progress',
+  array['text'],
+  'transactional personal reset RPC exists'
+);
+select is(
+  (select count(*) from public.level_definitions where is_active),
+  8::bigint,
+  'MVP seeds eight active levels'
+);
+select is(
+  (select count(*) from public.achievement_definitions where is_active),
+  8::bigint,
+  'MVP seeds eight active achievements'
 );
 select has_function(
   'public',

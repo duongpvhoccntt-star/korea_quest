@@ -9,6 +9,7 @@ import 'package:korea_quest/features/explore/presentation/pages/published_explor
 import 'package:korea_quest/features/explore/presentation/pages/published_location_page.dart';
 import 'package:korea_quest/features/landing/presentation/pages/landing_page.dart';
 import 'package:korea_quest/features/passport/presentation/pages/passport_page.dart';
+import 'package:korea_quest/features/passport/presentation/pages/shared_passport_page.dart';
 import 'package:korea_quest/features/profile/presentation/pages/profile_page.dart';
 import 'package:korea_quest/features/settings/presentation/pages/settings_page.dart';
 import 'package:korea_quest/features/system_states/presentation/pages/system_state_page.dart';
@@ -27,6 +28,7 @@ abstract final class AppRouteNames {
   static const journeyVocabulary = 'journey-vocabulary';
   static const journeySummary = 'journey-summary';
   static const passport = 'passport';
+  static const sharedPassport = 'shared-passport';
   static const achievements = 'achievements';
   static const profile = 'profile';
   static const profileEdit = 'profile-edit';
@@ -49,8 +51,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         '/admin',
       };
       final isGuest = ref.read(authRepositoryProvider).currentUser == null;
-      if (isGuest && !publicPaths.contains(state.uri.path)) {
-        return '/login';
+      final isPublic =
+          publicPaths.contains(state.uri.path) ||
+          state.uri.path == '/explore' ||
+          state.uri.path.startsWith('/locations/') ||
+          state.uri.path.startsWith('/journey/') ||
+          state.uri.path.startsWith('/passport/shared/');
+      if (isGuest && !isPublic) {
+        return Uri(
+          path: '/login',
+          queryParameters: {'redirect': state.uri.toString()},
+        ).toString();
       }
       return null;
     },
@@ -65,19 +76,30 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/register',
         name: AppRouteNames.register,
-        builder: (context, state) =>
-            const AuthPage(mode: AuthPageMode.register),
+        builder: (context, state) => AuthPage(
+          mode: AuthPageMode.register,
+          redirectTo: state.uri.queryParameters['redirect'],
+        ),
       ),
       GoRoute(
         path: '/login',
         name: AppRouteNames.login,
-        builder: (context, state) => const AuthPage(mode: AuthPageMode.login),
+        builder: (context, state) => AuthPage(
+          mode: AuthPageMode.login,
+          redirectTo: state.uri.queryParameters['redirect'],
+        ),
       ),
       GoRoute(
         path: '/forgot-password',
         name: AppRouteNames.forgotPassword,
         builder: (context, state) =>
             const AuthPage(mode: AuthPageMode.forgotPassword),
+      ),
+      GoRoute(
+        path: '/passport/shared/:token',
+        name: AppRouteNames.sharedPassport,
+        builder: (context, state) =>
+            SharedPassportPage(token: state.pathParameters['token']!),
       ),
       GoRoute(
         path: '/admin',

@@ -235,6 +235,35 @@ class AppLocalizationsKo extends AppLocalizations {
   String get loadPassportError => '여권을 불러오지 못했습니다.';
 
   @override
+  String get noPassportStamps => '아직 획득한 도장이 없습니다';
+
+  @override
+  String get noPassportStampsDescription => '획득한 도장이 여기에 표시됩니다.';
+
+  @override
+  String get sharePassport => '여권 공유';
+
+  @override
+  String get revokePassportLink => '링크 취소';
+
+  @override
+  String get passportLinkCreated => '여권 링크가 생성되었습니다';
+
+  @override
+  String get copyLink => '링크 복사';
+
+  @override
+  String sharedPassportTitle(String name) {
+    return '$name님의 여권';
+  }
+
+  @override
+  String get sharedPassportNotFound => '이 여권 링크가 없거나 취소되었습니다.';
+
+  @override
+  String get maxLevelReached => '최고 레벨 달성';
+
+  @override
   String get milestones => '이정표';
 
   @override
@@ -245,6 +274,31 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get loadBadgesError => '배지를 불러오지 못했습니다.';
+
+  @override
+  String get noAchievements => '아직 획득한 업적이 없습니다';
+
+  @override
+  String get noAchievementsDescription => '업적과 진행 상황이 여기에 표시됩니다.';
+
+  @override
+  String get allAchievements => '전체';
+
+  @override
+  String get earnedAchievements => '획득';
+
+  @override
+  String get lockedAchievements => '미획득';
+
+  @override
+  String achievementProgress(int current, int target) {
+    return '$current/$target';
+  }
+
+  @override
+  String earnedOn(String date) {
+    return '$date 획득';
+  }
 
   @override
   String get forbiddenTitle => '접근 권한이 없습니다';

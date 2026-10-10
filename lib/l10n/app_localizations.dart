@@ -520,6 +520,60 @@ abstract class AppLocalizations {
   /// **'Không thể tải hộ chiếu.'**
   String get loadPassportError;
 
+  /// No description provided for @noPassportStamps.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa nhận dấu mộc nào'**
+  String get noPassportStamps;
+
+  /// No description provided for @noPassportStampsDescription.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dấu mộc đã nhận sẽ xuất hiện tại đây.'**
+  String get noPassportStampsDescription;
+
+  /// No description provided for @sharePassport.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chia sẻ hộ chiếu'**
+  String get sharePassport;
+
+  /// No description provided for @revokePassportLink.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thu hồi liên kết'**
+  String get revokePassportLink;
+
+  /// No description provided for @passportLinkCreated.
+  ///
+  /// In vi, this message translates to:
+  /// **'Liên kết hộ chiếu đã được tạo'**
+  String get passportLinkCreated;
+
+  /// No description provided for @copyLink.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sao chép liên kết'**
+  String get copyLink;
+
+  /// No description provided for @sharedPassportTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hộ chiếu của {name}'**
+  String sharedPassportTitle(String name);
+
+  /// No description provided for @sharedPassportNotFound.
+  ///
+  /// In vi, this message translates to:
+  /// **'Liên kết hộ chiếu không tồn tại hoặc đã bị thu hồi.'**
+  String get sharedPassportNotFound;
+
+  /// No description provided for @maxLevelReached.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã đạt cấp tối đa'**
+  String get maxLevelReached;
+
   /// No description provided for @milestones.
   ///
   /// In vi, this message translates to:
@@ -543,6 +597,48 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Không thể tải huy hiệu.'**
   String get loadBadgesError;
+
+  /// No description provided for @noAchievements.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa nhận huy hiệu nào'**
+  String get noAchievements;
+
+  /// No description provided for @noAchievementsDescription.
+  ///
+  /// In vi, this message translates to:
+  /// **'Huy hiệu và tiến độ sẽ xuất hiện tại đây.'**
+  String get noAchievementsDescription;
+
+  /// No description provided for @allAchievements.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tất cả'**
+  String get allAchievements;
+
+  /// No description provided for @earnedAchievements.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã nhận'**
+  String get earnedAchievements;
+
+  /// No description provided for @lockedAchievements.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa nhận'**
+  String get lockedAchievements;
+
+  /// No description provided for @achievementProgress.
+  ///
+  /// In vi, this message translates to:
+  /// **'{current}/{target}'**
+  String achievementProgress(int current, int target);
+
+  /// No description provided for @earnedOn.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhận ngày {date}'**
+  String earnedOn(String date);
 
   /// No description provided for @forbiddenTitle.
   ///
