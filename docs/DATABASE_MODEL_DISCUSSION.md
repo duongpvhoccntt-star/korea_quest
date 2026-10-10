@@ -1,8 +1,8 @@
 # KoreaQuest Database & Domain Model
 
 > Trạng thái: Tài liệu thảo luận kỹ thuật, chưa phải cam kết triển khai production.
-> Nguồn đối chiếu: migrations đến `20261008160000_add_content_image_galleries.sql`, Edge Function `translate-location`, model/repository Admin và Explore, `CONTEXT.md`, ADR và `TEAM_OWNERSHIP.md` tại ngày 2026-10-09.
-> Trạng thái cloud: đã xác minh ngày 2026-10-09 trên project `KOREAQUEST` (org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`). Cloud đã áp dụng đến `20261008160000_add_content_image_galleries.sql`; lịch sử Local/Remote khớp và dry-run sau triển khai xác nhận không còn migration chờ áp dụng. OpenAPI có đủ bốn cột gallery cùng RPC Published/Admin mới; smoke test Published xác nhận `media.images` và các trường tương thích ảnh đầu tiên. Edge Function `translate-location` version 4 đang ACTIVE; các secret `GEMINI_API_KEY` và `GEMINI_TRANSLATION_MODEL=gemini-3.1-flash-lite` đã được cấu hình.
+> Nguồn đối chiếu: migrations đến `20261010113000_fix_progression_rpc_ambiguity.sql`, Edge Function `translate-location`, model/repository Admin, Explore và Gameplay, `CONTEXT.md`, ADR và `TEAM_OWNERSHIP.md` tại ngày 2026-10-10.
+> Trạng thái cloud: đã xác minh ngày 2026-10-10 trên project `KOREAQUEST` (org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`). Cloud đã áp dụng đến `20261010113000_fix_progression_rpc_ambiguity.sql`; lịch sử Local/Remote khớp, dry-run báo database up-to-date và database lint mức error sạch. Reset progression đã hoàn tất: các bảng gameplay chi tiết và share link có 0 bản ghi, 7 bản tổng hợp người dùng được giữ lại ở Level 1/0 XP; seed có 8 Level và 8 Huy hiệu active. Edge Function `translate-location` version 4 đang ACTIVE; các secret `GEMINI_API_KEY` và `GEMINI_TRANSLATION_MODEL=gemini-3.1-flash-lite` đã được cấu hình.
 
 ## 1. Mục tiêu và phạm vi
 
@@ -15,7 +15,7 @@ Phạm vi hiện tại bao gồm **Admin Content, public read model và progress
 - Có một Quiz tổng kết 10–20 Câu hỏi trong Hành trình chín Chặng.
 - Có tiến độ cá nhân, quiz attempt, XP ledger, Huy hiệu, Dấu mộc, lượt xem nội dung và cấu hình gameplay.
 - Public read model trả danh sách Published nhưng chỉ trả chi tiết cho Địa điểm `released`.
-- Repository chứa đầy đủ migration để tái tạo schema đến `20261008120000_finalize_free_exploration.sql`; cloud đã áp dụng đầy đủ các migration này ngày 2026-10-08.
+- Repository chứa đầy đủ migration để tái tạo schema, reset gameplay đã được duyệt, seed Level/Huy hiệu và RPC progression đến `20261010113000_fix_progression_rpc_ambiguity.sql`.
 
 ## 2. Ubiquitous Language
 
@@ -323,6 +323,9 @@ Bốn field media phải cùng null hoặc cùng có giá trị. Validation publ
 | `explorer_progress_summary` | XP, streak, correct answer, completed location, content view | Không còn counter `unlocked_fun_fact_count` |
 | `explorer_badges` | `user_id`, `achievement_id`, `awarded_at` | Repository bộ sưu tập chỉ trả Huy hiệu đã nhận |
 | `explorer_stamps` | `user_id`, `location_id`, `earned_at` | Repository Hộ chiếu chỉ trả Dấu mộc đã nhận; ngày nhận bắt buộc |
+| `level_definitions` | `level_number`, `min_xp`, `title_i18n` | 8 Cấp seed từ 0 đến 3.000 XP; tiêu đề có `vi`/`en`/`ko`; Cấp đã có người đạt không được xóa, đánh lại số hoặc tăng ngưỡng |
+| `achievement_definitions` | metric, target, `title_i18n`, `description_i18n`, secret flags | 8 Huy hiệu seed; tiêu chí đã trao bị khóa, nội dung trình bày vẫn có thể sửa |
+| `explorer_xp_ledger` | `amount`, `reason`, `reference_key` | Mỗi phần thưởng có khóa tham chiếu duy nhất theo người dùng để request lặp không cộng XP lần hai |
 
 `explorer_fun_fact_unlocks` đã bị xóa. Migration `20261008000000_remove_gameplay_unlocks.sql` chuyển lịch sử của bảng này sang `explorer_content_views(kind = 'fun_fact')` trước khi xóa.
 
@@ -339,6 +342,7 @@ Bốn field media phải cùng null hoặc cùng có giá trị. Validation publ
 | `stage_progress_status` | `not_started`, `in_progress`, `completed` | Tiến độ Chặng, không kiểm soát quyền truy cập |
 | `content_view_kind` | `highlight`, `experience`, `food`, `fun_fact` | Phân loại lượt xem nội dung |
 | `achievement_metric` | `completed_locations`, `correct_answers`, `streak_days`, `completed_specific_location`, `challenge_completion`, `content_views` | Tiêu chí Huy hiệu/Thử thách; Fun Fact dùng `content_views` với filter `kind = fun_fact` |
+| `xp_reason` | `first_correct_answer`, `first_quiz_pass`, `location_completed`, `achievement`, `challenge`, `task_completed`, `stage_completed` | Phân loại ledger; gameplay MVP dùng +2 hoàn thành Câu hỏi, +8 đúng, +20 Chặng và +50 Địa điểm |
 
 ## 7. Cấu trúc nội dung Địa điểm
 
@@ -435,8 +439,14 @@ Admin biên tập theo ba tab ngôn ngữ. Tiếng Việt là Bản nguồn. Nú
 | `get_admin_location` | `location_id` | JSON document | Nạp Draft cùng toàn bộ section cho editor |
 | `list_published_locations` | `requested_locale` | JSON summaries | Phủ bản dịch đã duyệt; fallback tiếng Việt khi thiếu. Trả Published chưa archive, gồm `release_status` |
 | `get_published_location` | slug, `requested_locale` | JSON document | Trả nội dung theo locale, thêm `media.images` cho gallery và metadata `resolved_locale`/`is_fallback` khi `release_status = released` |
-| `submit_quiz_answer` | question, answer, `requested_locale` | JSON result | Chấm bằng dữ liệu gốc và chỉ bản địa hóa phần giải thích |
+| `submit_quiz_answer` | question, answer, `requested_locale` | JSON result + reward result | Chấm bằng dữ liệu gốc, ghi Câu hỏi/XP idempotent cho user đăng nhập và chỉ bản địa hóa phần giải thích |
 | `record_content_view` | kind, revision, content | `void` | Ghi lượt xem duy nhất, gồm Fun Fact; không mở khóa nội dung |
+| `complete_location_stage` | slug, số Chặng, locale | reward result | Hoàn thành Chặng, trao +20 XP một lần; Chặng 9 hoàn thành Địa điểm, trao +50 XP và Dấu mộc |
+| `get_my_progress` | locale | JSON | Trả XP tích lũy, Cấp/danh hiệu hiện tại, ngưỡng kế tiếp, streak và cờ Cấp tối đa |
+| `get_my_achievements` | locale | JSON list | Trả cả Huy hiệu đã/chưa nhận; che tiêu chí và tiến độ Huy hiệu bí mật chưa đạt |
+| `get_my_passport` | locale | JSON | Trả hồ sơ riêng tư, Cấp và Dấu mộc; artwork Dấu mộc lấy revision mới nhất |
+| `reset_my_progress` | locale | JSON progress | Xóa tiến độ gameplay và thu hồi share link trong một transaction; giữ hồ sơ/nội dung đã lưu/kỷ niệm |
+| `resolve_shared_passport` | token, locale | JSON/null | Read model công khai đã lọc, không trả email hoặc họ tên pháp lý |
 | `admin_list_location_translations` | revision | JSON list | Nạp các bản dịch và trạng thái duyệt cho Admin |
 | `admin_save_location_translation` | revision, locale, content | JSON translation | Lưu bản Anh/Hàn thành `needs_review` |
 | `admin_approve_location_translation` | revision, locale | JSON translation | Duyệt nếu `source_lock_version` vẫn khớp |
@@ -455,6 +465,8 @@ Supabase Auth xác thực người dùng. Đăng nhập thành công chưa đủ
 | `location_revision_translations` | Chỉ đọc bản `approved` thuộc revision Published | Đọc mọi trạng thái; ghi qua RPC |
 | `admin_users` | Không đọc | Đọc qua policy |
 | DML trực tiếp | Không được grant | Không được grant; ghi qua RPC |
+| Gameplay cá nhân | Anonymous chỉ đọc nội dung Published; không ghi XP | Authenticated chỉ đọc dữ liệu của mình qua RLS/read RPC và ghi qua RPC idempotent |
+| Hộ chiếu chia sẻ | Chỉ đọc qua token còn hiệu lực; không lộ email/họ tên pháp lý | Chủ sở hữu tạo lại hoặc thu hồi token |
 
 Fixture trong `supabase/seed.sql` tạo tài khoản thử nghiệm và chỉ dành cho local. Production phải tạo tài khoản Auth bằng quy trình bảo mật riêng rồi thêm UUID vào `admin_users`; không chạy seed local và không commit secret.
 
@@ -465,7 +477,7 @@ Cập nhật ngày 2026-10-09:
 | Hạng mục | Trạng thái hiện tại |
 |---|---|
 | Supabase Cloud project | Project `KOREAQUEST`, org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`, region Northeast Asia (Tokyo) |
-| Migration trên cloud | **Đã áp dụng đến** `20261008160000_add_content_image_galleries.sql`; lịch sử Local/Remote khớp và dry-run sau triển khai báo database up-to-date ngày 2026-10-09 |
+| Migration trên cloud | **Đã áp dụng đến** `20261010113000_fix_progression_rpc_ambiguity.sql`; lịch sử Local/Remote khớp, dry-run báo database up-to-date và database lint mức error sạch ngày 2026-10-10 |
 | Gallery ảnh nội dung | Đã triển khai migration, RPC, Admin editor, public carousel và test; OpenAPI Cloud xác nhận bốn cột `image_gallery`, RPC lưu/validate, và smoke test Published trả đúng `media.images` cùng ảnh đầu tương thích |
 | Bảng trên cloud | Có đầy đủ các bảng Content, Gameplay và bảng mới `location_revision_translations` |
 | Dữ liệu trên cloud | Có 4 Location, 18 Location Revision, 2 Admin; migration đã backfill 18 bản nguồn tiếng Việt trong `location_revision_translations` |
@@ -478,12 +490,15 @@ Cập nhật ngày 2026-10-09:
 | Huy hiệu/Thử thách | Metric `unlocked_fun_facts` chuyển sang `content_views` với filter `kind = fun_fact` |
 | Flutter Admin | Có model/repository và UI editor; lỗi quiz được định vị tới số câu cụ thể và nút sửa cuộn tới đúng thẻ |
 | Explore/Journey runtime | Public content dùng Supabase khi có cấu hình và gửi locale `vi`/`en`/`ko`; thiếu bản dịch sẽ fallback tiếng Việt |
+| Level/Thành tích/Hộ chiếu runtime | Flutter đã dùng read/write RPC thật; Level/Huy hiệu/Dấu mộc không còn fallback mock khi Supabase được cấu hình |
+| Progression MVP | Seed 8 Level, 8 Huy hiệu; XP server-authoritative theo +2/+8/+20/+50; reward result trả delta XP, Huy hiệu/Dấu mộc mới và cờ request lặp |
+| Reset gameplay 2026-10-10 | Đã chạy trên cloud. Các bảng gameplay chi tiết và passport share link có 0 bản ghi; 7 dòng `explorer_progress_summary` được giữ để đặt Level 1/0 XP. Tài khoản, hồ sơ, saved content, memories và nội dung Published được giữ lại |
 
 ### Điểm chưa thống nhất tại snapshot lịch sử (đã superseded)
 
 - `TEAM_OWNERSHIP.md` mô tả schema cũ với `location_checkin`, `checkin_questions`, `culture_questions` và trạng thái Location toàn cục; migration mới dùng Location Revision và `quiz_questions` thống nhất.
 - ADR 0004 yêu cầu tiến độ theo từng Nhà thám hiểm, nhưng migration chưa có bảng user progress.
-- Công thức XP, huy hiệu, dấu mộc và mở khóa đã có trong tài liệu ownership nhưng chưa có write model hoặc RPC chống cộng thưởng lặp.
+- Công thức XP, huy hiệu và dấu mộc từng thiếu write model; khoảng trống này được thay thế bởi các RPC progression và ledger idempotent ngày 2026-10-10.
 - Từ vựng là chặng chuẩn của Journey nhưng nằm ngoài Admin Content migration hiện tại.
 
 ## 14. Các quyết định đã ghi nhận
@@ -495,7 +510,7 @@ Cập nhật ngày 2026-10-09:
 5. Publish được validate và thực hiện trong PostgreSQL RPC transaction, không do Flutter tự đổi trạng thái.
 6. Theo ADR-0012, mọi Địa điểm `released` và mọi Chặng truy cập trực tiếp; `coming_soon` là trạng thái biên tập duy nhất ngăn mở chi tiết. ADR-0012 thay thế ADR-0004.
 7. Fun Fact là nội dung thông thường; lịch sử xem dùng `explorer_content_views`, không có mô hình mở khóa riêng.
-8. Bộ sưu tập Huy hiệu và Hộ chiếu chỉ trả phần thưởng đã nhận; reset xóa tiến độ, XP và phần thưởng nhưng giữ nguyên `release_status`.
+8. Hộ chiếu chỉ trả Dấu mộc đã nhận. Trang Thành tích trả cả định nghĩa đang hoạt động và tiến độ; Huy hiệu bí mật chưa đạt bị che điều kiện. Reset xóa tiến độ, XP, phần thưởng và share link nhưng giữ nguyên `release_status`.
 9. Tiếng Việt là Bản nguồn; Anh/Hàn là lớp dịch theo revision. Dữ liệu dùng chung không bị nhân ba.
 10. Bản dịch AI luôn là `needs_review`; chỉ bản được Admin duyệt mới hiển thị công khai.
 11. Thiếu bản dịch không ẩn nội dung: read model fallback tiếng Việt và trả cờ `is_fallback` để UI thông báo.
@@ -505,6 +520,11 @@ Cập nhật ngày 2026-10-09:
 15. Card Lịch sử, Điểm đến, Trải nghiệm và Ẩm thực dùng gallery tối đa 10 ảnh, chỉ hiển thị một ảnh tại một thời điểm. Ba loại đầu có thể dùng một video YouTube thay thế; public payload giữ các trường media ảnh đầu tiên để tương thích ngược, còn bản dịch chỉ lưu alt theo đúng chỉ số ảnh.
 16. Edge Function không được lưu phản hồi Gemini chỉ sao chép Bản nguồn. Prompt phải chỉ rõ nguồn/đích; output sai ngôn ngữ được retry tối đa một lần và bị từ chối nếu vẫn không đạt.
 17. Tài khoản khách (Guest User): Hỗ trợ phiên khách cục bộ (`AuthUser.isGuest = true`) không bắt buộc email/mật khẩu, chỉ cần tên hiển thị. Khách có thể khám phá và nhận XP; sau khi hoàn thành một Địa điểm (hoặc chặng Tổng kết), ứng dụng kích hoạt hộp thoại vinh danh và gợi ý chuyển đổi sang tài khoản chính thức mà không làm mất tiến trình đã đạt được.
+18. XP và Level là server-authoritative. Flutter không tự cộng thưởng; ledger dùng `(user_id, reference_key)` để chống cộng lặp và Level được suy ra từ XP tích lũy cùng `level_definitions`.
+19. Công thức MVP là +2 hoàn thành Câu hỏi, +8 nếu đúng, +20 hoàn thành Chặng, +50 hoàn thành Địa điểm. Làm lại được phép nhưng không nhận lại cùng phần thưởng.
+20. Hộ chiếu riêng tư mặc định; share link dùng token hash, có thể tạo lại/thu hồi và read model công khai không trả email/họ tên pháp lý.
+21. Dấu mộc giữ ownership/ngày nhận theo Location nhưng lấy tên, mô tả và artwork từ revision mới nhất để sửa nội dung được phản ánh đồng nhất.
+22. Level/Huy hiệu hỗ trợ `vi`/`en`/`ko` với fallback tiếng Việt; seed MVP gồm 8 Level và 8 Huy hiệu.
 
 ## 15. Các điểm cần nhóm thảo luận
 
@@ -512,12 +532,10 @@ Cập nhật ngày 2026-10-09:
 2. `location_sources` nên tiếp tục chỉ Admin đọc hay cần public để hiển thị trích dẫn?
 3. Có chấp nhận việc client đọc trực tiếp đáp án quiz, hay phải chấm bằng RPC/server?
 4. Ai sở hữu công việc chuyển `Explore` và `Journey` từ mock sang Supabase, và hợp đồng repository sẽ đổi thế nào?
-5. Migration tiếp theo có cần cùng lúc tạo user progress, quiz attempts và XP ledger không?
 6. Cần lưu audit event riêng cho người publish/archive và hỗ trợ rollback revision như thế nào?
 7. Quy trình thêm/xóa Admin production cần approval, audit và nguyên tắc tối thiểu bao nhiêu người?
 8. Schema mới có thay thế hoàn toàn các bảng dự kiến trong `TEAM_OWNERSHIP.md`, hay cần adapter/migration tương thích?
 9. Vocabulary sẽ dùng cùng `location_revisions` để version đồng bộ hay có aggregate/version riêng?
-10. XP có được chốt theo công thức hiện tại: +2 hoàn thành, +8 trả lời đúng, +20 section và +50 Location?
 12. Cần policy nào để chống spam request, sửa đồng thời và lộ nguồn/media chưa publish?
 
 ## 16. Kế hoạch triển khai đề xuất

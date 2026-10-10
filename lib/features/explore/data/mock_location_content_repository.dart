@@ -809,4 +809,18 @@ class MockLocationContentRepository implements LocationContentRepository {
       explanation: 'Câu hỏi không tìm thấy trong dữ liệu mock.',
     );
   }
+
+  @override
+  Future<GameplayReward> completeStage({
+    required String slug,
+    required int stageNumber,
+    String locale = 'vi',
+  }) async {
+    return const GameplayReward(
+      awardedXp: 20,
+      alreadyAwarded: false,
+      stampAwarded: false,
+      newAchievementTitles: [],
+    );
+  }
 }

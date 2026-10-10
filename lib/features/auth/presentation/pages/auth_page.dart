@@ -21,10 +21,16 @@ import 'package:korea_quest/l10n/app_strings.dart';
 enum AuthPageMode { register, login, forgotPassword }
 
 class AuthPage extends ConsumerStatefulWidget {
-  const AuthPage({required this.mode, this.prefilledName, super.key});
+  const AuthPage({
+    required this.mode,
+    this.prefilledName,
+    this.redirectTo,
+    super.key,
+  });
 
   final AuthPageMode mode;
   final String? prefilledName;
+  final String? redirectTo;
 
   @override
   ConsumerState<AuthPage> createState() => _AuthPageState();
@@ -108,7 +114,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
             setState(() => _mode = AuthPageMode.login);
           } else {
             AppToast.show(context, strings.accountCreated);
-            context.go('/explore');
+            context.go(widget.redirectTo ?? '/explore');
           }
         }
       } else {
@@ -128,7 +134,9 @@ class _AuthPageState extends ConsumerState<AuthPage> {
             context,
             user.isAdmin ? strings.adminSignedIn : strings.signedIn,
           );
-          context.go(user.isAdmin ? '/admin' : '/explore');
+          context.go(
+            user.isAdmin ? '/admin' : (widget.redirectTo ?? '/explore'),
+          );
         }
       }
     } catch (error) {
@@ -213,7 +221,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
           .signIn(identity: 'duong@example.com', password: 'user123');
       if (mounted) {
         AppToast.show(context, appStrings(context).studentQuickSignedIn);
-        context.go('/explore');
+        context.go(widget.redirectTo ?? '/explore');
       }
     } catch (error) {
       if (mounted) setState(() => _errorMessage = error.toString());
