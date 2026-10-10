@@ -7,6 +7,7 @@ import 'package:korea_quest/core/utils/optimized_image_url.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_feedback.dart';
 import 'package:korea_quest/design_system/components/app_scroll_view.dart';
+import 'package:korea_quest/design_system/components/progress_components.dart';
 import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/shadows/app_shadows.dart';
@@ -37,6 +38,9 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
   Widget build(BuildContext context) {
     final locations = ref.watch(publishedLocationsProvider);
     final achievements = ref.watch(earnedAchievementsProvider);
+    final user = ref.watch(currentUserProvider).value;
+    final progress = ref.watch(userProgressProvider).value;
+    final personalLocations = ref.watch(locationsProvider).value;
     if (achievements.isLoading) {
       return const Center(child: LoadingIndicator());
     }
@@ -56,17 +60,33 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
           ),
         ),
       ),
-      data: (items) => _buildDashboard(items, achievements.requireValue),
+      data: (items) => _buildDashboard(
+        items,
+        achievements.requireValue,
+        user: user,
+        progress: progress,
+        personalLocations: personalLocations,
+      ),
     );
   }
 
   Widget _buildDashboard(
     List<PublishedLocationSummary> items,
-    List<Achievement> achievements,
-  ) {
+    List<Achievement> achievements, {
+    required AppUser? user,
+    required UserProgress? progress,
+    required List<Location>? personalLocations,
+  }) {
     final filters = _filtersFor(items);
     final visible = _filtered(items);
     final selected = _selectedLocation(visible, items);
+    final personal = _personalOverview(
+      items,
+      selected: selected,
+      user: user,
+      progress: progress,
+      personalLocations: personalLocations,
+    );
     final isWide = MediaQuery.sizeOf(context).width >= 1050;
 
     return ColoredBox(
@@ -89,6 +109,7 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
                           visible: visible,
                           selected: selected,
                           achievements: achievements,
+                          personal: personal,
                           onExplore: _openLocation,
                         ),
                       ),
@@ -112,7 +133,11 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
                     ],
                   )
                 else ...[
-                  _IntroPanel(total: items.length),
+                  _IntroPanel(
+                    total: personal.total,
+                    personal: personal,
+                    onExplore: _openLocation,
+                  ),
                   const SizedBox(height: AppSpacing.lg),
                   _MapExperience(
                     locations: visible,
@@ -196,6 +221,52 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
         );
   }
 
+  _PersonalOverview _personalOverview(
+    List<PublishedLocationSummary> items, {
+    required PublishedLocationSummary? selected,
+    required AppUser? user,
+    required UserProgress? progress,
+    required List<Location>? personalLocations,
+  }) {
+    final released = items.where((item) => item.isReleased).toList();
+    final personalById = {
+      for (final location in personalLocations ?? const <Location>[])
+        location.id: location,
+    };
+    final completed = personalLocations == null
+        ? null
+        : released
+              .where(
+                (item) =>
+                    personalById[item.slug]?.status == LocationStatus.completed,
+              )
+              .length;
+
+    PublishedLocationSummary? active;
+    if (personalLocations != null) {
+      for (final location in personalLocations) {
+        if (location.status != LocationStatus.inProgress) continue;
+        for (final item in released) {
+          if (item.slug == location.id) {
+            active = item;
+            break;
+          }
+        }
+        if (active != null) break;
+      }
+    }
+
+    final selectedReleased = selected?.isReleased == true ? selected : null;
+    return _PersonalOverview(
+      user: user,
+      progress: progress,
+      completed: completed,
+      total: released.length,
+      target: active ?? selectedReleased ?? released.firstOrNull,
+      hasActiveJourney: active != null,
+    );
+  }
+
   void _openLocation(PublishedLocationSummary location) {
     if (!location.isReleased) return;
     context.go('/locations/${location.slug}');
@@ -208,6 +279,7 @@ class _SideRail extends StatelessWidget {
     required this.visible,
     required this.selected,
     required this.achievements,
+    required this.personal,
     required this.onExplore,
   });
 
@@ -215,12 +287,17 @@ class _SideRail extends StatelessWidget {
   final List<PublishedLocationSummary> visible;
   final PublishedLocationSummary? selected;
   final List<Achievement> achievements;
+  final _PersonalOverview personal;
   final ValueChanged<PublishedLocationSummary> onExplore;
 
   @override
   Widget build(BuildContext context) => Column(
     children: [
-      _IntroPanel(total: total),
+      _IntroPanel(
+        total: personal.total,
+        personal: personal,
+        onExplore: onExplore,
+      ),
       const SizedBox(height: AppSpacing.lg),
       _RecommendationStrip(locations: visible, onExplore: onExplore),
       const SizedBox(height: AppSpacing.lg),
@@ -234,9 +311,15 @@ class _SideRail extends StatelessWidget {
 }
 
 class _IntroPanel extends StatelessWidget {
-  const _IntroPanel({required this.total});
+  const _IntroPanel({
+    required this.total,
+    required this.personal,
+    required this.onExplore,
+  });
 
   final int total;
+  final _PersonalOverview personal;
+  final ValueChanged<PublishedLocationSummary> onExplore;
 
   @override
   Widget build(BuildContext context) => _SurfaceCard(
@@ -255,18 +338,32 @@ class _IntroPanel extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          appStrings(context).exploreIntro,
+          personal.user == null
+              ? appStrings(context).exploreIntro
+              : appStrings(
+                  context,
+                ).exploreHeroDescription(personal.user!.displayName),
           style: const TextStyle(color: AppColors.stitchMuted, height: 1.6),
         ),
         const SizedBox(height: AppSpacing.lg),
-        _ProgressBlock(total: total),
+        _ProgressBlock(
+          total: total,
+          completed: personal.completed,
+          progress: personal.progress,
+        ),
         const SizedBox(height: AppSpacing.lg),
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
-            onPressed: null,
+            onPressed: personal.target == null
+                ? null
+                : () => onExplore(personal.target!),
             icon: const Icon(Icons.arrow_forward_rounded),
-            label: Text(appStrings(context).continueLatestJourney),
+            label: Text(
+              personal.hasActiveJourney
+                  ? appStrings(context).continueJourney
+                  : appStrings(context).startExploring,
+            ),
           ),
         ),
       ],
@@ -617,11 +714,15 @@ class _RecommendationStrip extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(
-              appStrings(context).recommendedForYou,
-              style: Theme.of(context).textTheme.titleMedium,
+            Expanded(
+              child: Text(
+                appStrings(context).recommendedForYou,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
             ),
-            const Spacer(),
+            const SizedBox(width: AppSpacing.xs),
             TextButton(
               onPressed: () {},
               child: Text(appStrings(context).viewAll),
@@ -766,25 +867,28 @@ class _MiniJourneyCard extends StatelessWidget {
               color: AppColors.koreanBlue.withValues(alpha: .25),
             ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                appStrings(context).content,
-                style: const TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w800,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  appStrings(context).content,
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
-              ),
-              const Text(
-                '09',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w900,
-                  color: AppColors.koreanBlue,
+                const Text(
+                  '09',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                    color: AppColors.koreanBlue,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         const SizedBox(width: AppSpacing.md),
@@ -817,52 +921,108 @@ class _MiniJourneyCard extends StatelessWidget {
 }
 
 class _ProgressBlock extends StatelessWidget {
-  const _ProgressBlock({required this.total});
+  const _ProgressBlock({
+    required this.total,
+    required this.completed,
+    required this.progress,
+  });
 
   final int total;
+  final int? completed;
+  final UserProgress? progress;
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-    decoration: BoxDecoration(
-      color: AppColors.skyLight.withValues(alpha: .45),
-      borderRadius: BorderRadius.circular(AppRadius.large),
-      border: Border.all(color: AppColors.borderSoft),
-    ),
-    child: Padding(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                appStrings(context).publishedLocations,
-                style: const TextStyle(fontWeight: FontWeight.w800),
+  Widget build(BuildContext context) {
+    final hasPersonalProgress = completed != null && progress != null;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.skyLight.withValues(alpha: .45),
+        borderRadius: BorderRadius.circular(AppRadius.large),
+        border: Border.all(color: AppColors.borderSoft),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              hasPersonalProgress
+                  ? appStrings(context).explorationProgress
+                  : appStrings(context).publishedLocations,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontWeight: FontWeight.w800),
+            ),
+            const SizedBox(height: AppSpacing.xxs),
+            Text(
+              hasPersonalProgress
+                  ? appStrings(
+                      context,
+                    ).completedLocationsProgress(completed!, total)
+                  : appStrings(context).locationCount(total),
+              style: const TextStyle(
+                color: AppColors.koreanRed,
+                fontWeight: FontWeight.w800,
               ),
-              const Spacer(),
-              Text(
-                appStrings(context).locationCount(total),
-                style: const TextStyle(
+            ),
+            if (hasPersonalProgress) ...[
+              const SizedBox(height: AppSpacing.sm),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(AppRadius.round),
+                child: LinearProgressIndicator(
+                  minHeight: 9,
+                  value: total == 0 ? 0 : completed! / total,
+                  backgroundColor: Colors.white,
                   color: AppColors.koreanRed,
-                  fontWeight: FontWeight.w800,
                 ),
               ),
+              const SizedBox(height: AppSpacing.sm),
+              Row(
+                children: [
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: LevelBadge(level: progress!.level),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.xs),
+                  Text(
+                    '${progress!.currentXp} XP',
+                    style: const TextStyle(
+                      color: AppColors.stitchMuted,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
             ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppRadius.round),
-            child: LinearProgressIndicator(
-              minHeight: 9,
-              value: total == 0 ? 0 : 1,
-              backgroundColor: Colors.white,
-              color: AppColors.koreanRed,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
+}
+
+class _PersonalOverview {
+  const _PersonalOverview({
+    required this.user,
+    required this.progress,
+    required this.completed,
+    required this.total,
+    required this.target,
+    required this.hasActiveJourney,
+  });
+
+  final AppUser? user;
+  final UserProgress? progress;
+  final int? completed;
+  final int total;
+  final PublishedLocationSummary? target;
+  final bool hasActiveJourney;
 }
 
 class _LocationImage extends StatelessWidget {
@@ -965,9 +1125,13 @@ class _InfoPill extends StatelessWidget {
           Icon(icon, size: 14, color: AppColors.koreanRed),
           const SizedBox(width: 4),
         ],
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+        Flexible(
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+          ),
         ),
       ],
     ),

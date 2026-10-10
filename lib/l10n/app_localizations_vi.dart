@@ -15,9 +15,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get cultureAdventure => 'HÀNH TRÌNH VĂN HÓA';
 
   @override
-  String get home => 'Trang chủ';
-
-  @override
   String get explore => 'Khám phá';
 
   @override
@@ -97,7 +94,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get cancel => 'Hủy';
 
   @override
-  String get backHome => 'Về trang chủ';
+  String get backExplore => 'Về Khám phá';
 
   @override
   String get loadJourneyError => 'Không thể đọc dữ liệu hành trình.';
@@ -113,7 +110,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get whereStart => 'Bạn muốn bắt đầu từ đâu?';
 
   @override
-  String homeHeroDescription(String name) {
+  String exploreHeroDescription(String name) {
     return 'Khám phá văn hóa Hàn Quốc qua từng địa danh. $name, hành trình của bạn đang chờ đón!';
   }
 
@@ -130,8 +127,8 @@ class AppLocalizationsVi extends AppLocalizations {
   String get explorationProgress => 'Tiến độ khám phá';
 
   @override
-  String badgesProgress(int completed, int total) {
-    return '$completed/$total Huy hiệu';
+  String completedLocationsProgress(int completed, int total) {
+    return '$completed/$total địa điểm';
   }
 
   @override

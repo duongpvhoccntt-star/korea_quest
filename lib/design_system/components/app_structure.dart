@@ -505,7 +505,7 @@ class AppFooter extends StatelessWidget {
               title: appStrings(context).explore,
               links: [
                 (appStrings(context).locations, '/explore'),
-                (appStrings(context).journey, '/home'),
+                (appStrings(context).journey, '/explore'),
                 (appStrings(context).badges, '/achievements'),
               ],
             ),

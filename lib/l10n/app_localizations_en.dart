@@ -15,9 +15,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cultureAdventure => 'CULTURE ADVENTURE';
 
   @override
-  String get home => 'Home';
-
-  @override
   String get explore => 'Explore';
 
   @override
@@ -97,7 +94,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancel => 'Cancel';
 
   @override
-  String get backHome => 'Back to home';
+  String get backExplore => 'Back to Explore';
 
   @override
   String get loadJourneyError => 'Could not load journey data.';
@@ -113,7 +110,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whereStart => 'Where would you like to start?';
 
   @override
-  String homeHeroDescription(String name) {
+  String exploreHeroDescription(String name) {
     return 'Explore Korean culture one destination at a time. $name, your journey is waiting!';
   }
 
@@ -130,8 +127,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get explorationProgress => 'Exploration progress';
 
   @override
-  String badgesProgress(int completed, int total) {
-    return '$completed/$total badges';
+  String completedLocationsProgress(int completed, int total) {
+    return '$completed/$total destinations';
   }
 
   @override

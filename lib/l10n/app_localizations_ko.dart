@@ -15,9 +15,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get cultureAdventure => '한국 문화 탐험';
 
   @override
-  String get home => '홈';
-
-  @override
   String get explore => '탐험';
 
   @override
@@ -95,7 +92,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get cancel => '취소';
 
   @override
-  String get backHome => '홈으로';
+  String get backExplore => '탐험으로 돌아가기';
 
   @override
   String get loadJourneyError => '여정 데이터를 불러오지 못했습니다.';
@@ -110,7 +107,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get whereStart => '어디에서 시작할까요?';
 
   @override
-  String homeHeroDescription(String name) {
+  String exploreHeroDescription(String name) {
     return '여행지마다 새로운 한국 문화를 만나 보세요. $name님, 여정이 기다리고 있어요!';
   }
 
@@ -127,8 +124,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get explorationProgress => '탐험 진행도';
 
   @override
-  String badgesProgress(int completed, int total) {
-    return '배지 $completed/$total';
+  String completedLocationsProgress(int completed, int total) {
+    return '여행지 $completed/$total';
   }
 
   @override

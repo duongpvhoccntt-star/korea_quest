@@ -112,12 +112,6 @@ abstract class AppLocalizations {
   /// **'HÀNH TRÌNH VĂN HÓA'**
   String get cultureAdventure;
 
-  /// No description provided for @home.
-  ///
-  /// In vi, this message translates to:
-  /// **'Trang chủ'**
-  String get home;
-
   /// No description provided for @explore.
   ///
   /// In vi, this message translates to:
@@ -268,11 +262,11 @@ abstract class AppLocalizations {
   /// **'Hủy'**
   String get cancel;
 
-  /// No description provided for @backHome.
+  /// No description provided for @backExplore.
   ///
   /// In vi, this message translates to:
-  /// **'Về trang chủ'**
-  String get backHome;
+  /// **'Về Khám phá'**
+  String get backExplore;
 
   /// No description provided for @loadJourneyError.
   ///
@@ -298,11 +292,11 @@ abstract class AppLocalizations {
   /// **'Bạn muốn bắt đầu từ đâu?'**
   String get whereStart;
 
-  /// No description provided for @homeHeroDescription.
+  /// No description provided for @exploreHeroDescription.
   ///
   /// In vi, this message translates to:
   /// **'Khám phá văn hóa Hàn Quốc qua từng địa danh. {name}, hành trình của bạn đang chờ đón!'**
-  String homeHeroDescription(String name);
+  String exploreHeroDescription(String name);
 
   /// No description provided for @continueJourney.
   ///
@@ -328,11 +322,11 @@ abstract class AppLocalizations {
   /// **'Tiến độ khám phá'**
   String get explorationProgress;
 
-  /// No description provided for @badgesProgress.
+  /// No description provided for @completedLocationsProgress.
   ///
   /// In vi, this message translates to:
-  /// **'{completed}/{total} Huy hiệu'**
-  String badgesProgress(int completed, int total);
+  /// **'{completed}/{total} địa điểm'**
+  String completedLocationsProgress(int completed, int total);
 
   /// No description provided for @badgeCollection.
   ///

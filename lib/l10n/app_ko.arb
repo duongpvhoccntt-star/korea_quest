@@ -2,7 +2,6 @@
   "@@locale": "ko",
   "appTitle": "KoreaQuest",
   "cultureAdventure": "한국 문화 탐험",
-  "home": "홈",
   "explore": "탐험",
   "passport": "여권",
   "achievements": "업적",
@@ -28,34 +27,19 @@
   "close": "닫기",
   "save": "저장",
   "cancel": "취소",
-  "backHome": "홈으로",
+  "backExplore": "탐험으로 돌아가기",
   "loadJourneyError": "여정 데이터를 불러오지 못했습니다.",
   "koreaMap": "한국 지도",
   "chooseFirstLocation": "첫 여행지를 선택해 여정을 시작하세요.",
   "whereStart": "어디에서 시작할까요?",
-  "homeHeroDescription": "여행지마다 새로운 한국 문화를 만나 보세요. {name}님, 여정이 기다리고 있어요!",
-  "@homeHeroDescription": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
+  "exploreHeroDescription": "여행지마다 새로운 한국 문화를 만나 보세요. {name}님, 여정이 기다리고 있어요!",
+  "@exploreHeroDescription": {"placeholders": {"name": {"type": "String"}}},
   "continueJourney": "여정 계속하기",
   "recommendedForYou": "추천 여행지",
   "viewAll": "전체 보기",
   "explorationProgress": "탐험 진행도",
-  "badgesProgress": "배지 {completed}/{total}",
-  "@badgesProgress": {
-    "placeholders": {
-      "completed": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
+  "completedLocationsProgress": "여행지 {completed}/{total}",
+  "@completedLocationsProgress": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}},
   "badgeCollection": "배지 컬렉션",
   "completed": "완료",
   "exploring": "탐험 중",

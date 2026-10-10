@@ -2,7 +2,6 @@
   "@@locale": "vi",
   "appTitle": "KoreaQuest",
   "cultureAdventure": "HÀNH TRÌNH VĂN HÓA",
-  "home": "Trang chủ",
   "explore": "Khám phá",
   "passport": "Hộ chiếu",
   "achievements": "Thành tích",
@@ -38,34 +37,19 @@
   "close": "Đóng",
   "save": "Lưu",
   "cancel": "Hủy",
-  "backHome": "Về trang chủ",
+  "backExplore": "Về Khám phá",
   "loadJourneyError": "Không thể đọc dữ liệu hành trình.",
   "koreaMap": "Bản đồ Hàn Quốc",
   "chooseFirstLocation": "Chọn địa điểm đầu tiên để bắt đầu hành trình.",
   "whereStart": "Bạn muốn bắt đầu từ đâu?",
-  "homeHeroDescription": "Khám phá văn hóa Hàn Quốc qua từng địa danh. {name}, hành trình của bạn đang chờ đón!",
-  "@homeHeroDescription": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
+  "exploreHeroDescription": "Khám phá văn hóa Hàn Quốc qua từng địa danh. {name}, hành trình của bạn đang chờ đón!",
+  "@exploreHeroDescription": {"placeholders": {"name": {"type": "String"}}},
   "continueJourney": "Tiếp tục hành trình",
   "recommendedForYou": "Gợi ý cho bạn",
   "viewAll": "Xem tất cả",
   "explorationProgress": "Tiến độ khám phá",
-  "badgesProgress": "{completed}/{total} Huy hiệu",
-  "@badgesProgress": {
-    "placeholders": {
-      "completed": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
+  "completedLocationsProgress": "{completed}/{total} địa điểm",
+  "@completedLocationsProgress": {"placeholders": {"completed": {"type": "int"}, "total": {"type": "int"}}},
   "badgeCollection": "Bộ sưu tập huy hiệu",
   "completed": "Đã hoàn thành",
   "exploring": "Đang khám phá",
