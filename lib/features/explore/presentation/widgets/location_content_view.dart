@@ -16,6 +16,7 @@ class LocationContentView extends StatelessWidget {
     required this.onSubmitQuizAnswer,
     this.currentStage = 1,
     this.onStageSelected,
+    this.onStageCompleted,
     this.showLocationHeader = true,
     this.showJourneyStepper = true,
     this.showStageBody = true,
@@ -28,6 +29,7 @@ class LocationContentView extends StatelessWidget {
   onSubmitQuizAnswer;
   final int currentStage;
   final ValueChanged<int>? onStageSelected;
+  final Future<void> Function(int stageNumber)? onStageCompleted;
   final bool showLocationHeader;
   final bool showJourneyStepper;
   final bool showStageBody;
@@ -54,7 +56,9 @@ class LocationContentView extends StatelessWidget {
           const SizedBox(height: AppSpacing.xl),
           _StageNavigation(
             currentStage: stage,
-            onPressed: () => onStageSelected!(stage == 9 ? 0 : stage + 1),
+            onPressed: onStageCompleted == null
+                ? () async => onStageSelected!(stage == 9 ? 0 : stage + 1)
+                : () => onStageCompleted!(stage),
           ),
         ],
       ],
@@ -64,7 +68,9 @@ class LocationContentView extends StatelessWidget {
   Widget _stageBody(BuildContext context, int stage) => switch (stage) {
     1 => _HeroStage(
       location: location,
-      onStart: onStageSelected == null ? null : () => onStageSelected!(2),
+      onStart: onStageCompleted == null
+          ? (onStageSelected == null ? null : () async => onStageSelected!(2))
+          : () => onStageCompleted!(1),
     ),
     2 => _OverviewStage(location: location),
     3 => _HistoryStage(
@@ -396,7 +402,7 @@ class _StageNavigation extends StatelessWidget {
   const _StageNavigation({required this.currentStage, required this.onPressed});
 
   final int currentStage;
-  final VoidCallback onPressed;
+  final Future<void> Function() onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -431,7 +437,7 @@ class _StageNavigation extends StatelessWidget {
 class _HeroStage extends StatelessWidget {
   const _HeroStage({required this.location, this.onStart});
   final PublishedLocationDetail location;
-  final VoidCallback? onStart;
+  final Future<void> Function()? onStart;
 
   @override
   Widget build(BuildContext context) => _Stage(

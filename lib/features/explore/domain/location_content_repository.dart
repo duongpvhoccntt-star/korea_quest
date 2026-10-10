@@ -13,4 +13,9 @@ abstract interface class LocationContentRepository {
     required JsonMap answer,
     String locale = 'vi',
   });
+  Future<GameplayReward> completeStage({
+    required String slug,
+    required int stageNumber,
+    String locale = 'vi',
+  });
 }

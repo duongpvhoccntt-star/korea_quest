@@ -116,6 +116,14 @@ _Avoid_: Điểm số, coin
 Cột mốc tiến triển được xác định từ XP tích lũy.
 _Avoid_: Hạng
 
+**Kết quả phần thưởng**:
+Phản hồi nguyên tử từ RPC gameplay sau một hành động, gồm XP vừa nhận, tổng XP/Cấp mới, Huy hiệu mới, Dấu mộc mới và trạng thái đã trao trước đó. Flutter dùng phản hồi này để cập nhật giao diện nhưng không tự tính phần thưởng.
+_Avoid_: Điểm tạm, kết quả do client tính
+
+**Liên kết chia sẻ Hộ chiếu**:
+Liên kết công khai có token bí mật, có thể bị thu hồi hoặc thay thế, chỉ hiển thị dữ liệu Nhà thám hiểm đã chọn và không lộ email hay họ tên pháp lý.
+_Avoid_: Hộ chiếu công khai mặc định, URL hồ sơ
+
 **Dấu mộc**:
 Vật phẩm kỷ niệm được ghi vào Hộ chiếu khi Nhà thám hiểm hoàn tất hành trình của một Địa điểm; giao diện bộ sưu tập có thể gọi vật phẩm này là Tem bưu chính.
 _Avoid_: Con dấu, token, Huy hiệu

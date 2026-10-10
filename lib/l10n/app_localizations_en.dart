@@ -245,6 +245,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadPassportError => 'Could not load your passport.';
 
   @override
+  String get noPassportStamps => 'No stamps earned yet';
+
+  @override
+  String get noPassportStampsDescription => 'Earned stamps will appear here.';
+
+  @override
+  String get sharePassport => 'Share passport';
+
+  @override
+  String get revokePassportLink => 'Revoke link';
+
+  @override
+  String get passportLinkCreated => 'Passport link created';
+
+  @override
+  String get copyLink => 'Copy link';
+
+  @override
+  String sharedPassportTitle(String name) {
+    return '$name\'s passport';
+  }
+
+  @override
+  String get sharedPassportNotFound =>
+      'This passport link does not exist or has been revoked.';
+
+  @override
+  String get maxLevelReached => 'Maximum level reached';
+
+  @override
   String get milestones => 'Milestones';
 
   @override
@@ -256,6 +286,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loadBadgesError => 'Could not load badges.';
+
+  @override
+  String get noAchievements => 'No achievements earned yet';
+
+  @override
+  String get noAchievementsDescription =>
+      'Achievements and progress will appear here.';
+
+  @override
+  String get allAchievements => 'All';
+
+  @override
+  String get earnedAchievements => 'Earned';
+
+  @override
+  String get lockedAchievements => 'Locked';
+
+  @override
+  String achievementProgress(int current, int target) {
+    return '$current/$target';
+  }
+
+  @override
+  String earnedOn(String date) {
+    return 'Earned on $date';
+  }
 
   @override
   String get forbiddenTitle => 'You do not have access';
