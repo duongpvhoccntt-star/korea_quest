@@ -98,7 +98,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
             setState(() => _mode = AuthPageMode.login);
           } else {
             AppToast.show(context, strings.accountCreated);
-            context.go('/home');
+            context.go('/explore');
           }
         }
       } else {
@@ -118,7 +118,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
             context,
             user.isAdmin ? strings.adminSignedIn : strings.signedIn,
           );
-          context.go(user.isAdmin ? '/admin' : '/home');
+          context.go(user.isAdmin ? '/admin' : '/explore');
         }
       }
     } catch (error) {
@@ -203,7 +203,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
           .signIn(identity: 'duong@example.com', password: 'user123');
       if (mounted) {
         AppToast.show(context, appStrings(context).studentQuickSignedIn);
-        context.go('/home');
+        context.go('/explore');
       }
     } catch (error) {
       if (mounted) setState(() => _errorMessage = error.toString());

@@ -4,9 +4,9 @@
 
 MVP khám phá văn hóa Hàn Quốc theo hướng game-based learning
 
-| **Phạm Văn Dương**   | Tài khoản • Trang chủ • Hồ sơ • Hộ chiếu   |
+| **Phạm Văn Dương**   | Tài khoản • Hồ sơ • Hộ chiếu • XP/Level    |
 |----------------------|--------------------------------------------|
-| **Nguyễn Viết Thức** | Bản đồ • Địa điểm • Check-in               |
+| **Nguyễn Viết Thức** | Khám phá • Bản đồ • Địa điểm • Check-in    |
 | **Lê Uyên Nhi**      | Văn hóa • Từ vựng • Tổng kết • Phần thưởng |
 
 **Mỗi thành viên chịu trách nhiệm trọn gói tính năng mình nhận: frontend, dữ liệu, backend/API và kiểm thử.**
@@ -26,8 +26,7 @@ Người dùng chọn bất kỳ địa điểm đã phát hành, khám phá tr�
 <thead>
 <tr class="header">
 <th>Đăng nhập<br />
-→ Trang chủ<br />
-→ Bản đồ<br />
+→ Khám phá<br />
 → Chọn địa điểm<br />
 → Check-in<br />
 → Văn hóa<br />
@@ -97,7 +96,7 @@ Ba thành viên:
 
 ## Cụm tính năng phụ trách
 
-**Tài khoản + Trang chủ + Hồ sơ + Hộ chiếu**
+**Tài khoản + Hồ sơ + Hộ chiếu + XP/Level dùng chung**
 
 ---
 
@@ -152,80 +151,14 @@ created_at</th>
 
 ---
 
-## 3.2. Trang chủ
+## 3.2. Dữ liệu cá nhân dùng chung
 
-Hiển thị:
+Dương phụ trách dữ liệu hồ sơ, XP và Level dùng chung. Màn hình Khám phá do
+Thức phụ trách đọc dữ liệu này qua provider/repository để hiển thị lời chào,
+tiến độ và nút tiếp tục hành trình.
 
-- Tên người dùng.
-
-- Avatar.
-
-- XP.
-
-- Level.
-
-- Địa điểm đang khám phá.
-
-- Tiến độ hiện tại.
-
-- Nút "Tiếp tục khám phá".
-
-- Huy hiệu mới nhất.
-
-- Địa điểm tiếp theo.
-
-Ví dụ:
-
-<table>
-<colgroup>
-<col style="width: 100%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Xin chào Minh Khang<br />
-<br />
-Level 2<br />
-850 XP<br />
-<br />
-Đang khám phá:<br />
-Chợ Gwangjang<br />
-<br />
-Tiến độ: 64%<br />
-<br />
-[ Tiếp tục khám phá ]</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
-
-### API / Data liên quan
-
-Ví dụ:
-
-| GET /me/home |
-|--------------|
-
-Trả về:
-
-<table>
-<colgroup>
-<col style="width: 100%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>{<br />
-"name": "Minh Khang",<br />
-"xp": 850,<br />
-"level": 2,<br />
-"currentLocation": "Gwangjang",<br />
-"progress": 64<br />
-}</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
+Không còn page, tab hoặc API riêng cho Trang chủ. URL `/home` chỉ redirect
+tương thích sang `/explore`.
 
 ---
 
@@ -305,7 +238,7 @@ Luồng hoàn chỉnh:
 <tr class="header">
 <th>Đăng ký<br />
 → Đăng nhập<br />
-→ Trang chủ<br />
+→ Khám phá<br />
 → Xem XP / Level<br />
 → Xem Hộ chiếu<br />
 → Xem huy hiệu / dấu mộc</th>
@@ -1189,7 +1122,7 @@ Luồng hoàn chỉnh:
 | Đăng ký                    | **Phạm Văn Dương**   |
 | Đăng nhập                  | **Phạm Văn Dương**   |
 | Hồ sơ người dùng           | **Phạm Văn Dương**   |
-| Trang chủ                  | **Phạm Văn Dương**   |
+| Màn hình Khám phá hợp nhất | **Nguyễn Viết Thức** |
 | Level                      | **Phạm Văn Dương**   |
 | Hộ chiếu                   | **Phạm Văn Dương**   |
 | Hiển thị huy hiệu          | **Phạm Văn Dương**   |
@@ -1358,7 +1291,7 @@ stamp</th>
 </tbody>
 </table>
 
-Dương hiển thị trong Trang chủ và Hộ chiếu.
+Dữ liệu XP/Level do Dương phụ trách được hiển thị trong Khám phá và Hộ chiếu.
 
 ---
 
@@ -1394,12 +1327,12 @@ Một tính năng chỉ được coi là hoàn thành khi:
 
 ### Phạm Văn Dương
 
-|     | **Tài khoản → Trang chủ → Level → Hộ chiếu.** |
+|     | **Tài khoản → Level dùng chung → Hồ sơ → Hộ chiếu.** |
 |-----|-----------------------------------------------|
 
 ### Nguyễn Viết Thức
 
-|     | **Bản đồ → Địa điểm → Check-in → Lịch sử → Media → Nhiệm vụ Check-in.** |
+|     | **Khám phá hợp nhất → Bản đồ → Địa điểm → Check-in → Lịch sử → Media → Nhiệm vụ Check-in.** |
 |-----|-------------------------------------------------------------------------|
 
 ### Lê Uyên Nhi

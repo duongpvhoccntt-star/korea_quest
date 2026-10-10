@@ -9,7 +9,7 @@ Người dùng chọn bất kỳ địa điểm đã phát hành, khám phá cá
 **Phạm vi MVP:**
 
 ```
-Đăng nhập → Trang chủ → Bản đồ → Chọn địa điểm
+Đăng nhập → Khám phá → Chọn địa điểm
 → Check-in → Văn hóa → Từ vựng → Tổng kết
 → Nhận XP / Huy hiệu / Dấu mộc → Tiếp tục tự do khám phá
 ```
@@ -47,10 +47,9 @@ lib/
 ├── shared/          # Models, Repositories, Services, Widgets dùng chung
 ├── features/
 │   ├── auth/        # Phạm Văn Dương
-│   ├── home/        # Phạm Văn Dương
 │   ├── profile/     # Phạm Văn Dương
 │   ├── passport/    # Phạm Văn Dương
-│   ├── explore/     # Nguyễn Viết Thức
+│   ├── explore/     # Nguyễn Viết Thức — màn hình chính + bản đồ
 │   ├── journey/     # Nguyễn Viết Thức + Lê Uyên Nhi
 │   └── achievements/# Lê Uyên Nhi
 └── l10n/
@@ -76,8 +75,8 @@ Xem đầy đủ tại [`docs/TEAM_OWNERSHIP.md`](docs/TEAM_OWNERSHIP.md).
 
 | Thành viên | Module |
 | :--- | :--- |
-| **Phạm Văn Dương** | `auth`, `home`, `profile`, `passport` |
-| **Nguyễn Viết Thức** | `explore`, `journey` (Check-in) |
+| **Phạm Văn Dương** | `auth`, `profile`, `passport`, XP/Level dùng chung |
+| **Nguyễn Viết Thức** | `explore` (màn hình chính + bản đồ), `journey` (Check-in) |
 | **Lê Uyên Nhi** | `journey` (Văn hóa, Từ vựng, Tổng kết), `achievements` |
 
 ---

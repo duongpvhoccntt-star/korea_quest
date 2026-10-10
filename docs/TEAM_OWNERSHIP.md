@@ -17,8 +17,8 @@ Nhóm chia công việc theo **tính năng**, không chia riêng frontend/backen
 
 | Thành viên                  | Cụm tính năng                                       |
 | :---------------------------- | :----------------------------------------------------- |
-| **Phạm Văn Dương**  | Tài khoản · Trang chủ · Hồ sơ · Hộ chiếu     |
-| **Nguyễn Viết Thức** | Bản đồ · Địa điểm · Check-in                  |
+| **Phạm Văn Dương**  | Tài khoản · Hồ sơ · Hộ chiếu · XP/Level dùng chung |
+| **Nguyễn Viết Thức** | Khám phá (màn hình chính + bản đồ) · Địa điểm · Check-in |
 | **Lê Uyên Nhi**       | Văn hóa · Từ vựng · Tổng kết · Phần thưởng |
 
 ---
@@ -32,8 +32,7 @@ Nhóm chia công việc theo **tính năng**, không chia riêng frontend/backen
 | Đăng ký                       | `lib/features/auth/`                         |
 | Đăng nhập                     | `lib/features/auth/`                         |
 | Đăng xuất                     | `lib/features/auth/`                         |
-| Trang chủ (Home)                | `lib/features/home/`                         |
-| Hệ thống Level                 | `lib/shared/models/`, `lib/features/home/` |
+| Hệ thống Level                 | `lib/shared/models/`, `lib/shared/providers/` |
 | Hồ sơ người dùng (Profile)  | `lib/features/profile/`                      |
 | Hộ chiếu khám phá (Passport) | `lib/features/passport/`                     |
 | Hiển thị huy hiệu             | `lib/features/passport/`                     |
@@ -52,14 +51,13 @@ user_stamps    (đọc — Nhi trao)
 ```
 POST /auth/register
 POST /auth/login
-GET  /me/home
 GET  /me/passport
 ```
 
 ### Luồng bàn giao
 
 ```
-Đăng ký → Đăng nhập → Trang chủ → Xem XP / Level → Xem Hộ chiếu → Xem huy hiệu / dấu mộc
+Đăng ký → Đăng nhập → Khám phá → Xem XP / Level → Xem Hộ chiếu → Xem huy hiệu / dấu mộc
 ```
 
 ### Điểm tích hợp
@@ -67,7 +65,7 @@ GET  /me/passport
 | Nhận từ                     | Nội dung                                                                                                            |
 | :---------------------------- | :------------------------------------------------------------------------------------------------------------------- |
 | **Nguyễn Viết Thức** | `user_id`, `location_id` khi người dùng chọn địa điểm                                                    |
-| **Lê Uyên Nhi**       | `xp`, `badge`, `stamp` sau khi hoàn thành địa điểm — Dương hiển thị trong Trang chủ và Hộ chiếu |
+| **Lê Uyên Nhi**       | `xp`, `badge`, `stamp` sau khi hoàn thành địa điểm — hiển thị trong Khám phá và Hộ chiếu |
 
 ---
 
@@ -77,6 +75,7 @@ GET  /me/passport
 
 | Tính năng                                 | Thư mục dự kiến       |
 | :------------------------------------------ | :------------------------ |
+| Màn hình chính sau đăng nhập và tiến độ cá nhân | `lib/features/explore/` |
 | Bản đồ khám phá                        | `lib/features/explore/` |
 | Danh sách địa điểm                     | `lib/features/explore/` |
 | Chi tiết địa điểm (trang giới thiệu) | `lib/features/journey/` |
@@ -210,8 +209,8 @@ Văn hóa → Từ vựng → Tổng kết → Tính XP → Tính sao
 
 | Truyền cho                   | Nội dung                                                               |
 | :---------------------------- | :---------------------------------------------------------------------- |
-| **Nguyễn Viết Thức** | tiến độ và phần thưởng đã nhận để cập nhật bản đồ              |
-| **Phạm Văn Dương**  | `xp`, `badge`, `stamp` để hiển thị ở Trang chủ & Hộ chiếu |
+| **Nguyễn Viết Thức** | tiến độ và phần thưởng đã nhận để cập nhật màn Khám phá |
+| **Phạm Văn Dương**  | `xp`, `badge`, `stamp` để hiển thị ở Hộ chiếu |
 
 ---
 

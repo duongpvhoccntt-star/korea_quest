@@ -33,6 +33,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    expect(find.text('Trang chủ'), findsNothing);
+    expect(find.text('Khám phá'), findsOneWidget);
+
     await tester.tap(find.byTooltip('Mở menu tài khoản'));
     await tester.pumpAndSettle();
 
@@ -66,10 +69,10 @@ void main() {
 }
 
 GoRouter _router() => GoRouter(
-  initialLocation: '/home',
+  initialLocation: '/explore',
   routes: [
     GoRoute(
-      path: '/home',
+      path: '/explore',
       builder: (context, state) => const Scaffold(appBar: AppHeader()),
     ),
     GoRoute(

@@ -79,7 +79,6 @@ widgets/
 features/
 landing/
 auth/
-home/
 explore/
 journey/
 passport/
@@ -109,8 +108,8 @@ Chuẩn bị không gian làm việc độc lập:
 
 * Nền tảng chung: app, core, design_system, shared.
 * Thành viên Auth: features/auth.
-* Thành viên Trang chủ: features/home.
-* Thành viên Khám phá: features/explore.
+* Thành viên Khám phá: features/explore, gồm màn hình chính sau đăng nhập,
+  thông tin tiến độ cá nhân và bản đồ địa điểm.
 * Thành viên Hành trình: features/journey.
 * Phạm Văn Dương: features/passport, features/achievements, features/profile và XP/Level dùng chung.
 * Thành viên Cài đặt và trạng thái: features/settings, features/system_states.
@@ -239,7 +238,7 @@ Tạo named routes với URL thân thiện:
 * `/register`
 * `/login`
 * `/forgot-password`
-* `/home`
+* `/home` (chỉ redirect tương thích sang `/explore`)
 * `/explore`
 * `/locations/:locationId`
 * `/journey/:locationId`

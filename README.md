@@ -102,8 +102,7 @@ Các module dự kiến:
 ```text
 features/
 ├── auth/
-├── home/
-├── explore/
+├── explore/             # Màn hình chính sau đăng nhập và bản đồ khám phá
 ├── journey/
 ├── passport/
 ├── achievements/
@@ -111,6 +110,9 @@ features/
 ├── settings/
 └── system_states/
 ```
+
+Sau đăng nhập, người dùng được chuyển thẳng tới /explore. URL cũ /home chỉ
+được giữ để chuyển hướng tương thích sang /explore.
 
 ## 👥 Quy trình làm việc nhóm
 

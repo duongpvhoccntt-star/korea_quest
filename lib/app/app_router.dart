@@ -7,7 +7,6 @@ import 'package:korea_quest/features/auth/presentation/pages/auth_page.dart';
 import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
 import 'package:korea_quest/features/explore/presentation/pages/published_explore_page.dart';
 import 'package:korea_quest/features/explore/presentation/pages/published_location_page.dart';
-import 'package:korea_quest/features/home/presentation/pages/home_page.dart';
 import 'package:korea_quest/features/landing/presentation/pages/landing_page.dart';
 import 'package:korea_quest/features/passport/presentation/pages/passport_page.dart';
 import 'package:korea_quest/features/profile/presentation/pages/profile_page.dart';
@@ -19,7 +18,6 @@ abstract final class AppRouteNames {
   static const register = 'register';
   static const login = 'login';
   static const forgotPassword = 'forgot-password';
-  static const home = 'home';
   static const explore = 'explore';
   static const location = 'location';
   static const locationStage = 'location-stage';
@@ -89,11 +87,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ShellRoute(
         builder: (context, state, child) => AppShell(child: child),
         routes: [
-          GoRoute(
-            path: '/home',
-            name: AppRouteNames.home,
-            builder: (context, state) => const HomePage(),
-          ),
+          GoRoute(path: '/home', redirect: (context, state) => '/explore'),
           GoRoute(
             path: '/explore',
             name: AppRouteNames.explore,

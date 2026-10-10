@@ -24,9 +24,9 @@ void main() {
           builder: (context, state) => const AdminDatabasePage(),
         ),
         GoRoute(
-          path: '/home',
+          path: '/explore',
           builder: (context, state) =>
-              const Scaffold(body: Text('Home Screen')),
+              const Scaffold(body: Text('Explore Screen')),
         ),
       ],
     );
@@ -145,7 +145,7 @@ void main() {
       );
     });
 
-    testWidgets('tapping quick student button navigates to /home', (
+    testWidgets('tapping quick student button navigates to /explore', (
       tester,
     ) async {
       tester.view.physicalSize = const Size(1280, 1024);
@@ -163,8 +163,8 @@ void main() {
       await tester.tap(studentQuickButton);
       await tester.pumpAndSettle();
 
-      // Navigated to /home
-      expect(find.text('Home Screen'), findsOneWidget);
+      // Navigated to /explore
+      expect(find.text('Explore Screen'), findsOneWidget);
     });
   });
 }
