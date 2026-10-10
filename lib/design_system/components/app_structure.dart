@@ -14,8 +14,6 @@ import 'package:korea_quest/l10n/app_strings.dart';
 import 'package:korea_quest/l10n/locale_controller.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
 
-import 'package:korea_quest/shared/widgets/ai_command_box.dart';
-
 class AppScaffold extends StatelessWidget {
   const AppScaffold({
     required this.body,
@@ -46,18 +44,7 @@ class AppShell extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => AppScaffold(
-    body: Stack(
-      children: [
-        Positioned.fill(child: child),
-        const Positioned(
-          bottom: AppSpacing.lg,
-          right: AppSpacing.lg,
-          child: AiCommandWidget(),
-        ),
-      ],
-    ),
-  );
+  Widget build(BuildContext context) => AppScaffold(body: child);
 }
 
 class AppHeader extends ConsumerWidget implements PreferredSizeWidget {

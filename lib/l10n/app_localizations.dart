@@ -2140,95 +2140,11 @@ abstract class AppLocalizations {
   /// **'Tải ảnh từ máy tính'**
   String get uploadFromDevice;
 
-  /// No description provided for @configureGemini.
-  ///
-  /// In vi, this message translates to:
-  /// **'Cấu hình Gemini AI'**
-  String get configureGemini;
-
-  /// No description provided for @selectedModel.
-  ///
-  /// In vi, this message translates to:
-  /// **'Model đang chọn:'**
-  String get selectedModel;
-
-  /// No description provided for @saveSettings.
-  ///
-  /// In vi, this message translates to:
-  /// **'Lưu cài đặt'**
-  String get saveSettings;
-
-  /// No description provided for @aiVoiceCommand.
-  ///
-  /// In vi, this message translates to:
-  /// **'AI Lệnh thoại'**
-  String get aiVoiceCommand;
-
-  /// No description provided for @apiKeySettings.
-  ///
-  /// In vi, this message translates to:
-  /// **'Cài đặt API Key'**
-  String get apiKeySettings;
-
-  /// No description provided for @testLabel.
-  ///
-  /// In vi, this message translates to:
-  /// **'Thử nghiệm:'**
-  String get testLabel;
-
-  /// No description provided for @openProfileNow.
-  ///
-  /// In vi, this message translates to:
-  /// **'Mở Hồ sơ ngay'**
-  String get openProfileNow;
-
   /// No description provided for @discoverNow.
   ///
   /// In vi, this message translates to:
   /// **'Khám phá ngay'**
   String get discoverNow;
-
-  /// No description provided for @profileCommandCalled.
-  ///
-  /// In vi, this message translates to:
-  /// **'Đã gọi: navigateToProfile'**
-  String get profileCommandCalled;
-
-  /// No description provided for @aiCommandHint.
-  ///
-  /// In vi, this message translates to:
-  /// **'Nhập lệnh (vd: \"Chuyển sang trang hồ sơ\")...'**
-  String get aiCommandHint;
-
-  /// No description provided for @callingGemini.
-  ///
-  /// In vi, this message translates to:
-  /// **'Đang gọi Gemini...'**
-  String get callingGemini;
-
-  /// No description provided for @sendToAi.
-  ///
-  /// In vi, this message translates to:
-  /// **'Gửi lệnh tới AI'**
-  String get sendToAi;
-
-  /// No description provided for @functionCallComplete.
-  ///
-  /// In vi, this message translates to:
-  /// **'Function Calling: {calls} → Đã chuyển trang!'**
-  String functionCallComplete(String calls);
-
-  /// No description provided for @hideRawJson.
-  ///
-  /// In vi, this message translates to:
-  /// **'Ẩn JSON thô'**
-  String get hideRawJson;
-
-  /// No description provided for @showRawJson.
-  ///
-  /// In vi, this message translates to:
-  /// **'Xem JSON thô từ Gemini'**
-  String get showRawJson;
 
   /// No description provided for @openOnYoutube.
   ///
