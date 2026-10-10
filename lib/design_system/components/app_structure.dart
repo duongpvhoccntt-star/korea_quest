@@ -78,7 +78,6 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
     final authUser = ref.watch(authUserStreamProvider).value;
     final isGuest = authUser == null;
     final destinations = [
-      (strings.home, isGuest ? '/' : '/home'),
       (strings.explore, '/explore'),
       (strings.passport, '/passport'),
       (strings.achievements, '/achievements'),
@@ -451,7 +450,7 @@ class AppFooter extends StatelessWidget {
               title: appStrings(context).explore,
               links: [
                 (appStrings(context).locations, '/explore'),
-                (appStrings(context).journey, '/home'),
+                (appStrings(context).journey, '/explore'),
                 (appStrings(context).badges, '/achievements'),
               ],
             ),

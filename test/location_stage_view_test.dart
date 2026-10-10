@@ -257,8 +257,10 @@ void main() {
               location: quizLocation,
               currentStage: 8,
               onStageSelected: (_) {},
-              onSubmitQuizAnswer: (_, _) async =>
-                  const QuizAnswerResult(isCorrect: false, explanation: 'Try again'),
+              onSubmitQuizAnswer: (_, _) async => const QuizAnswerResult(
+                isCorrect: false,
+                explanation: 'Try again',
+              ),
             ),
           ),
         ),
