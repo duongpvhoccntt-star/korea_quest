@@ -33,7 +33,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Trang chủ'), findsOneWidget);
+    // Home page was removed — Explore is now the first nav destination.
+    expect(find.text('Trang chủ'), findsNothing);
     expect(find.text('Khám phá'), findsOneWidget);
 
     await tester.tap(find.byTooltip('Mở menu tài khoản'));

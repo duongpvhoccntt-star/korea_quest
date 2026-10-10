@@ -43,7 +43,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
     initialLocation: '/',
     redirect: (context, state) {
-      const publicPaths = {
+      const authPaths = {
         '/',
         '/login',
         '/register',
@@ -51,17 +51,31 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         '/admin',
       };
       final isGuest = ref.read(authRepositoryProvider).currentUser == null;
-      final isPublic =
-          publicPaths.contains(state.uri.path) ||
-          state.uri.path == '/explore' ||
-          state.uri.path.startsWith('/locations/') ||
-          state.uri.path.startsWith('/journey/') ||
-          state.uri.path.startsWith('/passport/shared/');
-      if (isGuest && !isPublic) {
-        return Uri(
-          path: '/login',
-          queryParameters: {'redirect': state.uri.toString()},
-        ).toString();
+      final isGuestMode = ref.read(guestModeProvider);
+
+      if (isGuest) {
+        if (!isGuestMode) {
+          if (!authPaths.contains(state.uri.path)) {
+            return Uri(
+              path: '/login',
+              queryParameters: {'redirect': state.uri.toString()},
+            ).toString();
+          }
+        } else {
+          final allowedGuestPaths =
+              state.uri.path == '/explore' ||
+              state.uri.path.startsWith('/locations/') ||
+              state.uri.path.startsWith('/journey/') ||
+              state.uri.path.startsWith('/passport/shared/') ||
+              authPaths.contains(state.uri.path);
+
+          if (!allowedGuestPaths) {
+            return Uri(
+              path: '/login',
+              queryParameters: {'redirect': state.uri.toString()},
+            ).toString();
+          }
+        }
       }
       return null;
     },
@@ -223,6 +237,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   );
 
   ref.listen(authUserStreamProvider, (_, _) => router.refresh());
+  ref.listen(guestModeProvider, (_, _) => router.refresh());
   ref.onDispose(router.dispose);
   return router;
 });

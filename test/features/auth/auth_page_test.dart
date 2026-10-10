@@ -51,6 +51,7 @@ void main() {
       expect(find.text('Tài khoản thử nghiệm nhanh'), findsOneWidget);
       expect(find.text('admin / admin123'), findsOneWidget);
       expect(find.text('duong@example.com'), findsOneWidget);
+      expect(find.text('Khám phá với tư cách Khách'), findsOneWidget);
       expect(find.byKey(const ValueKey('auth-korea-scenery')), findsOneWidget);
       expect(
         find.byKey(const ValueKey('auth-koreaquest-logo')),
@@ -161,6 +162,28 @@ void main() {
 
       await tester.ensureVisible(studentQuickButton);
       await tester.tap(studentQuickButton);
+      await tester.pumpAndSettle();
+
+      // Navigated to /explore
+      expect(find.text('Explore Screen'), findsOneWidget);
+    });
+
+    testWidgets('tapping guest mode button navigates to /explore', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1280, 1024);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(buildTestApp());
+      await tester.pumpAndSettle();
+
+      final guestButton = find.text('Khám phá với tư cách Khách');
+      expect(guestButton, findsOneWidget);
+
+      await tester.ensureVisible(guestButton);
+      await tester.tap(guestButton);
       await tester.pumpAndSettle();
 
       // Navigated to /explore

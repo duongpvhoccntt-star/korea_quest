@@ -425,7 +425,7 @@ class _TravelVisualPanel extends StatelessWidget {
   );
 }
 
-class _AuthFormPanel extends StatelessWidget {
+class _AuthFormPanel extends ConsumerWidget {
   const _AuthFormPanel({
     required this.mode,
     required this.title,
@@ -465,7 +465,7 @@ class _AuthFormPanel extends StatelessWidget {
   final VoidCallback onQuickLoginStudent;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final strings = appStrings(context);
     final compact = MediaQuery.sizeOf(context).width < 600;
     return Padding(
@@ -613,6 +613,43 @@ class _AuthFormPanel extends StatelessWidget {
                 isLoading: isLoading,
                 onPressed: onSubmit,
               ),
+              if (!isForgot) ...[
+                const SizedBox(height: AppSpacing.sm),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: isLoading
+                        ? null
+                        : () {
+                            ref
+                                .read(guestModeProvider.notifier)
+                                .enableGuestMode();
+                            context.go('/explore');
+                          },
+                    icon: const Icon(
+                      Icons.explore_outlined,
+                      color: AppColors.teal,
+                    ),
+                    label: const Text(
+                      'Khám phá với tư cách Khách',
+                      style: TextStyle(
+                        color: AppColors.navy,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppSpacing.sm,
+                        horizontal: AppSpacing.md,
+                      ),
+                      side: const BorderSide(color: AppColors.teal),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.medium),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
               if (mode == AuthPageMode.login)
                 Align(
                   alignment: Alignment.centerRight,

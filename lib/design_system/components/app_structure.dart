@@ -63,10 +63,13 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
     final showXp = width >= ResponsiveBreakpoints.wide;
     final path = GoRouterState.of(context).uri.path;
     final authUser = ref.watch(authUserStreamProvider).value;
+    final currentUserAccount = authUser;
     final isUnauthenticated = authUser == null;
+    final isGuest = isUnauthenticated;
     final isGuestUser = authUser?.isGuest == true;
+    final isGuestMode = ref.watch(guestModeProvider);
+    final canAccessApp = !isGuest || isGuestMode;
     final destinations = [
-      (strings.home, isUnauthenticated ? '/' : '/home'),
       (strings.explore, '/explore'),
       (strings.passport, '/passport'),
       (strings.achievements, '/achievements'),
@@ -91,7 +94,9 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
             height: preferredSize.height,
             child: Row(
               children: [
-                _BrandLockup(onTap: () => context.go('/')),
+                _BrandLockup(
+                  onTap: () => context.go(canAccessApp ? '/explore' : '/'),
+                ),
                 const Spacer(),
                 const _LanguageMenu(),
                 const SizedBox(width: AppSpacing.xs),
@@ -159,7 +164,8 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                               Row(
                                 children: [
                                   Text(
-                                    user?.displayName ?? authUser.displayName,
+                                    user?.displayName ??
+                                        currentUserAccount!.displayName,
                                     style: const TextStyle(
                                       color: AppColors.stitchText,
                                       fontWeight: FontWeight.w800,
@@ -193,7 +199,7 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                                 ],
                               ),
                               Text(
-                                authUser.usernameOrEmail,
+                                currentUserAccount!.usernameOrEmail,
                                 style: const TextStyle(
                                   color: AppColors.stitchMuted,
                                   fontSize: 12,
@@ -251,7 +257,8 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                         ),
                       ],
                       child: UserAvatar(
-                        displayName: user?.displayName ?? authUser.displayName,
+                        displayName:
+                            user?.displayName ?? currentUserAccount!.displayName,
                         avatarPreset: user?.avatarPreset,
                         avatarBytes: user?.avatarBytes,
                       ),

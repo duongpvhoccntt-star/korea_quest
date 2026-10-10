@@ -18,6 +18,7 @@ Future<void> confirmAndSignOut(BuildContext context, WidgetRef ref) async {
 
   try {
     await ref.read(authRepositoryProvider).signOut();
+    ref.read(guestModeProvider.notifier).disableGuestMode();
     if (!context.mounted) return;
     AppToast.show(context, strings.signOutSuccess);
     context.go('/login');

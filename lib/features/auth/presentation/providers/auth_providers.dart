@@ -23,3 +23,15 @@ final currentUserRoleProvider = Provider<UserRole?>((ref) {
   final user = ref.watch(authUserStreamProvider).value;
   return user?.role;
 });
+
+class GuestModeNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void enableGuestMode() => state = true;
+  void disableGuestMode() => state = false;
+}
+
+final guestModeProvider = NotifierProvider<GuestModeNotifier, bool>(
+  GuestModeNotifier.new,
+);
