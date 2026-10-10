@@ -24,9 +24,9 @@ void main() {
           builder: (context, state) => const AdminDatabasePage(),
         ),
         GoRoute(
-          path: '/home',
+          path: '/explore',
           builder: (context, state) =>
-              const Scaffold(body: Text('Home Screen')),
+              const Scaffold(body: Text('Explore Screen')),
         ),
       ],
     );
@@ -51,6 +51,7 @@ void main() {
       expect(find.text('Tài khoản thử nghiệm nhanh'), findsOneWidget);
       expect(find.text('admin / admin123'), findsOneWidget);
       expect(find.text('duong@example.com'), findsOneWidget);
+      expect(find.text('Khám phá với tư cách Khách'), findsOneWidget);
       expect(find.byKey(const ValueKey('auth-korea-scenery')), findsOneWidget);
       expect(
         find.byKey(const ValueKey('auth-koreaquest-logo')),
@@ -145,7 +146,7 @@ void main() {
       );
     });
 
-    testWidgets('tapping quick student button navigates to /home', (
+    testWidgets('tapping quick student button navigates to /explore', (
       tester,
     ) async {
       tester.view.physicalSize = const Size(1280, 1024);
@@ -163,8 +164,30 @@ void main() {
       await tester.tap(studentQuickButton);
       await tester.pumpAndSettle();
 
-      // Navigated to /home
-      expect(find.text('Home Screen'), findsOneWidget);
+      // Navigated to /explore
+      expect(find.text('Explore Screen'), findsOneWidget);
+    });
+
+    testWidgets('tapping guest mode button navigates to /explore', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1280, 1024);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(buildTestApp());
+      await tester.pumpAndSettle();
+
+      final guestButton = find.text('Khám phá với tư cách Khách');
+      expect(guestButton, findsOneWidget);
+
+      await tester.ensureVisible(guestButton);
+      await tester.tap(guestButton);
+      await tester.pumpAndSettle();
+
+      // Navigated to /explore
+      expect(find.text('Explore Screen'), findsOneWidget);
     });
   });
 }

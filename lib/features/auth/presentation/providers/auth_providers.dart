@@ -35,5 +35,3 @@ class GuestModeNotifier extends Notifier<bool> {
 final guestModeProvider = NotifierProvider<GuestModeNotifier, bool>(
   GuestModeNotifier.new,
 );
-
-
