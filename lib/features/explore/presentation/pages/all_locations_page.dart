@@ -75,7 +75,9 @@ class _AllLocationsPageState extends ConsumerState<AllLocationsPage> {
                           ),
                           Text(
                             appStrings(context).locationCount(locations.length),
-                            style: const TextStyle(color: AppColors.stitchMuted),
+                            style: const TextStyle(
+                              color: AppColors.stitchMuted,
+                            ),
                           ),
                         ],
                       ),
@@ -111,9 +113,8 @@ class _AllLocationsPageState extends ConsumerState<AllLocationsPage> {
                       itemCount: visible.length,
                       itemBuilder: (context, index) => _AllLocationCard(
                         location: visible[index],
-                        onExplore: () => context.go(
-                          '/locations/${visible[index].slug}',
-                        ),
+                        onExplore: () =>
+                            context.go('/locations/${visible[index].slug}'),
                       ),
                     ),
                   ),
@@ -247,7 +248,9 @@ class _AllLocationCard extends StatelessWidget {
                       Positioned(
                         top: AppSpacing.sm,
                         right: AppSpacing.sm,
-                        child: _ReleaseStatusBadge(isReleased: location.isReleased),
+                        child: _ReleaseStatusBadge(
+                          isReleased: location.isReleased,
+                        ),
                       ),
                     ],
                   ),
@@ -324,9 +327,8 @@ class _ReleaseStatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) => DecoratedBox(
     decoration: BoxDecoration(
-      color: (isReleased ? AppColors.completedGreen : AppColors.gold).withValues(
-        alpha: .94,
-      ),
+      color: (isReleased ? AppColors.completedGreen : AppColors.gold)
+          .withValues(alpha: .94),
       borderRadius: BorderRadius.circular(AppRadius.round),
     ),
     child: Padding(
@@ -335,7 +337,9 @@ class _ReleaseStatusBadge extends StatelessWidget {
         vertical: AppSpacing.xxs,
       ),
       child: Text(
-        isReleased ? appStrings(context).explore : appStrings(context).comingSoon,
+        isReleased
+            ? appStrings(context).explore
+            : appStrings(context).comingSoon,
         style: const TextStyle(
           color: AppColors.paper,
           fontWeight: FontWeight.w800,
@@ -362,20 +366,21 @@ class _AllLocationsImage extends StatelessWidget {
     );
   }
 
-  Widget _networkImage(
-    String url, {
-    required bool retryOriginalUrl,
-  }) => Image.network(
-    url,
-    fit: BoxFit.cover,
-    webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
-    semanticLabel: location.thumbnailAlt.isEmpty
-        ? location.name
-        : location.thumbnailAlt,
-    errorBuilder: (_, _, _) => retryOriginalUrl
-        ? _networkImage(location.thumbnailUrl.trim(), retryOriginalUrl: false)
-        : const _AllLocationsImageFallback(),
-  );
+  Widget _networkImage(String url, {required bool retryOriginalUrl}) =>
+      Image.network(
+        url,
+        fit: BoxFit.cover,
+        webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
+        semanticLabel: location.thumbnailAlt.isEmpty
+            ? location.name
+            : location.thumbnailAlt,
+        errorBuilder: (_, _, _) => retryOriginalUrl
+            ? _networkImage(
+                location.thumbnailUrl.trim(),
+                retryOriginalUrl: false,
+              )
+            : const _AllLocationsImageFallback(),
+      );
 }
 
 class _AllLocationsImageFallback extends StatelessWidget {

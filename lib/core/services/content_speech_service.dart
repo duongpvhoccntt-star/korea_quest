@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'content_speech_stub.dart'
-    if (dart.library.js_interop) 'content_speech_web.dart';
+    if (dart.library.js_interop) 'content_speech_web.dart'
+    if (dart.library.io) 'content_speech_native.dart';
 
-enum SpeechPlaybackState { idle, speaking, paused }
+enum SpeechPlaybackState { idle, speaking, paused, error }
 
 enum SpeechLocaleAvailability { loading, available, unavailable }
 
@@ -54,12 +55,13 @@ class LocationSpeechSource {
 }
 
 class SpeechPlayback {
-  const SpeechPlayback({required this.state, this.sessionId});
+  const SpeechPlayback({required this.state, this.sessionId, this.message});
 
   const SpeechPlayback.idle() : this(state: SpeechPlaybackState.idle);
 
   final SpeechPlaybackState state;
   final String? sessionId;
+  final String? message;
 }
 
 class SpeechStartResult {
@@ -92,7 +94,7 @@ abstract interface class ContentSpeechService {
   Stream<SpeechPlayback> get changes;
   Stream<void> get voiceChanges;
 
-  SpeechLocaleAvailability availabilityFor(String locale);
+  SpeechLocaleAvailability availabilityFor(LocationSpeechSource source);
 
   Future<SpeechStartResult> speak({
     required String sessionId,

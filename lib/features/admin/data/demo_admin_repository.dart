@@ -131,6 +131,7 @@ class DemoAdminRepository
       ),
     ];
   }
+
   @override
   Future<int> saveSection({
     required AdminLocationDraft draft,

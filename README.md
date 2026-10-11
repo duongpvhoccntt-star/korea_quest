@@ -73,6 +73,19 @@ flutter run -d chrome
 
 Bản đồ MapTiler cần truyền `--dart-define=MAPTILER_API_KEY=<LOCAL_MAPTILER_KEY>`. Key hiển thị trên Flutter Web phải giới hạn theo origin (localhost hoặc GitHub Pages); attribution MapTiler/OpenStreetMap luôn hiển thị trên bản đồ.
 
+Để chạy dữ liệu địa điểm và tọa độ Published từ Supabase trên máy cục bộ, đặt key MapTiler công khai (đã giới hạn origin `localhost`) vào biến môi trường rồi dùng script. Script tự lấy Supabase publishable key từ Supabase CLI và truyền cả hai cấu hình vào Flutter:
+
+```powershell
+$env:MAPTILER_API_KEY = '<MAPTILER_BROWSER_KEY>'
+.\tool\run_web_with_supabase.ps1 -Device chrome
+```
+
+Hoặc truyền key trực tiếp — tham số đúng là `-MapTilerApiKey`:
+
+```powershell
+.\tool\run_web_with_supabase.ps1 -Device chrome -MapTilerApiKey '<MAPTILER_BROWSER_KEY>'
+```
+
 Xem danh sách thiết bị có thể sử dụng:
 
 ```bash

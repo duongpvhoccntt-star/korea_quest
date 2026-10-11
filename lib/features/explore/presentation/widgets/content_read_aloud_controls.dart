@@ -36,7 +36,7 @@ class _ContentReadAloudControlsState extends State<ContentReadAloudControls> {
     super.initState();
     _speechService = widget.speechService ?? contentSpeechService;
     _playback = _speechService.playback;
-    _availability = _speechService.availabilityFor(widget.source.locale);
+    _availability = _speechService.availabilityFor(widget.source);
     _subscribe();
   }
 
@@ -51,7 +51,10 @@ class _ContentReadAloudControlsState extends State<ContentReadAloudControls> {
       _playback = _speechService.playback;
       _subscribe();
     }
-    if (oldWidget.source.locale != widget.source.locale) {
+    if (oldWidget.source.slug != widget.source.slug ||
+        oldWidget.source.locale != widget.source.locale ||
+        oldWidget.source.segment != widget.source.segment ||
+        oldWidget.source.index != widget.source.index) {
       _refreshAvailability();
     }
   }
@@ -67,7 +70,7 @@ class _ContentReadAloudControlsState extends State<ContentReadAloudControls> {
 
   void _refreshAvailability() {
     setState(() {
-      _availability = _speechService.availabilityFor(widget.source.locale);
+      _availability = _speechService.availabilityFor(widget.source);
     });
   }
 

@@ -144,7 +144,8 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
         );
         return false;
       }
-    }    setState(() => _saving = true);
+    }
+    setState(() => _saving = true);
     try {
       final repository = ref.read(adminRepositoryProvider);
       final wasPersisted = await _ensurePersisted(repository);

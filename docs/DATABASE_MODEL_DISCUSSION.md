@@ -36,7 +36,7 @@ Phạm vi hiện tại bao gồm **Admin Content, public read model và progress
 | **Quản trị viên (Admin User)** | Người dùng Supabase Auth có UUID trong `admin_users` và được phép biên tập/xuất bản. | Nhà thám hiểm |
 | **Bản dịch nội dung (Content Translation)** | Lớp chữ hiển thị theo `vi`, `en` hoặc `ko` gắn với một Phiên bản nội dung; không nhân bản media, XP, cấu trúc hay đáp án đúng. | Bản sao Địa điểm |
 | **Bản nguồn (Source Content)** | Nội dung tiếng Việt chuẩn để tạo và kiểm tra độ mới của các Bản dịch nội dung. | Bản dịch đã duyệt |
-| **Tài khoản khách (Guest User)** | Phiên chơi nhanh chỉ yêu cầu tên hiển thị (`AuthUser.isGuest = true`), không bắt buộc email/mật khẩu; cho phép trải nghiệm nội dung và bảo toàn tiến trình khi nâng cấp. | Người dùng ẩn danh chưa đặt tên |
+| **Tài khoản khách (Guest User)** | Phiên Supabase Anonymous Auth chỉ yêu cầu tên hiển thị (`AuthUser.isGuest = true`), không bắt buộc email/mật khẩu. Khi đăng ký, ứng dụng nâng cấp cùng UUID để giữ XP, Dấu mộc và Tiến độ. | Phiên thuần cục bộ, người dùng ẩn danh chưa đặt tên |
 
 ## 3. Tổng quan kiến trúc dữ liệu
 
@@ -455,7 +455,7 @@ Các RPC ghi dữ liệu là `security definer`, đặt `search_path` rỗng và
 
 Edge Function `suggest-location-coordinates` yêu cầu JWT của Admin và gọi `is_admin` trước khi truy cập provider. `MAPTILER_API_KEY` chỉ nằm ở Supabase secrets; `GEMINI_API_KEY` là tùy chọn để chuẩn hóa truy vấn. Function chỉ trả ứng viên, không ghi Draft hoặc Publish.
 
-Edge Function `synthesize-location-speech` là phương án Cloud TTS dự phòng, chưa triển khai trên production. Flutter Web hiện dùng Web Speech API của trình duyệt để khách không đăng nhập cũng có thể nghe nội dung Published, nên không gửi prose sang server và không cần Google Cloud billing/API key. Nếu bật Cloud TTS về sau, client chỉ gửi `slug`, `locale`, `segment` hợp lệ và index khi cần; function gọi `get_published_location` bằng anon role để không thể đọc Draft, tự dựng prose phía server và gọi Google Cloud Text-to-Speech. MP3 được cache công khai ở bucket `location-speech`; cache miss bị giới hạn nguyên tử 12 lần/phút theo IP băm với `SPEECH_RATE_LIMIT_SALT`.
+Flutter Web dùng Web Speech API của trình duyệt và app native dùng giọng đọc hệ điều hành, nên khách không đăng nhập có thể nghe nội dung Published mà không cần Google Cloud billing/API key. Edge Function `synthesize-location-speech` cùng bucket `location-speech` là phương án Cloud TTS dự phòng, chưa triển khai production. Nếu bật về sau, client chỉ gửi `slug`, `locale`, `segment` hợp lệ và index khi cần; function gọi `get_published_location` bằng anon role để không thể đọc Draft, tạo MP3 cache theo revision/locale/segment. Cache miss giới hạn 12 lần/phút theo IP băm với `SPEECH_RATE_LIMIT_SALT` trong `location_speech_rate_limits`, qua RPC chỉ cấp execute cho `service_role`.
 
 ## 12. Authentication, Authorization và RLS
 
@@ -469,7 +469,7 @@ Supabase Auth xác thực người dùng. Đăng nhập thành công chưa đủ
 | `location_revision_translations` | Chỉ đọc bản `approved` thuộc revision Published | Đọc mọi trạng thái; ghi qua RPC |
 | `admin_users` | Không đọc | Đọc qua policy |
 | DML trực tiếp | Không được grant | Không được grant; ghi qua RPC |
-| Gameplay cá nhân | Anonymous chỉ đọc nội dung Published; không ghi XP | Authenticated chỉ đọc dữ liệu của mình qua RLS/read RPC và ghi qua RPC idempotent |
+| Gameplay cá nhân | Anonymous Auth đọc nội dung Published và ghi dữ liệu của chính UUID đó qua RPC idempotent; cần bật Anonymous Sign-Ins trước khi phát hành | Authenticated chỉ đọc dữ liệu của mình qua RLS/read RPC và ghi qua RPC idempotent |
 | Hộ chiếu chia sẻ | Chỉ đọc qua token còn hiệu lực; không lộ email/họ tên pháp lý | Chủ sở hữu tạo lại hoặc thu hồi token |
 
 Fixture trong `supabase/seed.sql` tạo tài khoản thử nghiệm và chỉ dành cho local. Production phải tạo tài khoản Auth bằng quy trình bảo mật riêng rồi thêm UUID vào `admin_users`; không chạy seed local và không commit secret.
@@ -496,6 +496,7 @@ Cập nhật ngày 2026-10-11:
 | Huy hiệu/Thử thách | Metric `unlocked_fun_facts` chuyển sang `content_views` với filter `kind = fun_fact` |
 | Flutter Admin | Có model/repository, UI editor và panel duyệt gợi ý tọa độ; chỉ thao tác Áp dụng mới thay đổi Draft, còn Publish luôn qua RPC validator |
 | Explore/Journey runtime | Public content dùng Supabase khi có cấu hình và gửi locale `vi`/`en`/`ko`; thiếu bản dịch sẽ fallback tiếng Việt. Explore dùng tọa độ revision Published để hiện marker MapTiler |
+| Guest runtime | Khi có cấu hình Supabase, Flutter tạo phiên Anonymous Auth trước khi khám phá; đăng ký email/mật khẩu gọi `updateUser` trên cùng UUID. Cần bật **Anonymous Sign-Ins** trong Supabase trước khi phát hành. Mock/offline dùng cache cục bộ theo `userId` để đánh dấu hoàn thành ngay và sau tải lại. |
 | Level/Thành tích/Hộ chiếu runtime | Flutter đã dùng read/write RPC thật; Level/Huy hiệu/Dấu mộc không còn fallback mock khi Supabase được cấu hình |
 | Progression MVP | Seed 8 Level, 8 Huy hiệu; XP server-authoritative theo +2/+8/+20/+50; reward result trả delta XP, Huy hiệu/Dấu mộc mới và cờ request lặp |
 | Reset gameplay 2026-10-10 | Đã chạy trên cloud. Các bảng gameplay chi tiết và passport share link có 0 bản ghi; 7 dòng `explorer_progress_summary` được giữ để đặt Level 1/0 XP. Tài khoản, hồ sơ, saved content, memories và nội dung Published được giữ lại |
@@ -525,7 +526,7 @@ Cập nhật ngày 2026-10-11:
 14. RPC validation tiếp tục giữ hợp đồng `text[]`; Flutter Admin làm giàu lỗi quiz bằng dữ liệu Bản nháp đã lưu và `AdminDiagnostic.itemIndex` để định vị chính xác mà không đổi hợp đồng database.
 15. Card Lịch sử, Điểm đến, Trải nghiệm và Ẩm thực dùng gallery tối đa 10 ảnh, chỉ hiển thị một ảnh tại một thời điểm. Ba loại đầu có thể dùng một video YouTube thay thế; public payload giữ các trường media ảnh đầu tiên để tương thích ngược, còn bản dịch chỉ lưu alt theo đúng chỉ số ảnh.
 16. Edge Function không được lưu phản hồi Gemini chỉ sao chép Bản nguồn. Prompt phải chỉ rõ nguồn/đích; output sai ngôn ngữ được retry tối đa một lần và bị từ chối nếu vẫn không đạt.
-17. Tài khoản khách (Guest User): Hỗ trợ phiên khách cục bộ (`AuthUser.isGuest = true`) không bắt buộc email/mật khẩu, chỉ cần tên hiển thị. Khách có thể khám phá và nhận XP; sau khi hoàn thành một Địa điểm (hoặc chặng Tổng kết), ứng dụng kích hoạt hộp thoại vinh danh và gợi ý chuyển đổi sang tài khoản chính thức mà không làm mất tiến trình đã đạt được.
+17. Tài khoản khách (Guest User): Dùng Supabase Anonymous Auth (`AuthUser.isGuest = true`) không bắt buộc email/mật khẩu, chỉ cần tên hiển thị. Khách có thể khám phá và nhận XP; khi đăng ký, Flutter nâng cấp cùng danh tính bằng `updateUser(email, password)` để không làm mất tiến trình, XP, Dấu mộc hoặc phần thưởng đã đạt được. Điều kiện phát hành là bật **Anonymous Sign-Ins** trong Supabase.
 18. XP và Level là server-authoritative. Flutter không tự cộng thưởng; ledger dùng `(user_id, reference_key)` để chống cộng lặp và Level được suy ra từ XP tích lũy cùng `level_definitions`.
 19. Công thức MVP là +2 hoàn thành Câu hỏi, +8 nếu đúng, +20 hoàn thành Chặng, +50 hoàn thành Địa điểm. Làm lại được phép nhưng không nhận lại cùng phần thưởng.
 20. Hộ chiếu riêng tư mặc định; share link dùng token hash, có thể tạo lại/thu hồi và read model công khai không trả email/họ tên pháp lý.

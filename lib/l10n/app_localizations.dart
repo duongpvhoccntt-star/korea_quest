@@ -2349,6 +2349,18 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Đăng ký tài khoản chính thức'**
   String get upgradeToOfficialAccount;
+
+  /// No description provided for @rewardsAlreadyReceived.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phần thưởng của địa điểm này đã được ghi nhận trước đó.'**
+  String get rewardsAlreadyReceived;
+
+  /// No description provided for @exploreAgain.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khám phá lại'**
+  String get exploreAgain;
 }
 
 class _AppLocalizationsDelegate

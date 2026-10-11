@@ -795,7 +795,7 @@ class MockLocationContentRepository implements LocationContentRepository {
     for (final question in allQuestions) {
       if (question.string('id') == questionId) {
         final options = question.mapList('options');
-        final selectedId = answer['selected_option_id']?.toString() ?? '';
+        final selectedId = answer['option_id']?.toString() ?? '';
         final selected = options
             .where((o) => o.string('id') == selectedId)
             .firstOrNull;

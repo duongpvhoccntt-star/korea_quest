@@ -97,7 +97,8 @@ class _FakeSpeechService implements ContentSpeechService {
   @override
   Stream<void> get voiceChanges => _voiceChanges.stream;
   @override
-  SpeechLocaleAvailability availabilityFor(String locale) => availability;
+  SpeechLocaleAvailability availabilityFor(LocationSpeechSource source) =>
+      availability;
   @override
   void pause() {}
   @override

@@ -76,7 +76,8 @@ class _LocationCoordinateEditorState
       if (!mounted) return;
       setState(() {
         _suggestions = const [];
-        _message = 'Không thể lấy gợi ý vị trí lúc này. Hãy thử lại hoặc chọn vị trí thủ công.';
+        _message =
+            'Không thể lấy gợi ý vị trí lúc này. Hãy thử lại hoặc chọn vị trí thủ công.';
       });
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -94,7 +95,8 @@ class _LocationCoordinateEditorState
     widget.onChanged();
     setState(() {
       _preview = null;
-      _message = 'Đã áp dụng tọa độ vào Bản nháp. Hãy lưu Bản nháp khi bạn đã kiểm tra xong.';
+      _message =
+          'Đã áp dụng tọa độ vào Bản nháp. Hãy lưu Bản nháp khi bạn đã kiểm tra xong.';
     });
   }
 
@@ -205,8 +207,8 @@ class _CoordinateSuggestionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final confidence =
-        (suggestion.confidence.clamp(0, 1) * 100).toStringAsFixed(0);
+    final confidence = (suggestion.confidence.clamp(0, 1) * 100)
+        .toStringAsFixed(0);
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.paper,

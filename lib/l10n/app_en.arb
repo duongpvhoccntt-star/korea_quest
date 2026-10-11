@@ -395,4 +395,6 @@
   "continueAsGuest": "Maybe Later / Continue as Guest",
   "orContinueAsGuest": "Or continue without an account",
   "upgradeToOfficialAccount": "Register an official account"
+  ,"rewardsAlreadyReceived": "The rewards for this location have already been collected."
+  ,"exploreAgain": "Explore again"
 }

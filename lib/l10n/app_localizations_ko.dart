@@ -1202,4 +1202,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get upgradeToOfficialAccount => '정식 계정으로 가입';
+
+  @override
+  String get rewardsAlreadyReceived => '이 장소의 보상은 이미 받았습니다.';
+
+  @override
+  String get exploreAgain => '다시 탐험하기';
 }

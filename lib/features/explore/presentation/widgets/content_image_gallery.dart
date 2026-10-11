@@ -237,10 +237,7 @@ class _GalleryImage extends StatelessWidget {
           semanticLabel: image.alt.isEmpty ? fallbackLabel : image.alt,
           loadingBuilder: (context, child, progress) => progress == null
               ? child
-              : const ColoredBox(
-                  color: AppColors.skyLight,
-                  child: Center(child: CircularProgressIndicator()),
-                ),
+              : ContentImagePlaceholder(label: fallbackLabel, large: large),
           errorBuilder: (context, error, stackTrace) =>
               ContentImagePlaceholder(label: fallbackLabel, large: large),
         );
