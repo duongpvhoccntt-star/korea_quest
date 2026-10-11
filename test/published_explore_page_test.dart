@@ -7,6 +7,7 @@ import 'package:korea_quest/features/auth/domain/auth_models.dart';
 import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
 import 'package:korea_quest/features/explore/domain/published_location.dart';
 import 'package:korea_quest/features/explore/presentation/pages/published_explore_page.dart';
+import 'package:korea_quest/features/explore/presentation/pages/all_locations_page.dart';
 import 'package:korea_quest/features/explore/presentation/providers/location_content_providers.dart';
 import 'package:korea_quest/shared/models/domain_models.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
@@ -91,7 +92,6 @@ void main() {
     );
     expect(find.text('Không thể đọc dữ liệu hành trình.'), findsNothing);
   });
-
   testWidgets('guest exploration does not request personal data', (
     tester,
   ) async {
@@ -112,6 +112,40 @@ void main() {
     expect(find.text('Không thể tải huy hiệu đã nhận.'), findsNothing);
     expect(find.text('Không thể đọc dữ liệu hành trình.'), findsNothing);
   });
+
+  testWidgets('View all opens the public location list and only released places navigate', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
+
+    final bundle = _buildApp();
+    addTearDown(bundle.router.dispose);
+    await tester.pumpWidget(bundle.app);
+    await tester.pumpAndSettle();
+
+    final viewAll = find.byKey(const Key('explore-view-all'));
+    await tester.ensureVisible(viewAll);
+    await tester.tap(viewAll);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AllLocationsPage), findsOneWidget);
+    final released = tester.widget<FilledButton>(
+      find.byKey(const ValueKey('all-location-action-gyeongbokgung')),
+    );
+    final comingSoon = tester.widget<FilledButton>(
+      find.byKey(const ValueKey('all-location-action-jeju')),
+    );
+    expect(released.onPressed, isNotNull);
+    expect(comingSoon.onPressed, isNull);
+
+    await tester.tap(
+      find.byKey(const ValueKey('all-location-action-gyeongbokgung')),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Location: gyeongbokgung'), findsOneWidget);
+  });
 }
 
 ({Widget app, GoRouter router}) _buildApp({
@@ -126,6 +160,10 @@ void main() {
         path: '/explore',
         builder: (context, state) =>
             const Scaffold(body: PublishedExplorePage()),
+      ),
+      GoRoute(
+        path: '/explore/all',
+        builder: (context, state) => const Scaffold(body: AllLocationsPage()),
       ),
       GoRoute(
         path: '/locations/:slug',

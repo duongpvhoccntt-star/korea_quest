@@ -3,8 +3,10 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:korea_quest/app/app_config.dart';
+import 'package:korea_quest/core/utils/optimized_image_url.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
+import 'package:korea_quest/design_system/shadows/app_shadows.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -17,11 +19,16 @@ bool isInsideKoreaMapBounds(double latitude, double longitude) =>
     longitude >= 124 &&
     longitude <= 132;
 
+bool isOutsideKoreaMainlandBounds(double latitude, double longitude) =>
+    latitude < 34.4 || latitude > 38.9 || longitude < 125.1 || longitude > 130.3;
+
 class KoreaMapPlace {
   const KoreaMapPlace({
     required this.id,
     required this.title,
     required this.subtitle,
+    required this.thumbnailUrl,
+    required this.thumbnailAlt,
     required this.latitude,
     required this.longitude,
     required this.isReleased,
@@ -30,9 +37,14 @@ class KoreaMapPlace {
   final String id;
   final String title;
   final String subtitle;
+  final String thumbnailUrl;
+  final String thumbnailAlt;
   final double latitude;
   final double longitude;
   final bool isReleased;
+
+  bool get isOutsideMainland =>
+      isOutsideKoreaMainlandBounds(latitude, longitude);
 }
 
 String? _tileUrl() {
@@ -54,6 +66,7 @@ class KoreaLocationsMap extends StatefulWidget {
     required this.selectedPlaceId,
     required this.onPlaceSelected,
     required this.resetLabel,
+    required this.remotePlacesLabel,
     required this.unavailableBuilder,
     super.key,
   });
@@ -62,6 +75,7 @@ class KoreaLocationsMap extends StatefulWidget {
   final String? selectedPlaceId;
   final ValueChanged<String> onPlaceSelected;
   final String resetLabel;
+  final String remotePlacesLabel;
   final WidgetBuilder unavailableBuilder;
 
   @override
@@ -76,26 +90,26 @@ class _KoreaLocationsMapState extends State<KoreaLocationsMap> {
         final selected = place.id == widget.selectedPlaceId;
         return Marker(
           point: LatLng(place.latitude, place.longitude),
-          width: selected ? 48 : 38,
-          height: selected ? 48 : 38,
-          child: GestureDetector(
+          width: selected ? 80 : 64,
+          height: selected ? 80 : 64,
+          child: KoreaMapPlaceMarker(
+            place: place,
+            selected: selected,
             onTap: () => widget.onPlaceSelected(place.id),
-            child: Icon(
-              Icons.location_on,
-              size: selected ? 44 : 34,
-              color: selected
-                  ? AppColors.koreanBlue
-                  : place.isReleased
-                  ? AppColors.koreanRed
-                  : AppColors.gold,
-            ),
           ),
         );
       })
       .toList(growable: false);
 
+  List<KoreaMapPlace> get _remotePlaces => widget.places
+      .where((place) => place.isOutsideMainland)
+      .toList(growable: false);
+
   void _reset() => _controller.fitCamera(
-    CameraFit.bounds(bounds: koreaMapBounds, padding: const EdgeInsets.all(AppSpacing.xl)),
+    CameraFit.bounds(
+      bounds: koreaMapBounds,
+      padding: const EdgeInsets.all(AppSpacing.xl),
+    ),
   );
 
   @override
@@ -132,41 +146,56 @@ class _KoreaLocationsMapState extends State<KoreaLocationsMap> {
             borderRadius: BorderRadius.circular(AppRadius.large),
             child: SizedBox(
               height: constraints.maxWidth < 600 ? 390 : 520,
-              child: FlutterMap(
-                mapController: _controller,
-                options: MapOptions(
-                  initialCenter: koreaMapCenter,
-                  initialZoom: constraints.maxWidth < 600 ? 5.6 : 6.2,
-                  minZoom: 5,
-                  maxZoom: 19,
-                  cameraConstraint: CameraConstraint.contain(
-                    bounds: koreaMapBounds,
-                  ),
-                ),
+              child: Stack(
                 children: [
-                  TileLayer(
-                    urlTemplate: _tileUrl()!,
-                    userAgentPackageName: 'com.koreaquest.app',
-                  ),
-                  MarkerClusterLayerWidget(
-                    options: MarkerClusterLayerOptions(
-                      markers: _markers,
-                      maxClusterRadius: 45,
-                      size: const Size(42, 42),
-                      builder: (context, markers) => Container(
-                        decoration: const BoxDecoration(
-                          color: AppColors.koreanBlue,
-                          shape: BoxShape.circle,
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          '${markers.length}',
-                          style: const TextStyle(color: AppColors.paper),
-                        ),
+                  FlutterMap(
+                    mapController: _controller,
+                    options: MapOptions(
+                      initialCenter: koreaMapCenter,
+                      initialZoom: constraints.maxWidth < 600 ? 5.6 : 6.2,
+                      minZoom: 5,
+                      maxZoom: 19,
+                      cameraConstraint: CameraConstraint.contain(
+                        bounds: koreaMapBounds,
                       ),
                     ),
+                    children: [
+                      TileLayer(
+                        urlTemplate: _tileUrl()!,
+                        userAgentPackageName: 'com.koreaquest.app',
+                      ),
+                      MarkerClusterLayerWidget(
+                        options: MarkerClusterLayerOptions(
+                          markers: _markers,
+                          maxClusterRadius: 45,
+                          size: const Size(42, 42),
+                          builder: (context, markers) => Container(
+                            decoration: const BoxDecoration(
+                              color: AppColors.koreanBlue,
+                              shape: BoxShape.circle,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              '${markers.length}',
+                              style: const TextStyle(color: AppColors.paper),
+                            ),
+                          ),
+                        ),
+                      ),
+                      _attribution(),
+                    ],
                   ),
-                  _attribution(),
+                  if (_remotePlaces.isNotEmpty)
+                    Positioned(
+                      left: AppSpacing.sm,
+                      bottom: AppSpacing.sm,
+                      child: KoreaMapRemotePlacesInset(
+                        label: widget.remotePlacesLabel,
+                        places: _remotePlaces,
+                        selectedPlaceId: widget.selectedPlaceId,
+                        onSelected: widget.onPlaceSelected,
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -175,6 +204,192 @@ class _KoreaLocationsMapState extends State<KoreaLocationsMap> {
       ),
     );
   }
+}
+
+class KoreaMapRemotePlacesInset extends StatelessWidget {
+  const KoreaMapRemotePlacesInset({
+    required this.label,
+    required this.places,
+    required this.selectedPlaceId,
+    required this.onSelected,
+    super.key,
+  });
+
+  final String label;
+  final List<KoreaMapPlace> places;
+  final String? selectedPlaceId;
+  final ValueChanged<String> onSelected;
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: AppColors.paper.withValues(alpha: .94),
+    borderRadius: BorderRadius.circular(AppRadius.medium),
+    elevation: 3,
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 220),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.xs),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.travel_explore_rounded,
+                  size: 16,
+                  color: AppColors.koreanBlue,
+                ),
+                const SizedBox(width: AppSpacing.xxs),
+                Flexible(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Wrap(
+              spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xs,
+              children: [
+                for (final place in places)
+                  Tooltip(
+                    message: place.title,
+                    child: SizedBox(
+                      width: 44,
+                      height: 44,
+                      child: KoreaMapPlaceMarker(
+                        place: place,
+                        selected: place.id == selectedPlaceId,
+                        compact: true,
+                        onTap: () => onSelected(place.id),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+class KoreaMapPlaceMarker extends StatelessWidget {
+  const KoreaMapPlaceMarker({
+    required this.place,
+    required this.selected,
+    required this.onTap,
+    this.compact = false,
+    super.key,
+  });
+
+  final KoreaMapPlace place;
+  final bool selected;
+  final VoidCallback onTap;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    final size = compact ? 40.0 : selected ? 68.0 : 54.0;
+    final borderColor = selected
+        ? AppColors.koreanBlue
+        : place.isReleased
+        ? AppColors.koreanRed
+        : AppColors.gold;
+
+    return Semantics(
+      button: true,
+      label: place.title,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Center(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              color: AppColors.skyLight,
+              shape: BoxShape.circle,
+              border: Border.all(color: borderColor, width: selected ? 4 : 3),
+              boxShadow: AppShadows.small,
+            ),
+            child: ClipOval(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  _MarkerImage(place: place),
+                  if (!place.isReleased)
+                    ColoredBox(
+                      color: AppColors.paper.withValues(alpha: .62),
+                      child: Icon(
+                        Icons.schedule_rounded,
+                        color: AppColors.gold,
+                        size: compact ? 18 : 24,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MarkerImage extends StatelessWidget {
+  const _MarkerImage({required this.place});
+
+  final KoreaMapPlace place;
+
+  @override
+  Widget build(BuildContext context) {
+    final originalUrl = place.thumbnailUrl.trim();
+    if (originalUrl.isEmpty) return const _MarkerImageFallback();
+
+    final optimizedUrl = optimizedImageUrl(originalUrl, maxWidth: 160);
+    return _networkImage(
+      optimizedUrl,
+      retryOriginalUrl: optimizedUrl != originalUrl,
+    );
+  }
+
+  Widget _networkImage(
+    String url, {
+    required bool retryOriginalUrl,
+  }) => Image.network(
+    url,
+    fit: BoxFit.cover,
+    webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
+    semanticLabel: place.thumbnailAlt.isEmpty ? place.title : place.thumbnailAlt,
+    errorBuilder: (_, _, _) => retryOriginalUrl
+        ? _networkImage(place.thumbnailUrl.trim(), retryOriginalUrl: false)
+        : const _MarkerImageFallback(),
+  );
+}
+
+class _MarkerImageFallback extends StatelessWidget {
+  const _MarkerImageFallback();
+
+  @override
+  Widget build(BuildContext context) => const ColoredBox(
+    color: AppColors.skyLight,
+    child: Center(
+      child: Icon(
+        Icons.location_on_rounded,
+        color: AppColors.koreanBlue,
+      ),
+    ),
+  );
 }
 
 class LocationCoordinateMap extends StatefulWidget {

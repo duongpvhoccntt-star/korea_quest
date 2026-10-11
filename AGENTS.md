@@ -30,6 +30,7 @@ Người dùng chọn bất kỳ địa điểm đã phát hành, khám phá cá
 | `cupertino_icons` | ^1.0.8 | Icons |
 
 - **Nền tảng ưu tiên:** Flutter Web.
+- **Bản đồ:** MapTiler Cloud raster tiles trên nền OpenStreetMap; cấu hình bằng `MAPTILER_API_KEY`, luôn hiển thị attribution.
 - **Material 3** — không dùng Material 2.
 
 ---
@@ -192,3 +193,5 @@ Ngoài ra, nếu thay đổi có chạm tới database hoặc model, xác nhận
 | Thuật ngữ nghiệp vụ (Ubiquitous Language) | [`CONTEXT.md`](CONTEXT.md) |
 | Prototype thiết kế | [`design-reference/koreaquest-prototype.html`](design-reference/koreaquest-prototype.html) |
 | README | [`README.md`](README.md) |
+
+- T?a d? AI trong Admin ch? l� g?i � t? Edge Function (Gemini + MapTiler Geocoding); Admin ph?i duy?t tru?c khi ghi Draft, kh�ng d�ng kh�a AI ph�a client.

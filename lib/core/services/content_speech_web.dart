@@ -1,20 +1,26 @@
 import 'dart:async';
 import 'dart:js_interop';
 
+import 'package:korea_quest/app/app_config.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:web/web.dart' as web;
 
 import 'content_speech_service.dart';
 
 ContentSpeechService createPlatformContentSpeechService() =>
-    _WebContentSpeechService();
+    _CloudContentSpeechService();
 
-class _WebContentSpeechService implements ContentSpeechService {
+/// Plays cached Cloud TTS MP3. Native Web Speech is deliberately never used:
+/// published content therefore sounds the same on every supported device.
+class _CloudContentSpeechService implements ContentSpeechService {
   final _changes = StreamController<SpeechPlayback>.broadcast();
+  final _availabilityChanges = StreamController<void>.broadcast();
   SpeechPlayback _playback = const SpeechPlayback.idle();
+  web.HTMLAudioElement? _audio;
   int _generation = 0;
 
   @override
-  bool get isSupported => true;
+  bool get isSupported => AppConfig.hasSupabaseConfiguration;
 
   @override
   SpeechPlayback get playback => _playback;
@@ -23,74 +29,65 @@ class _WebContentSpeechService implements ContentSpeechService {
   Stream<SpeechPlayback> get changes => _changes.stream;
 
   @override
-  void speak({
+  Stream<void> get voiceChanges => _availabilityChanges.stream;
+
+  @override
+  SpeechLocaleAvailability availabilityFor(String locale) =>
+      isSupported
+          ? SpeechLocaleAvailability.available
+          : SpeechLocaleAvailability.unavailable;
+
+  @override
+  Future<SpeechStartResult> speak({
     required String sessionId,
     required String text,
     required String locale,
-  }) {
-    final normalizedText = text.trim();
-    if (normalizedText.isEmpty) return;
+    required LocationSpeechSource source,
+  }) async {
+    if (text.trim().isEmpty) return const SpeechStartResult.emptyText();
+    if (!isSupported) return const SpeechStartResult.unavailable();
 
     final generation = ++_generation;
+    _stopAudio();
     try {
-      final speech = web.window.speechSynthesis;
-      speech.cancel();
-      final utterance = web.SpeechSynthesisUtterance(normalizedText)
-        ..lang = _speechLocale(locale)
-        ..rate = .92
-        ..pitch = 1
-        ..volume = 1
-        ..onstart = ((web.Event _) {
-          if (_isCurrent(generation)) {
-            _setPlayback(
-              SpeechPlayback(
-                state: SpeechPlaybackState.speaking,
-                sessionId: sessionId,
-              ),
-            );
-          }
-        }).toJS
-        ..onpause = ((web.Event _) {
-          if (_isCurrent(generation)) {
-            _setPlayback(
-              SpeechPlayback(
-                state: SpeechPlaybackState.paused,
-                sessionId: sessionId,
-              ),
-            );
-          }
-        }).toJS
-        ..onresume = ((web.Event _) {
-          if (_isCurrent(generation)) {
-            _setPlayback(
-              SpeechPlayback(
-                state: SpeechPlaybackState.speaking,
-                sessionId: sessionId,
-              ),
-            );
-          }
-        }).toJS
-        ..onend = ((web.Event _) {
+      final response = await Supabase.instance.client.functions.invoke(
+        'synthesize-location-speech',
+        body: source.toRequest(),
+      );
+      final data = response.data;
+      final audioUrl = data is Map ? data['audio_url'] : null;
+      if (audioUrl is! String || audioUrl.isEmpty || !_isCurrent(generation)) {
+        return const SpeechStartResult.failed();
+      }
+
+      final audio = web.HTMLAudioElement()
+        ..src = audioUrl
+        ..preload = 'auto'
+        ..onended = ((web.Event _) {
           if (_isCurrent(generation)) _setPlayback(const SpeechPlayback.idle());
         }).toJS
         ..onerror = ((web.Event _) {
           if (_isCurrent(generation)) _setPlayback(const SpeechPlayback.idle());
         }).toJS;
+      _audio = audio;
+      await audio.play().toDart;
+      if (!_isCurrent(generation)) return const SpeechStartResult.failed();
       _setPlayback(
         SpeechPlayback(
           state: SpeechPlaybackState.speaking,
           sessionId: sessionId,
         ),
       );
-      speech.speak(utterance);
+      return const SpeechStartResult.started();
     } on Object {
-      _setPlayback(const SpeechPlayback.idle());
+      if (_isCurrent(generation)) _setPlayback(const SpeechPlayback.idle());
+      return const SpeechStartResult.failed();
     }
   }
 
   @override
   void pause() {
-    web.window.speechSynthesis.pause();
+    _audio?.pause();
     if (_playback.state == SpeechPlaybackState.speaking) {
       _setPlayback(
         SpeechPlayback(
@@ -103,7 +100,9 @@ class _WebContentSpeechService implements ContentSpeechService {
 
   @override
   void resume() {
-    web.window.speechSynthesis.resume();
+    final audio = _audio;
+    if (audio == null) return;
+    unawaited(audio.play().toDart);
     if (_playback.state == SpeechPlaybackState.paused) {
       _setPlayback(
         SpeechPlayback(
@@ -117,20 +116,22 @@ class _WebContentSpeechService implements ContentSpeechService {
   @override
   void stop() {
     _generation++;
-    web.window.speechSynthesis.cancel();
+    _stopAudio();
     _setPlayback(const SpeechPlayback.idle());
   }
 
   bool _isCurrent(int generation) => generation == _generation;
 
+  void _stopAudio() {
+    final audio = _audio;
+    if (audio == null) return;
+    audio.pause();
+    audio.currentTime = 0;
+    _audio = null;
+  }
+
   void _setPlayback(SpeechPlayback playback) {
     _playback = playback;
     _changes.add(playback);
   }
-
-  String _speechLocale(String locale) => switch (locale) {
-    'ko' => 'ko-KR',
-    'en' => 'en-US',
-    _ => 'vi-VN',
-  };
 }

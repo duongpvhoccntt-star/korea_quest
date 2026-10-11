@@ -181,6 +181,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get locationList => 'Danh sách địa điểm';
 
   @override
+  String get locationsOutsideMap => 'Địa điểm ngoài khung';
+
+  @override
   String loadMapError(String error) {
     return 'Không thể tải bản đồ địa điểm: $error';
   }
@@ -701,6 +704,17 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get listenRead => 'Nghe đọc';
+
+  @override
+  String get speechVoiceLoading => 'Đang chuẩn bị giọng đọc...';
+
+  @override
+  String get speechVoiceUnavailable =>
+      'Thiết bị chưa có giọng đọc cho nội dung này';
+
+  @override
+  String get speechAudioUnavailable =>
+      'Không thể tải giọng đọc. Vui lòng thử lại.';
 
   @override
   String get pauseReading => 'Tạm dừng';

@@ -181,6 +181,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get locationList => 'Destination list';
 
   @override
+  String get locationsOutsideMap => 'Places beyond the main map';
+
+  @override
   String loadMapError(String error) {
     return 'Could not load the destination map: $error';
   }
@@ -704,6 +707,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get listenRead => 'Listen';
+
+  @override
+  String get speechVoiceLoading => 'Preparing voice...';
+
+  @override
+  String get speechVoiceUnavailable =>
+      'This device has no voice for this content language';
+
+  @override
+  String get speechAudioUnavailable =>
+      'The audio narration could not be loaded. Please try again.';
 
   @override
   String get pauseReading => 'Pause';

@@ -176,6 +176,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get locationList => '여행지 목록';
 
   @override
+  String get locationsOutsideMap => '주요 지도 밖의 여행지';
+
+  @override
   String loadMapError(String error) {
     return '여행지 지도를 불러오지 못했습니다: $error';
   }
@@ -673,6 +676,15 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get listenRead => '듣기';
+
+  @override
+  String get speechVoiceLoading => '음성을 준비하고 있습니다...';
+
+  @override
+  String get speechVoiceUnavailable => '이 기기에는 콘텐츠 언어 음성이 없습니다';
+
+  @override
+  String get speechAudioUnavailable => '음성 안내를 불러올 수 없습니다. 다시 시도해 주세요.';
 
   @override
   String get pauseReading => '일시 정지';

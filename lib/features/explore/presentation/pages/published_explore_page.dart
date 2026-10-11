@@ -154,6 +154,7 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
                           achievements: achievements,
                           personal: personal,
                           onExplore: _openLocation,
+                          onViewAll: _openAllLocations,
                         ),
                       ),
                       const SizedBox(width: AppSpacing.xl),
@@ -205,6 +206,7 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
                   _RecommendationStrip(
                     locations: items,
                     onExplore: _openLocation,
+                    onViewAll: _openAllLocations,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   _BadgeCollection(
@@ -321,6 +323,8 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
     if (!location.isReleased) return;
     context.go('/locations/${location.slug}');
   }
+
+  void _openAllLocations() => context.push('/explore/all');
 }
 
 class _SideRail extends StatelessWidget {
@@ -331,6 +335,7 @@ class _SideRail extends StatelessWidget {
     required this.achievements,
     required this.personal,
     required this.onExplore,
+    required this.onViewAll,
   });
 
   final int total;
@@ -339,6 +344,7 @@ class _SideRail extends StatelessWidget {
   final List<Achievement> achievements;
   final _PersonalOverview personal;
   final ValueChanged<PublishedLocationSummary> onExplore;
+  final VoidCallback onViewAll;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -349,7 +355,11 @@ class _SideRail extends StatelessWidget {
         onExplore: onExplore,
       ),
       const SizedBox(height: AppSpacing.lg),
-      _RecommendationStrip(locations: visible, onExplore: onExplore),
+      _RecommendationStrip(
+        locations: visible,
+        onExplore: onExplore,
+        onViewAll: onViewAll,
+      ),
       const SizedBox(height: AppSpacing.lg),
       _BadgeCollection(total: total, achievements: achievements),
       if (selected != null) ...[
@@ -568,6 +578,8 @@ class _ExploreGoogleMap extends StatelessWidget {
             subtitle: location.city,
             latitude: location.latitude!,
             longitude: location.longitude!,
+            thumbnailUrl: location.thumbnailUrl,
+            thumbnailAlt: location.thumbnailAlt,
             isReleased: location.isReleased,
           ),
         )
@@ -591,11 +603,12 @@ class _ExploreGoogleMap extends StatelessWidget {
             if (location != null) onSelect(location);
           },
           resetLabel: appStrings(context).resetMap,
+          remotePlacesLabel: appStrings(context).locationsOutsideMap,
           unavailableBuilder: (context) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _MapNotice(
-                message: appStrings(context).loadMapError('Google Maps'),
+                message: appStrings(context).loadMapError('MapTiler'),
               ),
               const SizedBox(height: AppSpacing.md),
               _DestinationList(
@@ -796,10 +809,12 @@ class _RecommendationStrip extends StatelessWidget {
   const _RecommendationStrip({
     required this.locations,
     required this.onExplore,
+    required this.onViewAll,
   });
 
   final List<PublishedLocationSummary> locations;
   final ValueChanged<PublishedLocationSummary> onExplore;
+  final VoidCallback onViewAll;
 
   @override
   Widget build(BuildContext context) => _SurfaceCard(
@@ -819,7 +834,8 @@ class _RecommendationStrip extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.xs),
             TextButton(
-              onPressed: () {},
+              key: const Key('explore-view-all'),
+              onPressed: onViewAll,
               child: Text(appStrings(context).viewAll),
             ),
           ],
