@@ -1,7 +1,7 @@
 # KoreaQuest Database & Domain Model
 
 > Trạng thái: Tài liệu thảo luận kỹ thuật, chưa phải cam kết triển khai production.
-> Nguồn đối chiếu: migrations đến `20261010130000_expose_location_coordinates.sql`, Edge Function `translate-location` và `suggest-location-coordinates`, model/repository Admin, Explore và Gameplay, `CONTEXT.md`, ADR và `TEAM_OWNERSHIP.md` tại ngày 2026-10-11.
+> Nguồn đối chiếu: migrations đến `20261011100000_location_speech_cache.sql`, Edge Function `translate-location`, `suggest-location-coordinates` và `synthesize-location-speech`, model/repository Admin, Explore và Gameplay, `CONTEXT.md`, ADR và `TEAM_OWNERSHIP.md` tại ngày 2026-10-11.
 > Trạng thái cloud: migration `20261010130000_expose_location_coordinates.sql` và Edge Function `suggest-location-coordinates` đã được deploy ngày 2026-10-11 trên project `KOREAQUEST` (org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`). Đã cấu hình `MAPTILER_API_KEY` server-side; tile key web riêng đã lưu trong GitHub Actions secret và chỉ cho phép origin GitHub Pages cùng `localhost`.
 
 ## 1. Mục tiêu và phạm vi
@@ -455,6 +455,8 @@ Các RPC ghi dữ liệu là `security definer`, đặt `search_path` rỗng và
 
 Edge Function `suggest-location-coordinates` yêu cầu JWT của Admin và gọi `is_admin` trước khi truy cập provider. `MAPTILER_API_KEY` chỉ nằm ở Supabase secrets; `GEMINI_API_KEY` là tùy chọn để chuẩn hóa truy vấn. Function chỉ trả ứng viên, không ghi Draft hoặc Publish.
 
+Edge Function `synthesize-location-speech` cho phép khách không đăng nhập phát audio của nội dung đã Publish. Client chỉ gửi `slug`, `locale`, `segment` hợp lệ và index khi cần; function gọi `get_published_location` bằng anon role để không thể đọc Draft, tự dựng prose phía server và gọi Google Cloud Text-to-Speech. MP3 được cache công khai ở bucket `location-speech` theo revision, locale, segment, nội dung và voice version. Browser roles chỉ có quyền đọc bucket; service role của Edge Function là bên duy nhất ghi. Cache miss bị giới hạn nguyên tử 12 lần/phút theo IP băm với `SPEECH_RATE_LIMIT_SALT` trong bảng `location_speech_rate_limits`. Secrets cần khi deploy: `GOOGLE_CLOUD_TTS_API_KEY` và `SPEECH_RATE_LIMIT_SALT`; không đưa vào Flutter Web.
+
 ## 12. Authentication, Authorization và RLS
 
 Supabase Auth xác thực người dùng. Đăng nhập thành công chưa đủ quyền quản trị: UUID phải tồn tại trong `public.admin_users`.
@@ -479,13 +481,14 @@ Cập nhật ngày 2026-10-11:
 | Hạng mục | Trạng thái hiện tại |
 |---|---|
 | Supabase Cloud project | Project `KOREAQUEST`, org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`, region Northeast Asia (Tokyo) |
-| Migration trên cloud | `20261010130000_expose_location_coordinates.sql` đã áp dụng ngày 2026-10-11; public read model trả tọa độ của revision Published |
+| Migration trên cloud | `20261010130000_expose_location_coordinates.sql` đã áp dụng ngày 2026-10-11; `20261011100000_location_speech_cache.sql` đang chờ áp dụng. Public read model trả tọa độ của revision Published |
 | Gallery ảnh nội dung | Đã triển khai migration, RPC, Admin editor, public carousel và test; OpenAPI Cloud xác nhận bốn cột `image_gallery`, RPC lưu/validate, và smoke test Published trả đúng `media.images` cùng ảnh đầu tương thích |
 | Bảng trên cloud | Có đầy đủ các bảng Content, Gameplay và bảng mới `location_revision_translations` |
 | Dữ liệu trên cloud | Có 4 Location, 18 Location Revision, 2 Admin; migration đã backfill 18 bản nguồn tiếng Việt trong `location_revision_translations` |
 | Nới rule xuất bản | Các migration `20261008094500_simplify_publish_validation.sql` và `20261008111918_lower_publish_word_minimum.sql` đã áp dụng lên cloud ngày 2026-10-08 |
 | Edge Function | `translate-location` version 4 ACTIVE từ ngày 2026-10-09; endpoint yêu cầu JWT. Bản deploy khóa rõ nguồn/đích, kiểm tra sai ngôn ngữ và retry tối đa một lần; 2 regression test cho trường hợp locale Hàn đã pass |
 | Gợi ý tọa độ | Edge Function `suggest-location-coordinates` đã deploy ngày 2026-10-11. Đã cấu hình `MAPTILER_API_KEY` Supabase và kiểm tra endpoint không có JWT trả 401 ngày 2026-10-11; còn smoke test bằng quyền Admin. Gemini là fallback tùy chọn, không có key nào đi vào Flutter Web |
+| Cloud TTS | Migration/bucket/cache và Edge Function `synthesize-location-speech` đã có trong repository, chưa deploy. Cần bật billing + Text-to-Speech API trong Google Cloud, đặt `GOOGLE_CLOUD_TTS_API_KEY` và `SPEECH_RATE_LIMIT_SALT` ở Supabase secrets, rồi deploy với JWT verification tắt. |
 | Secret dịch AI | Đã cấu hình `GEMINI_API_KEY` và `GEMINI_TRANSLATION_MODEL=gemini-3.1-flash-lite` trên Supabase; giá trị khóa không lưu trong repository |
 | Mô hình truy cập | Cloud và repo cho phép truy cập trực tiếp mọi Địa điểm `released` cùng toàn bộ chín Chặng; `coming_soon` chỉ có summary |
 | Tiến độ Chặng | `not_started`, `in_progress`, `completed`; dữ liệu `locked`/`available` cũ được chuyển sang `not_started` |

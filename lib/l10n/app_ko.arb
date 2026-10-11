@@ -53,6 +53,7 @@
   "continueLatestJourney": "최근 여정 계속하기",
   "searchLocationsHint": "여행지, 도시 또는 체험 검색...",
   "locationList": "여행지 목록",
+  "locationsOutsideMap": "주요 지도 밖의 여행지",
   "loadMapError": "여행지 지도를 불러오지 못했습니다: {error}",
   "@loadMapError": {
     "placeholders": {
@@ -283,6 +284,9 @@
   "travelInformation": "여행 정보",
   "checkAnswer": "정답 확인",
   "listenRead": "듣기",
+  "speechVoiceLoading": "음성을 준비하고 있습니다...",
+  "speechVoiceUnavailable": "이 기기에는 콘텐츠 언어 음성이 없습니다",
+  "speechAudioUnavailable": "음성 안내를 불러올 수 없습니다. 다시 시도해 주세요.",
   "pauseReading": "일시 정지",
   "resumeReading": "계속 듣기",
   "stopReading": "읽기 중지",

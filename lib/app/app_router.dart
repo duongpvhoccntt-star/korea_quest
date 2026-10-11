@@ -5,6 +5,7 @@ import 'package:korea_quest/features/achievements/presentation/pages/achievement
 import 'package:korea_quest/features/admin/presentation/pages/admin_database_page.dart';
 import 'package:korea_quest/features/auth/presentation/pages/auth_page.dart';
 import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
+import 'package:korea_quest/features/explore/presentation/pages/all_locations_page.dart';
 import 'package:korea_quest/features/explore/presentation/pages/published_explore_page.dart';
 import 'package:korea_quest/features/explore/presentation/pages/published_location_page.dart';
 import 'package:korea_quest/features/landing/presentation/pages/landing_page.dart';
@@ -20,6 +21,7 @@ abstract final class AppRouteNames {
   static const login = 'login';
   static const forgotPassword = 'forgot-password';
   static const explore = 'explore';
+  static const exploreAll = 'explore-all';
   static const location = 'location';
   static const locationStage = 'location-stage';
   static const journey = 'journey';
@@ -66,6 +68,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         } else {
           final allowedGuestPaths =
               state.uri.path == '/explore' ||
+              state.uri.path == '/explore/all' ||
               state.uri.path.startsWith('/locations/') ||
               state.uri.path.startsWith('/journey/') ||
               state.uri.path.startsWith('/passport/shared/') ||
@@ -131,6 +134,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: '/explore',
             name: AppRouteNames.explore,
             builder: (context, state) => const PublishedExplorePage(),
+          ),
+          GoRoute(
+            path: '/explore/all',
+            name: AppRouteNames.exploreAll,
+            builder: (context, state) => const AllLocationsPage(),
           ),
           GoRoute(
             path: '/locations/:locationId',
