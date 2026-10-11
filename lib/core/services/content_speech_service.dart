@@ -104,7 +104,7 @@ abstract interface class ContentSpeechService {
   Stream<SpeechPlayback> get changes;
   Stream<void> get voiceChanges;
 
-  SpeechLocaleAvailability availabilityFor(String locale);
+  SpeechLocaleAvailability availabilityFor(LocationSpeechSource source);
 
   Future<SpeechStartResult> speak({
     required String sessionId,

@@ -62,7 +62,7 @@ class _NativeContentSpeechService implements ContentSpeechService {
   Stream<void> get voiceChanges => _voiceChanges.stream;
 
   @override
-  SpeechLocaleAvailability availabilityFor(String locale) {
+  SpeechLocaleAvailability availabilityFor(LocationSpeechSource source) {
     if (!_voicesLoaded) return SpeechLocaleAvailability.loading;
     // A system fallback voice is preferable to refusing to read content.
     return _hasAnyVoice

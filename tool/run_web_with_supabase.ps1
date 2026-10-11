@@ -1,7 +1,8 @@
 ﻿[CmdletBinding()]
 param(
   [string]$Device = 'chrome',
-  [string]$MapTilerApiKey = $env:MAPTILER_API_KEY
+  [string]$MapTilerApiKey = $env:MAPTILER_API_KEY,
+  [switch]$LocalNamsanNativeSpeech
 )
 
 $projectRef = 'rsswzbgqapvrutcqasqv'
@@ -17,6 +18,13 @@ if ([string]::IsNullOrWhiteSpace($publishableKey)) {
   throw 'Không tìm thấy publishable key. Hãy đăng nhập Supabase CLI và thử lại.'
 }
 
+$nativeSpeechDefine = if ($LocalNamsanNativeSpeech) {
+  '--dart-define=LOCAL_NAMSAN_NATIVE_SPEECH=true'
+} else {
+  $null
+}
+
 flutter run -d $Device --dart-define=MAPTILER_API_KEY=$MapTilerApiKey `
   --dart-define="SUPABASE_URL=$projectUrl" `
-  --dart-define="SUPABASE_PUBLISHABLE_KEY=$publishableKey"
+  --dart-define="SUPABASE_PUBLISHABLE_KEY=$publishableKey" `
+  $nativeSpeechDefine

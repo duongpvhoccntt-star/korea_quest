@@ -17,7 +17,7 @@ class _UnavailableContentSpeechService implements ContentSpeechService {
   Stream<void> get voiceChanges => const Stream.empty();
 
   @override
-  SpeechLocaleAvailability availabilityFor(String locale) =>
+  SpeechLocaleAvailability availabilityFor(LocationSpeechSource source) =>
       SpeechLocaleAvailability.unavailable;
 
   @override

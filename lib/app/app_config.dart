@@ -8,6 +8,9 @@ abstract final class AppConfig {
   );
   static const mapTilerApiKey = String.fromEnvironment('MAPTILER_API_KEY');
   static const adminDemoMode = bool.fromEnvironment('ADMIN_DEMO_MODE');
+  static const localNamsanNativeSpeech = bool.fromEnvironment(
+    'LOCAL_NAMSAN_NATIVE_SPEECH',
+  );
 
   static bool get hasSupabaseConfiguration =>
       supabaseUrl.isNotEmpty && supabasePublishableKey.isNotEmpty;

@@ -21,7 +21,7 @@ create table if not exists public.location_speech_rate_limits (
 alter table public.location_speech_rate_limits enable row level security;
 revoke all on table public.location_speech_rate_limits from anon, authenticated;
 
-create or replace function private.consume_location_speech_cache_miss(
+create or replace function public.consume_location_speech_cache_miss(
   p_client_hash text,
   p_window_started_at timestamptz,
   p_limit smallint default 12
@@ -44,9 +44,9 @@ begin
   return affected_rows > 0;
 end;
 $$;
-revoke all on function private.consume_location_speech_cache_miss(
+revoke all on function public.consume_location_speech_cache_miss(
   text, timestamptz, smallint
 ) from public;
-grant execute on function private.consume_location_speech_cache_miss(
+grant execute on function public.consume_location_speech_cache_miss(
   text, timestamptz, smallint
 ) to service_role;
