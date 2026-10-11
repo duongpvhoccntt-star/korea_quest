@@ -11,6 +11,20 @@ void main() {
     expect(speechLocaleFor('ko-KR'), 'ko-KR');
     expect(speechLocaleFor('en-US'), 'en-US');
   });
+  test(
+    'does not make Vietnamese speech available through an English voice',
+    () {
+      expect(
+        browserSpeechAvailability(
+          isSupported: true,
+          voicesAreReady: true,
+          voiceLanguages: const ['en-US', 'ko-KR'],
+          locale: 'vi',
+        ),
+        SpeechLocaleAvailability.unavailable,
+      );
+    },
+  );
 
   test('serializes only a public segment selector', () {
     const source = LocationSpeechSource(

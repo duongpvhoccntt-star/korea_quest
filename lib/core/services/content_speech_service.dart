@@ -86,6 +86,33 @@ String speechLocaleFor(String locale) => switch (_languageCode(locale)) {
   _ => 'vi-VN',
 };
 
+/// Describes whether a browser voice list can read the requested locale.
+///
+/// Web Speech silently falls back to the browser's default language when its
+/// utterance has no matching voice. Keeping that decision here makes callers
+/// able to disable read-aloud instead of speaking Vietnamese as English.
+SpeechLocaleAvailability browserSpeechAvailability({
+  required bool isSupported,
+  required bool voicesAreReady,
+  required Iterable<String> voiceLanguages,
+  required String locale,
+}) {
+  if (!isSupported) return SpeechLocaleAvailability.unavailable;
+  if (!voicesAreReady) return SpeechLocaleAvailability.loading;
+
+  final expectedLanguage = speechLocaleFor(locale).toLowerCase();
+  final expectedCode = expectedLanguage.split('-').first;
+  final hasMatchingVoice = voiceLanguages.any((language) {
+    final normalized = language.trim().toLowerCase();
+    return normalized == expectedLanguage ||
+        normalized == expectedCode ||
+        normalized.startsWith('$expectedCode-');
+  });
+  return hasMatchingVoice
+      ? SpeechLocaleAvailability.available
+      : SpeechLocaleAvailability.unavailable;
+}
+
 String _languageCode(String locale) => locale.toLowerCase().split('-').first;
 
 abstract interface class ContentSpeechService {

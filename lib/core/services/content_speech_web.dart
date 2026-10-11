@@ -15,8 +15,9 @@ class _BrowserContentSpeechService implements ContentSpeechService {
     try {
       _synthesis = web.window.speechSynthesis;
       _synthesis.onvoiceschanged = ((web.Event _) {
-        _availabilityChanges.add(null);
+        _refreshVoices();
       }).toJS;
+      _refreshVoices();
     } on Object {
       _supported = false;
     }
@@ -27,7 +28,9 @@ class _BrowserContentSpeechService implements ContentSpeechService {
   final _availabilityChanges = StreamController<void>.broadcast();
   SpeechPlayback _playback = const SpeechPlayback.idle();
   web.SpeechSynthesisUtterance? _utterance;
+  List<web.SpeechSynthesisVoice> _voices = const [];
   var _supported = true;
+  var _voicesAreReady = false;
   int _generation = 0;
 
   @override
@@ -44,9 +47,12 @@ class _BrowserContentSpeechService implements ContentSpeechService {
 
   @override
   SpeechLocaleAvailability availabilityFor(LocationSpeechSource source) =>
-      _supported
-      ? SpeechLocaleAvailability.available
-      : SpeechLocaleAvailability.unavailable;
+      browserSpeechAvailability(
+        isSupported: _supported,
+        voicesAreReady: _voicesAreReady,
+        voiceLanguages: _voices.map((voice) => voice.lang),
+        locale: source.locale,
+      );
 
   @override
   Future<SpeechStartResult> speak({
@@ -57,14 +63,19 @@ class _BrowserContentSpeechService implements ContentSpeechService {
   }) async {
     final normalizedText = text.trim();
     if (normalizedText.isEmpty) return const SpeechStartResult.emptyText();
-    if (!_supported) return const SpeechStartResult.unavailable();
+    if (availabilityFor(source) != SpeechLocaleAvailability.available) {
+      return const SpeechStartResult.unavailable();
+    }
+
+    final voice = _preferredVoice(locale);
+    if (voice == null) return const SpeechStartResult.unavailable();
 
     final generation = ++_generation;
     try {
       _synthesis.cancel();
       final utterance = web.SpeechSynthesisUtterance(normalizedText)
         ..lang = speechLocaleFor(locale)
-        ..voice = _preferredVoice(locale)
+        ..voice = voice
         ..onend = ((web.Event _) {
           if (_isCurrent(generation)) {
             _utterance = null;
@@ -131,19 +142,28 @@ class _BrowserContentSpeechService implements ContentSpeechService {
     _setPlayback(const SpeechPlayback.idle());
   }
 
-  web.SpeechSynthesisVoice? _preferredVoice(String locale) {
+  void _refreshVoices() {
     try {
-      final expectedLanguage = speechLocaleFor(locale).toLowerCase();
-      final expectedCode = expectedLanguage.split('-').first;
-      final voices = _synthesis.getVoices().toDart;
-      for (final voice in voices) {
-        if (voice.lang.toLowerCase() == expectedLanguage) return voice;
-      }
-      for (final voice in voices) {
-        if (voice.lang.toLowerCase().startsWith('$expectedCode-')) return voice;
-      }
+      _voices = _synthesis.getVoices().toDart;
+      _voicesAreReady = _voices.isNotEmpty;
     } on Object {
-      // Let the browser select its normal fallback voice.
+      _voices = const [];
+      _voicesAreReady = false;
+    }
+    _availabilityChanges.add(null);
+  }
+
+  web.SpeechSynthesisVoice? _preferredVoice(String locale) {
+    final expectedLanguage = speechLocaleFor(locale).toLowerCase();
+    final expectedCode = expectedLanguage.split('-').first;
+    for (final voice in _voices) {
+      if (voice.lang.toLowerCase() == expectedLanguage) return voice;
+    }
+    for (final voice in _voices) {
+      final language = voice.lang.toLowerCase();
+      if (language == expectedCode || language.startsWith('$expectedCode-')) {
+        return voice;
+      }
     }
     return null;
   }
