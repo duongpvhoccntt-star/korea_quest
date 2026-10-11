@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:korea_quest/features/auth/domain/auth_models.dart';
 import 'package:korea_quest/features/auth/domain/auth_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
@@ -11,6 +13,7 @@ class SupabaseAuthRepository implements AuthRepository {
   }
 
   final supabase.SupabaseClient _client;
+  final _userStateChanges = StreamController<AuthUser?>.broadcast();
   AuthUser? _currentUser;
 
   @override
@@ -18,19 +21,35 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   Stream<AuthUser?> watchCurrentUser() async* {
-    final initialUser = _client.auth.currentUser;
-    if (initialUser != null) {
-      _currentUser = await _loadUser(initialUser);
-    } else {
-      _currentUser = null;
+    if (_currentUser?.isGuest != true) {
+      final initialUser = _client.auth.currentUser;
+      _currentUser = initialUser == null ? null : await _loadUser(initialUser);
     }
     yield _currentUser;
 
-    yield* _client.auth.onAuthStateChange.asyncMap((event) async {
-      final user = event.session?.user;
-      _currentUser = user == null ? null : await _loadUser(user);
-      return _currentUser;
-    });
+    final changes = StreamController<AuthUser?>();
+    final localSubscription = _userStateChanges.stream.listen(
+      changes.add,
+      onError: changes.addError,
+    );
+    final authSubscription = _client.auth.onAuthStateChange
+        .asyncMap((event) async {
+          final user = event.session?.user;
+          if (user == null && _currentUser?.isGuest == true) {
+            return _currentUser;
+          }
+          _currentUser = user == null ? null : await _loadUser(user);
+          return _currentUser;
+        })
+        .listen(changes.add, onError: changes.addError);
+
+    try {
+      yield* changes.stream;
+    } finally {
+      await localSubscription.cancel();
+      await authSubscription.cancel();
+      await changes.close();
+    }
   }
 
   @override
@@ -55,6 +74,7 @@ class SupabaseAuthRepository implements AuthRepository {
         throw const AuthException('Không thể tạo phiên đăng nhập.');
       }
       _currentUser = await _loadUser(user);
+      _userStateChanges.add(_currentUser);
       return _currentUser!;
     } on supabase.AuthException catch (error) {
       throw AuthException(_friendlyMessage(error.message));
@@ -75,6 +95,7 @@ class SupabaseAuthRepository implements AuthRepository {
       isGuest: true,
     );
     _currentUser = guestUser;
+    _userStateChanges.add(guestUser);
     return guestUser;
   }
 
@@ -117,6 +138,7 @@ class SupabaseAuthRepository implements AuthRepository {
 
       final mappedUser = _mapUser(user, role: UserRole.user);
       _currentUser = response.session == null ? null : mappedUser;
+      _userStateChanges.add(_currentUser);
       return mappedUser;
     } on supabase.AuthException catch (error) {
       throw AuthException(_friendlyMessage(error.message));
@@ -166,9 +188,14 @@ class SupabaseAuthRepository implements AuthRepository {
     try {
       await _client.auth.signOut();
       _currentUser = null;
+      _userStateChanges.add(null);
     } on supabase.AuthException catch (error) {
       throw AuthException(_friendlyMessage(error.message));
     }
+  }
+
+  void dispose() {
+    _userStateChanges.close();
   }
 
   Future<AuthUser> _loadUser(supabase.User user) async {

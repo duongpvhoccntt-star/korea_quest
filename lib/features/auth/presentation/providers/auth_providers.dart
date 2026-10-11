@@ -8,7 +8,9 @@ import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   if (AppConfig.hasSupabaseConfiguration && !AppConfig.adminDemoMode) {
-    return SupabaseAuthRepository(Supabase.instance.client);
+    final repository = SupabaseAuthRepository(Supabase.instance.client);
+    ref.onDispose(repository.dispose);
+    return repository;
   }
   final repository = MockAuthRepository();
   ref.onDispose(repository.dispose);
