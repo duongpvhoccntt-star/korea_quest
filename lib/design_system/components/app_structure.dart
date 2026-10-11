@@ -67,6 +67,7 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
     final isUnauthenticated = authUser == null;
     final isGuest = isUnauthenticated;
     final isGuestUser = authUser?.isGuest == true;
+    final isMember = authUser != null && !isGuestUser;
     final isGuestMode = ref.watch(guestModeProvider);
     final canAccessApp = !isGuest || isGuestMode;
     final destinations = [
@@ -75,12 +76,8 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
       (strings.achievements, '/achievements'),
       (strings.profile, '/profile'),
     ];
-    final user = isUnauthenticated
-        ? null
-        : ref.watch(currentUserProvider).value;
-    final progress = isUnauthenticated
-        ? null
-        : ref.watch(userProgressProvider).value;
+    final user = !isMember ? null : ref.watch(currentUserProvider).value;
+    final progress = !isMember ? null : ref.watch(userProgressProvider).value;
 
     return Material(
       color: AppColors.cream.withValues(alpha: .96),
@@ -258,7 +255,8 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                       ],
                       child: UserAvatar(
                         displayName:
-                            user?.displayName ?? currentUserAccount!.displayName,
+                            user?.displayName ??
+                            currentUserAccount!.displayName,
                         avatarPreset: user?.avatarPreset,
                         avatarBytes: user?.avatarBytes,
                       ),

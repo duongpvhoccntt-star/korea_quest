@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:korea_quest/app/app_theme.dart';
+import 'package:korea_quest/features/auth/domain/auth_models.dart';
+import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
 import 'package:korea_quest/features/explore/domain/published_location.dart';
 import 'package:korea_quest/features/explore/presentation/pages/published_explore_page.dart';
 import 'package:korea_quest/features/explore/presentation/providers/location_content_providers.dart';
@@ -89,9 +91,34 @@ void main() {
     );
     expect(find.text('Không thể đọc dữ liệu hành trình.'), findsNothing);
   });
+
+  testWidgets('guest exploration does not request personal data', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(1280, 900);
+    addTearDown(tester.view.reset);
+
+    final bundle = _buildApp(
+      authUser: _guestAuthUser,
+      personalFails: true,
+      achievementsFail: true,
+    );
+    addTearDown(bundle.router.dispose);
+    await tester.pumpWidget(bundle.app);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Bạn muốn bắt đầu từ đâu?'), findsOneWidget);
+    expect(find.text('Không thể tải huy hiệu đã nhận.'), findsNothing);
+    expect(find.text('Không thể đọc dữ liệu hành trình.'), findsNothing);
+  });
 }
 
-({Widget app, GoRouter router}) _buildApp({bool personalFails = false}) {
+({Widget app, GoRouter router}) _buildApp({
+  AuthUser authUser = _authUser,
+  bool personalFails = false,
+  bool achievementsFail = false,
+}) {
   final router = GoRouter(
     initialLocation: '/explore',
     routes: [
@@ -112,11 +139,14 @@ void main() {
     router: router,
     app: ProviderScope(
       overrides: [
+        authUserStreamProvider.overrideWith((ref) => Stream.value(authUser)),
         publishedLocationsProvider.overrideWith(
           (ref) async => _publishedLocations,
         ),
         earnedAchievementsProvider.overrideWith(
-          (ref) async => const <Achievement>[],
+          (ref) => achievementsFail
+              ? Future<List<Achievement>>.error(StateError('achievement error'))
+              : Future.value(const <Achievement>[]),
         ),
         currentUserProvider.overrideWith(
           (ref) => personalFails
@@ -138,6 +168,21 @@ void main() {
     ),
   );
 }
+
+const _authUser = AuthUser(
+  id: 'user-duong',
+  usernameOrEmail: 'duong@example.com',
+  displayName: 'Dương',
+  role: UserRole.user,
+);
+
+const _guestAuthUser = AuthUser(
+  id: 'guest-minh-anh',
+  usernameOrEmail: 'guest@koreaquest.local',
+  displayName: 'Minh Anh',
+  role: UserRole.user,
+  isGuest: true,
+);
 
 final _user = AppUser(
   id: 'user-duong',

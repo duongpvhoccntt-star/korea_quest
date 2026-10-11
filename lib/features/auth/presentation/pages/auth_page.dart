@@ -613,43 +613,6 @@ class _AuthFormPanel extends ConsumerWidget {
                 isLoading: isLoading,
                 onPressed: onSubmit,
               ),
-              if (!isForgot) ...[
-                const SizedBox(height: AppSpacing.sm),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: isLoading
-                        ? null
-                        : () {
-                            ref
-                                .read(guestModeProvider.notifier)
-                                .enableGuestMode();
-                            context.go('/explore');
-                          },
-                    icon: const Icon(
-                      Icons.explore_outlined,
-                      color: AppColors.teal,
-                    ),
-                    label: const Text(
-                      'Khám phá với tư cách Khách',
-                      style: TextStyle(
-                        color: AppColors.navy,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: AppSpacing.sm,
-                        horizontal: AppSpacing.md,
-                      ),
-                      side: const BorderSide(color: AppColors.teal),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppRadius.medium),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
               if (mode == AuthPageMode.login)
                 Align(
                   alignment: Alignment.centerRight,
