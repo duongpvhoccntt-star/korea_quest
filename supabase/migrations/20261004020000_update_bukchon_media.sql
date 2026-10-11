@@ -125,4 +125,3 @@ begin
   where revision_id = revision_uuid;
 end;
 $$;
-

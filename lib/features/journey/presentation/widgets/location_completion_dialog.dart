@@ -115,6 +115,9 @@ class _LocationCompletionDialogState extends State<LocationCompletionDialog>
   @override
   Widget build(BuildContext context) {
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    final flagWidth = (MediaQuery.sizeOf(context).width * .22)
+        .clamp(AppSpacing.section * 2, AppSpacing.section * 3)
+        .toDouble();
     return PopScope(
       canPop: false,
       child: Material(
@@ -124,6 +127,32 @@ class _LocationCompletionDialogState extends State<LocationCompletionDialog>
           child: Stack(
             fit: StackFit.expand,
             children: [
+              Positioned(
+                top: AppSpacing.lg,
+                left: AppSpacing.lg,
+                child: IgnorePointer(
+                  child: AnimatedBuilder(
+                    animation: _controller,
+                    builder: (context, child) {
+                      final opacity = reduceMotion
+                          ? 1.0
+                          : Curves.easeOutCubic.transform(
+                              (_controller.value / .46).clamp(0, 1).toDouble(),
+                            );
+                      return Opacity(opacity: opacity, child: child);
+                    },
+                    child: Image.asset(
+                      'assets/images/south_korea_flag.png',
+                      key: const ValueKey('south-korea-flag'),
+                      width: flagWidth,
+                      height: flagWidth * (854 / 1280),
+                      fit: BoxFit.contain,
+                      filterQuality: FilterQuality.high,
+                      excludeFromSemantics: true,
+                    ),
+                  ),
+                ),
+              ),
               IgnorePointer(
                 child: CustomPaint(
                   key: ValueKey(
@@ -486,95 +515,10 @@ class _KoreanCelebrationPainter extends CustomPainter {
     final fall = ((value - .12) / .88).clamp(0, 1).toDouble();
     final center = Offset(size.width / 2, size.height / 2);
 
-    _paintTaegeukgi(canvas, size, burst);
     _paintDancheongRibbons(canvas, size, burst);
     _paintTaegeuk(canvas, size, burst);
     _paintFireworks(canvas, size, burst, fall);
     _paintPetals(canvas, size, center, burst, fall);
-  }
-
-  void _paintTaegeukgi(Canvas canvas, Size size, double progress) {
-    final flagWidth = (size.width * .22)
-        .clamp(AppSpacing.section * 2, AppSpacing.section * 3)
-        .toDouble();
-    final flagHeight = flagWidth * .66;
-    final flagRect = Rect.fromLTWH(
-      AppSpacing.lg,
-      AppSpacing.lg,
-      flagWidth,
-      flagHeight,
-    );
-    final paint = Paint()
-      ..color = AppColors.paper.withValues(alpha: .92 * progress);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(flagRect, const Radius.circular(AppRadius.small)),
-      paint,
-    );
-    _paintTaegeukSymbol(
-      canvas,
-      flagRect.center,
-      flagHeight * .24,
-      opacity: progress,
-    );
-
-    final trigramPaint = Paint()
-      ..color = AppColors.ink.withValues(alpha: .85 * progress)
-      ..strokeWidth = AppSpacing.xxs / 2
-      ..strokeCap = StrokeCap.round;
-    _paintTrigram(
-      canvas,
-      Offset(flagRect.left + AppSpacing.sm, flagRect.top + AppSpacing.sm),
-      trigramPaint,
-      splitMiddle: false,
-    );
-    _paintTrigram(
-      canvas,
-      Offset(flagRect.right - AppSpacing.lg, flagRect.top + AppSpacing.sm),
-      trigramPaint,
-      splitMiddle: true,
-    );
-    _paintTrigram(
-      canvas,
-      Offset(flagRect.left + AppSpacing.sm, flagRect.bottom - AppSpacing.md),
-      trigramPaint,
-      splitMiddle: true,
-    );
-    _paintTrigram(
-      canvas,
-      Offset(flagRect.right - AppSpacing.lg, flagRect.bottom - AppSpacing.md),
-      trigramPaint,
-      splitMiddle: false,
-    );
-  }
-
-  void _paintTrigram(
-    Canvas canvas,
-    Offset origin,
-    Paint paint, {
-    required bool splitMiddle,
-  }) {
-    for (var index = 0; index < 3; index++) {
-      final y = origin.dy + (index * AppSpacing.xxs);
-      if (splitMiddle && index.isOdd) {
-        canvas
-          ..drawLine(
-            origin.translate(0, y - origin.dy),
-            Offset(origin.dx + AppSpacing.xxs, y),
-            paint,
-          )
-          ..drawLine(
-            Offset(origin.dx + AppSpacing.sm, y),
-            Offset(origin.dx + AppSpacing.md, y),
-            paint,
-          );
-      } else {
-        canvas.drawLine(
-          Offset(origin.dx, y),
-          Offset(origin.dx + AppSpacing.md, y),
-          paint,
-        );
-      }
-    }
   }
 
   void _paintDancheongRibbons(Canvas canvas, Size size, double progress) {

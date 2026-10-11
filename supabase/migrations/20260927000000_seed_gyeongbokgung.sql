@@ -243,4 +243,3 @@ insert into public.quiz_options (question_id, option_text, is_correct, display_o
   end if;
 end;
 $$;
-
