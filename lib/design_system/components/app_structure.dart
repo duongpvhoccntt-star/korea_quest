@@ -95,6 +95,7 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
               children: [
                 _BrandLockup(
                   onTap: () => context.go(canAccessApp ? '/explore' : '/'),
+                  compact: !isDesktop,
                 ),
                 const Spacer(),
                 LanguageMenu(compact: !isDesktop),
@@ -399,7 +400,9 @@ class LanguageMenu extends ConsumerWidget {
           decoration: BoxDecoration(
             color: AppColors.skyLight,
             borderRadius: BorderRadius.circular(AppRadius.round),
-            border: Border.all(color: AppColors.koreanBlue.withValues(alpha: .35)),
+            border: Border.all(
+              color: AppColors.koreanBlue.withValues(alpha: .35),
+            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -572,10 +575,11 @@ class _GuestIdentityRow extends StatelessWidget {
 }
 
 class _BrandLockup extends StatelessWidget {
-  const _BrandLockup({this.onTap, this.light = false});
+  const _BrandLockup({this.onTap, this.light = false, this.compact = false});
 
   final VoidCallback? onTap;
   final bool light;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) => InkWell(
@@ -594,32 +598,38 @@ class _BrandLockup extends StatelessWidget {
             filterQuality: FilterQuality.high,
           ),
           const SizedBox(width: AppSpacing.sm),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'KoreaQuest',
-                style: TextStyle(
-                  color: light ? Colors.white : AppColors.navy,
-                  fontSize: 19,
-                  height: 1.1,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -.4,
+          SizedBox(
+            width: compact ? 112 : null,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'KoreaQuest',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: light ? Colors.white : AppColors.navy,
+                    fontSize: 19,
+                    height: 1.1,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -.4,
+                  ),
                 ),
-              ),
-              Text(
-                'CULTURE ADVENTURE',
-                style: TextStyle(
-                  color: light
-                      ? Colors.white.withValues(alpha: .64)
-                      : AppColors.teal,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1.2,
-                ),
-              ),
-            ],
+                if (!compact)
+                  Text(
+                    'CULTURE ADVENTURE',
+                    style: TextStyle(
+                      color: light
+                          ? Colors.white.withValues(alpha: .64)
+                          : AppColors.teal,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+              ],
+            ),
           ),
         ],
       ),
