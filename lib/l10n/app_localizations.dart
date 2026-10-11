@@ -406,6 +406,12 @@ abstract class AppLocalizations {
   /// **'Danh sách địa điểm'**
   String get locationList;
 
+  /// No description provided for @locationsOutsideMap.
+  ///
+  /// In vi, this message translates to:
+  /// **'Địa điểm ngoài khung'**
+  String get locationsOutsideMap;
+
   /// No description provided for @loadMapError.
   ///
   /// In vi, this message translates to:
@@ -1353,6 +1359,18 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Nghe đọc'**
   String get listenRead;
+
+  /// No description provided for @speechVoiceLoading.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang chuẩn bị giọng đọc...'**
+  String get speechVoiceLoading;
+
+  /// No description provided for @speechVoiceUnavailable.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thiết bị chưa có giọng đọc cho nội dung này'**
+  String get speechVoiceUnavailable;
 
   /// No description provided for @pauseReading.
   ///

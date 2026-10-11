@@ -63,6 +63,7 @@
   "continueLatestJourney": "Tiếp tục hành trình gần nhất",
   "searchLocationsHint": "Tìm địa điểm, thành phố hoặc trải nghiệm...",
   "locationList": "Danh sách địa điểm",
+  "locationsOutsideMap": "Địa điểm ngoài khung",
   "loadMapError": "Không thể tải bản đồ địa điểm: {error}",
   "@loadMapError": {
     "placeholders": {
@@ -293,6 +294,9 @@
   "travelInformation": "Thông tin du lịch",
   "checkAnswer": "Kiểm tra đáp án",
   "listenRead": "Nghe đọc",
+  "speechVoiceLoading": "Đang chuẩn bị giọng đọc...",
+  "speechVoiceUnavailable": "Thiết bị chưa có giọng đọc cho nội dung này",
+  "speechAudioUnavailable": "Không thể tải giọng đọc. Vui lòng thử lại.",
   "pauseReading": "Tạm dừng",
   "resumeReading": "Tiếp tục",
   "stopReading": "Dừng đọc",

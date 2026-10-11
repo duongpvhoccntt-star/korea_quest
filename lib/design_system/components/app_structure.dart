@@ -98,7 +98,7 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                   onTap: () => context.go(canAccessApp ? '/explore' : '/'),
                 ),
                 const Spacer(),
-                const _LanguageMenu(),
+                const LanguageMenu(),
                 const SizedBox(width: AppSpacing.xs),
                 if (isDesktop) ...[
                   for (final destination in destinations)
@@ -338,8 +338,8 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
   }
 }
 
-class _LanguageMenu extends ConsumerWidget {
-  const _LanguageMenu();
+class LanguageMenu extends ConsumerWidget {
+  const LanguageMenu({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -357,14 +357,35 @@ class _LanguageMenu extends ConsumerWidget {
       child: Semantics(
         button: true,
         label: appStrings(context).language,
-        child: SizedBox(
-          width: 40,
-          height: 40,
-          child: Center(
-            child: Text(
-              locale.languageCode.toUpperCase(),
-              style: const TextStyle(fontWeight: FontWeight.w800),
-            ),
+        child: Container(
+          height: 36,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+          decoration: BoxDecoration(
+            color: AppColors.skyLight,
+            borderRadius: BorderRadius.circular(AppRadius.round),
+            border: Border.all(color: AppColors.koreanBlue.withValues(alpha: .35)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.public_rounded,
+                size: 18,
+                color: AppColors.koreanBlue,
+              ),
+              const SizedBox(width: AppSpacing.xxs),
+              Text(
+                locale.languageCode.toUpperCase(),
+                style: const TextStyle(
+                  color: AppColors.koreanBlue,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const Icon(
+                Icons.arrow_drop_down_rounded,
+                color: AppColors.koreanBlue,
+              ),
+            ],
           ),
         ),
       ),

@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:korea_quest/core/services/content_speech_service.dart';
 import 'package:korea_quest/core/services/quiz_feedback_sound.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
@@ -81,6 +82,8 @@ class LocationContentView extends StatelessWidget {
     3 => _HistoryStage(
       key: ValueKey('history-stage-${location.id}'),
       items: location.history,
+      contentLocale: location.resolvedLocale,
+      locationSlug: location.slug,
     ),
     4 => _ListStage(
       stage: 4,
@@ -90,6 +93,13 @@ class LocationContentView extends StatelessWidget {
       emptyMessage: appStrings(context).noFeatured,
       items: location.highlights,
       builder: (item, index) => _ContentCard(
+        contentLocale: location.resolvedLocale,
+        speechSource: LocationSpeechSource(
+          slug: location.slug,
+          locale: location.resolvedLocale,
+          segment: LocationSpeechSegment.highlight,
+          index: index,
+        ),
         title: _fallback(
           item.string('name'),
           appStrings(context).destinationNumber(index + 1),
@@ -124,6 +134,13 @@ class LocationContentView extends StatelessWidget {
           emptyMessage: appStrings(context).noCulture,
           items: location.experiences,
           builder: (item, index) => _ContentCard(
+            contentLocale: location.resolvedLocale,
+            speechSource: LocationSpeechSource(
+              slug: location.slug,
+              locale: location.resolvedLocale,
+              segment: LocationSpeechSegment.experience,
+              index: index,
+            ),
             title: _fallback(
               item.string('name'),
               appStrings(context).experienceNumber(index + 1),
@@ -174,6 +191,13 @@ class LocationContentView extends StatelessWidget {
       items: location.foods,
       asGrid: true,
       builder: (item, index) => _FoodCard(
+        contentLocale: location.resolvedLocale,
+        speechSource: LocationSpeechSource(
+          slug: location.slug,
+          locale: location.resolvedLocale,
+          segment: LocationSpeechSegment.food,
+          index: index,
+        ),
         title: _fallback(
           item.string('name'),
           appStrings(context).foodNumber(index + 1),
@@ -197,7 +221,11 @@ class LocationContentView extends StatelessWidget {
         ],
       ),
     ),
-    7 => _FunFactsStage(items: location.funFacts),
+    7 => _FunFactsStage(
+      items: location.funFacts,
+      contentLocale: location.resolvedLocale,
+      locationSlug: location.slug,
+    ),
     8 => _QuizStage(
       questions: location.quiz,
       onSubmitQuizAnswer: onSubmitQuizAnswer,
@@ -617,6 +645,11 @@ class _Identity extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
         ContentReadAloudControls(
           sessionId: 'overview-${location.id}',
+          source: LocationSpeechSource(
+            slug: location.slug,
+            locale: location.resolvedLocale,
+            segment: LocationSpeechSegment.overview,
+          ),
           text: _spokenText(
             title: location.name,
             description: location.longDescription.isEmpty
@@ -748,9 +781,16 @@ class _ListStage extends StatelessWidget {
 }
 
 class _HistoryStage extends StatefulWidget {
-  const _HistoryStage({required this.items, super.key});
+  const _HistoryStage({
+    required this.items,
+    required this.contentLocale,
+    required this.locationSlug,
+    super.key,
+  });
 
   final List<JsonMap> items;
+  final String contentLocale;
+  final String locationSlug;
 
   @override
   State<_HistoryStage> createState() => _HistoryStageState();
@@ -784,12 +824,16 @@ class _HistoryStageState extends State<_HistoryStage> {
               return isDesktop
                   ? _HistoryDesktopTimeline(
                       items: widget.items,
+                      contentLocale: widget.contentLocale,
+                      locationSlug: widget.locationSlug,
                       expandedIndex: _expandedIndex,
                       viewedIndexes: _viewedIndexes,
                       onToggle: _toggle,
                     )
                   : _HistoryMobileTimeline(
                       items: widget.items,
+                      contentLocale: widget.contentLocale,
+                      locationSlug: widget.locationSlug,
                       expandedIndex: _expandedIndex,
                       viewedIndexes: _viewedIndexes,
                       onToggle: _toggle,
@@ -859,12 +903,16 @@ class _HistoryHeader extends StatelessWidget {
 class _HistoryDesktopTimeline extends StatelessWidget {
   const _HistoryDesktopTimeline({
     required this.items,
+    required this.contentLocale,
+    required this.locationSlug,
     required this.expandedIndex,
     required this.viewedIndexes,
     required this.onToggle,
   });
 
   final List<JsonMap> items;
+  final String contentLocale;
+  final String locationSlug;
   final int? expandedIndex;
   final Set<int> viewedIndexes;
   final ValueChanged<int> onToggle;
@@ -884,6 +932,8 @@ class _HistoryDesktopTimeline extends StatelessWidget {
           for (var index = 0; index < items.length; index++) ...[
             _HistoryDesktopMilestone(
               item: items[index],
+              contentLocale: contentLocale,
+              locationSlug: locationSlug,
               index: index,
               isExpanded: expandedIndex == index,
               isViewed: viewedIndexes.contains(index),
@@ -901,6 +951,8 @@ class _HistoryDesktopTimeline extends StatelessWidget {
 class _HistoryDesktopMilestone extends StatelessWidget {
   const _HistoryDesktopMilestone({
     required this.item,
+    required this.contentLocale,
+    required this.locationSlug,
     required this.index,
     required this.isExpanded,
     required this.isViewed,
@@ -908,6 +960,8 @@ class _HistoryDesktopMilestone extends StatelessWidget {
   });
 
   final JsonMap item;
+  final String contentLocale;
+  final String locationSlug;
   final int index;
   final bool isExpanded;
   final bool isViewed;
@@ -917,6 +971,8 @@ class _HistoryDesktopMilestone extends StatelessWidget {
   Widget build(BuildContext context) {
     final card = _HistoryCard(
       item: item,
+      contentLocale: contentLocale,
+      locationSlug: locationSlug,
       index: index,
       isExpanded: isExpanded,
       isViewed: isViewed,
@@ -948,12 +1004,16 @@ class _HistoryDesktopMilestone extends StatelessWidget {
 class _HistoryMobileTimeline extends StatelessWidget {
   const _HistoryMobileTimeline({
     required this.items,
+    required this.contentLocale,
+    required this.locationSlug,
     required this.expandedIndex,
     required this.viewedIndexes,
     required this.onToggle,
   });
 
   final List<JsonMap> items;
+  final String contentLocale;
+  final String locationSlug;
   final int? expandedIndex;
   final Set<int> viewedIndexes;
   final ValueChanged<int> onToggle;
@@ -988,6 +1048,8 @@ class _HistoryMobileTimeline extends StatelessWidget {
                     children: [
                       _HistoryCard(
                         item: items[index],
+                        contentLocale: contentLocale,
+                        locationSlug: locationSlug,
                         index: index,
                         isExpanded: expandedIndex == index,
                         isViewed: viewedIndexes.contains(index),
@@ -1021,6 +1083,8 @@ class _HistoryMobileTimeline extends StatelessWidget {
 class _HistoryCard extends StatelessWidget {
   const _HistoryCard({
     required this.item,
+    required this.contentLocale,
+    required this.locationSlug,
     required this.index,
     required this.isExpanded,
     required this.isViewed,
@@ -1028,6 +1092,8 @@ class _HistoryCard extends StatelessWidget {
   });
 
   final JsonMap item;
+  final String contentLocale;
+  final String locationSlug;
   final int index;
   final bool isExpanded;
   final bool isViewed;
@@ -1164,6 +1230,12 @@ class _HistoryCard extends StatelessWidget {
               const SizedBox(height: AppSpacing.md),
               ContentReadAloudControls(
                 sessionId: 'history-$index',
+                source: LocationSpeechSource(
+                  slug: locationSlug,
+                  locale: contentLocale,
+                  segment: LocationSpeechSegment.history,
+                  index: index,
+                ),
                 text: _spokenText(
                   title: title,
                   eyebrow: period,
@@ -1382,6 +1454,8 @@ class _ContentCard extends StatelessWidget {
     required this.title,
     required this.description,
     required this.details,
+    required this.contentLocale,
+    required this.speechSource,
     this.eyebrow = '',
     this.media = const {},
     this.wideMedia = false,
@@ -1392,6 +1466,8 @@ class _ContentCard extends StatelessWidget {
   final String description;
   final JsonMap media;
   final List<(String, String)> details;
+  final String contentLocale;
+  final LocationSpeechSource speechSource;
   final bool wideMedia;
 
   @override
@@ -1407,6 +1483,8 @@ class _ContentCard extends StatelessWidget {
           eyebrow: eyebrow,
           description: description,
           details: details,
+          contentLocale: contentLocale,
+          speechSource: speechSource,
         );
         if (canSplit) {
           return Row(
@@ -1445,6 +1523,8 @@ class _ContentBody extends StatelessWidget {
     required this.title,
     required this.description,
     required this.details,
+    required this.contentLocale,
+    required this.speechSource,
     this.eyebrow = '',
   });
 
@@ -1452,6 +1532,8 @@ class _ContentBody extends StatelessWidget {
   final String eyebrow;
   final String description;
   final List<(String, String)> details;
+  final String contentLocale;
+  final LocationSpeechSource speechSource;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -1482,6 +1564,7 @@ class _ContentBody extends StatelessWidget {
       const SizedBox(height: AppSpacing.md),
       ContentReadAloudControls(
         sessionId: 'content-$title-$eyebrow',
+        source: speechSource,
         text: _spokenText(
           title: title,
           eyebrow: eyebrow,
@@ -1499,6 +1582,8 @@ class _FoodCard extends StatelessWidget {
     required this.description,
     required this.details,
     required this.chips,
+    required this.contentLocale,
+    required this.speechSource,
     this.eyebrow = '',
     this.media = const {},
   });
@@ -1509,6 +1594,8 @@ class _FoodCard extends StatelessWidget {
   final JsonMap media;
   final List<String> chips;
   final List<(String, String)> details;
+  final String contentLocale;
+  final LocationSpeechSource speechSource;
 
   @override
   Widget build(BuildContext context) => _Card(
@@ -1563,6 +1650,7 @@ class _FoodCard extends StatelessWidget {
               const SizedBox(height: AppSpacing.md),
               ContentReadAloudControls(
                 sessionId: 'food-$title-$eyebrow',
+                source: speechSource,
                 text: _spokenText(
                   title: title,
                   eyebrow: eyebrow,
@@ -1616,8 +1704,14 @@ class _GuidelineStage extends StatelessWidget {
 }
 
 class _FunFactsStage extends StatelessWidget {
-  const _FunFactsStage({required this.items});
+  const _FunFactsStage({
+    required this.items,
+    required this.contentLocale,
+    required this.locationSlug,
+  });
   final List<JsonMap> items;
+  final String contentLocale;
+  final String locationSlug;
 
   @override
   Widget build(BuildContext context) => _Stage(
@@ -1667,6 +1761,12 @@ class _FunFactsStage extends StatelessWidget {
                         const SizedBox(height: AppSpacing.md),
                         ContentReadAloudControls(
                           sessionId: 'fun-fact-$index',
+                          source: LocationSpeechSource(
+                            slug: locationSlug,
+                            locale: contentLocale,
+                            segment: LocationSpeechSegment.funFact,
+                            index: index,
+                          ),
                           text: _spokenText(
                             title: _fallback(
                               items[index].string('title'),
@@ -1775,8 +1875,15 @@ class _TravelStage extends StatelessWidget {
           ),
           if (transports.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.lg),
-            for (final item in transports) ...[
+            for (final (index, item) in transports.indexed) ...[
               _ContentCard(
+                contentLocale: location.resolvedLocale,
+                speechSource: LocationSpeechSource(
+                  slug: location.slug,
+                  locale: location.resolvedLocale,
+                  segment: LocationSpeechSegment.transport,
+                  index: index,
+                ),
                 title: _fallback(
                   item.string('title'),
                   appStrings(context).directions,
