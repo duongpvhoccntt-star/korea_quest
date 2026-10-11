@@ -8,6 +8,10 @@ KoreaQuest mô tả hành trình khám phá văn hóa Hàn Quốc được trò 
 Người dùng tham gia các hành trình văn hóa và tích lũy tiến độ cá nhân.
 _Avoid_: Người chơi, khách hàng
 
+**Tài khoản khách**:
+Nhà thám hiểm đăng nhập bằng Supabase Anonymous Auth với tên hiển thị, chưa có email/mật khẩu. Khi đăng ký, cùng UUID được nâng cấp để giữ nguyên XP, Dấu mộc và Tiến độ.
+_Avoid_: Phiên thuần cục bộ, tài khoản mới thay thế khách
+
 **Quản trị viên**:
 Người được phép biên tập, xuất bản và lưu trữ nội dung khám phá.
 _Avoid_: Nhà thám hiểm, editor

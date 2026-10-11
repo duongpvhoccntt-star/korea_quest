@@ -36,21 +36,21 @@ void main() {
   );
 
   test('recognises Jeju as outside the mainland map view', () {
-    expect(isOutsideKoreaMainlandBounds(comingSoon.latitude, comingSoon.longitude), isTrue);
-    expect(isOutsideKoreaMainlandBounds(released.latitude, released.longitude), isFalse);
+    expect(
+      isOutsideKoreaMainlandBounds(comingSoon.latitude, comingSoon.longitude),
+      isTrue,
+    );
+    expect(
+      isOutsideKoreaMainlandBounds(released.latitude, released.longitude),
+      isFalse,
+    );
   });
 
   testWidgets('marker has an image fallback and selected coming-soon state', (
     tester,
   ) async {
     await tester.pumpWidget(
-      _app(
-        KoreaMapPlaceMarker(
-          place: released,
-          selected: false,
-          onTap: () {},
-        ),
-      ),
+      _app(KoreaMapPlaceMarker(place: released, selected: false, onTap: () {})),
     );
     expect(find.byIcon(Icons.location_on_rounded), findsOneWidget);
 
@@ -66,19 +66,12 @@ void main() {
     expect(find.byType(Image), findsOneWidget);
     await tester.pumpWidget(
       _app(
-        KoreaMapPlaceMarker(
-          place: comingSoon,
-          selected: true,
-          onTap: () {},
-        ),
+        KoreaMapPlaceMarker(place: comingSoon, selected: true, onTap: () {}),
       ),
     );
     await tester.pumpAndSettle();
     expect(find.byIcon(Icons.schedule_rounded), findsOneWidget);
-    expect(
-      tester.getSize(find.byType(AnimatedContainer)).width,
-      68,
-    );
+    expect(tester.getSize(find.byType(AnimatedContainer)).width, 68);
   });
 
   testWidgets('remote inset selects the Jeju place', (tester) async {
@@ -100,4 +93,6 @@ void main() {
   });
 }
 
-Widget _app(Widget child) => MaterialApp(home: Scaffold(body: Center(child: child)));
+Widget _app(Widget child) => MaterialApp(
+  home: Scaffold(body: Center(child: child)),
+);

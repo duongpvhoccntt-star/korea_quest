@@ -1258,4 +1258,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get upgradeToOfficialAccount => 'Register an official account';
+
+  @override
+  String get rewardsAlreadyReceived =>
+      'The rewards for this location have already been collected.';
+
+  @override
+  String get exploreAgain => 'Explore again';
 }

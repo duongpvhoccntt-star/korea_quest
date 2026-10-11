@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:korea_quest/app/app_config.dart';
 import 'package:korea_quest/features/auth/domain/auth_models.dart';
 import 'package:korea_quest/features/auth/domain/auth_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
@@ -87,16 +88,35 @@ class SupabaseAuthRepository implements AuthRepository {
     if (trimmed.isEmpty) {
       throw const AuthException('Vui lòng nhập tên của bạn.');
     }
-    final guestUser = AuthUser(
-      id: 'guest-${DateTime.now().millisecondsSinceEpoch}',
-      usernameOrEmail: 'guest@koreaquest.local',
-      displayName: trimmed,
-      role: UserRole.user,
-      isGuest: true,
-    );
-    _currentUser = guestUser;
-    _userStateChanges.add(guestUser);
-    return guestUser;
+    try {
+      final response = await _client.auth.signInAnonymously(
+        data: {'display_name': trimmed, 'full_name': trimmed},
+      );
+      final user = response.user;
+      if (user == null) {
+        throw const AuthException('Không thể tạo phiên khách.');
+      }
+      _currentUser = await _loadUser(user);
+      _userStateChanges.add(_currentUser);
+      return _currentUser!;
+    } on supabase.AuthException catch (error) {
+      // The configured runtime must use Anonymous Auth so the UUID can own
+      // progress. Keeping a local identity only makes isolated/offline tests
+      // and the unconfigured demo usable.
+      if (!AppConfig.hasSupabaseConfiguration) {
+        final guestUser = AuthUser(
+          id: 'guest-${DateTime.now().millisecondsSinceEpoch}',
+          usernameOrEmail: 'guest@koreaquest.local',
+          displayName: trimmed,
+          role: UserRole.user,
+          isGuest: true,
+        );
+        _currentUser = guestUser;
+        _userStateChanges.add(guestUser);
+        return guestUser;
+      }
+      throw AuthException(_friendlyMessage(error.message));
+    }
   }
 
   @override
@@ -120,6 +140,26 @@ class SupabaseAuthRepository implements AuthRepository {
     }
 
     try {
+      final existingUser = _client.auth.currentUser;
+      if (existingUser?.isAnonymous == true) {
+        final response = await _client.auth.updateUser(
+          supabase.UserAttributes(
+            email: normalizedEmail,
+            password: password,
+            data: {
+              'full_name': normalizedFullName,
+              'display_name': normalizedDisplayName,
+            },
+          ),
+        );
+        final upgradedUser = response.user;
+        if (upgradedUser == null) {
+          throw const AuthException('Không thể nâng cấp tài khoản khách.');
+        }
+        _currentUser = await _loadUser(upgradedUser);
+        _userStateChanges.add(_currentUser);
+        return _currentUser!;
+      }
       final response = await _client.auth.signUp(
         email: normalizedEmail,
         password: password,
@@ -224,6 +264,7 @@ class SupabaseAuthRepository implements AuthRepository {
           ? fullName!
           : email.split('@').first,
       role: role,
+      isGuest: user.isAnonymous,
     );
   }
 

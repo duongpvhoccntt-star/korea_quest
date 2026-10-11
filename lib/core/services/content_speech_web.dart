@@ -32,10 +32,9 @@ class _CloudContentSpeechService implements ContentSpeechService {
   Stream<void> get voiceChanges => _availabilityChanges.stream;
 
   @override
-  SpeechLocaleAvailability availabilityFor(String locale) =>
-      isSupported
-          ? SpeechLocaleAvailability.available
-          : SpeechLocaleAvailability.unavailable;
+  SpeechLocaleAvailability availabilityFor(String locale) => isSupported
+      ? SpeechLocaleAvailability.available
+      : SpeechLocaleAvailability.unavailable;
 
   @override
   Future<SpeechStartResult> speak({

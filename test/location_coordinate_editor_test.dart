@@ -15,7 +15,10 @@ void main() {
     final repository = _SuggestionRepository();
     addTearDown(repository.dispose);
     final draft = AdminLocationDraft(
-      overview: {...AdminLocationDraft.emptyOverview(), 'name': 'Gyeongbokgung'},
+      overview: {
+        ...AdminLocationDraft.emptyOverview(),
+        'name': 'Gyeongbokgung',
+      },
     );
     var changes = 0;
 
@@ -63,7 +66,10 @@ void main() {
 
     await tester.tap(find.text('AI gợi ý vị trí'));
     await tester.pump();
-    expect(find.textContaining('Không tìm thấy vị trí phù hợp.'), findsOneWidget);
+    expect(
+      find.textContaining('Không tìm thấy vị trí phù hợp.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('shows a recoverable message when coordinate lookup fails', (
@@ -88,24 +94,25 @@ void main() {
   });
 }
 
-Widget _app({
-  required AdminRepository repository,
-  required Widget child,
-}) => ProviderScope(
-  overrides: [adminRepositoryProvider.overrideWithValue(repository)],
-  child: MaterialApp(
-    theme: AppTheme.light,
-    home: Scaffold(
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: child,
+Widget _app({required AdminRepository repository, required Widget child}) =>
+    ProviderScope(
+      overrides: [adminRepositoryProvider.overrideWithValue(repository)],
+      child: MaterialApp(
+        theme: AppTheme.light,
+        home: Scaffold(
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: child,
+          ),
+        ),
       ),
-    ),
-  ),
-);
+    );
 
 class _SuggestionRepository extends DemoAdminRepository {
-  _SuggestionRepository({this.results = _defaultResults, this.shouldThrow = false});
+  _SuggestionRepository({
+    this.results = _defaultResults,
+    this.shouldThrow = false,
+  });
 
   final List<LocationCoordinateSuggestion> results;
   final bool shouldThrow;

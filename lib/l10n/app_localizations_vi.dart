@@ -1258,4 +1258,11 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get upgradeToOfficialAccount => 'Đăng ký tài khoản chính thức';
+
+  @override
+  String get rewardsAlreadyReceived =>
+      'Phần thưởng của địa điểm này đã được ghi nhận trước đó.';
+
+  @override
+  String get exploreAgain => 'Khám phá lại';
 }

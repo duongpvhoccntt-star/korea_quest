@@ -8,7 +8,9 @@ import 'package:korea_quest/l10n/app_localizations.dart';
 import 'package:korea_quest/l10n/locale_controller.dart';
 
 void main() {
-  testWidgets('globe language menu changes the selected locale', (tester) async {
+  testWidgets('globe language menu changes the selected locale', (
+    tester,
+  ) async {
     tester.binding.platformDispatcher.localeTestValue = const Locale('vi');
     addTearDown(tester.binding.platformDispatcher.clearLocaleTestValue);
 

@@ -20,7 +20,10 @@ bool isInsideKoreaMapBounds(double latitude, double longitude) =>
     longitude <= 132;
 
 bool isOutsideKoreaMainlandBounds(double latitude, double longitude) =>
-    latitude < 34.4 || latitude > 38.9 || longitude < 125.1 || longitude > 130.3;
+    latitude < 34.4 ||
+    latitude > 38.9 ||
+    longitude < 125.1 ||
+    longitude > 130.3;
 
 class KoreaMapPlace {
   const KoreaMapPlace({
@@ -32,6 +35,7 @@ class KoreaMapPlace {
     required this.latitude,
     required this.longitude,
     required this.isReleased,
+    this.isCompleted = false,
   });
 
   final String id;
@@ -42,6 +46,7 @@ class KoreaMapPlace {
   final double latitude;
   final double longitude;
   final bool isReleased;
+  final bool isCompleted;
 
   bool get isOutsideMainland =>
       isOutsideKoreaMainlandBounds(latitude, longitude);
@@ -299,7 +304,11 @@ class KoreaMapPlaceMarker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = compact ? 40.0 : selected ? 68.0 : 54.0;
+    final size = compact
+        ? 40.0
+        : selected
+        ? 68.0
+        : 54.0;
     final borderColor = selected
         ? AppColors.koreanBlue
         : place.isReleased
@@ -336,6 +345,19 @@ class KoreaMapPlaceMarker extends StatelessWidget {
                         size: compact ? 18 : 24,
                       ),
                     ),
+                  if (place.isCompleted)
+                    const Align(
+                      alignment: Alignment.bottomRight,
+                      child: CircleAvatar(
+                        radius: 11,
+                        backgroundColor: AppColors.koreanBlue,
+                        child: Icon(
+                          Icons.check_rounded,
+                          size: 16,
+                          color: AppColors.paper,
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -363,18 +385,18 @@ class _MarkerImage extends StatelessWidget {
     );
   }
 
-  Widget _networkImage(
-    String url, {
-    required bool retryOriginalUrl,
-  }) => Image.network(
-    url,
-    fit: BoxFit.cover,
-    webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
-    semanticLabel: place.thumbnailAlt.isEmpty ? place.title : place.thumbnailAlt,
-    errorBuilder: (_, _, _) => retryOriginalUrl
-        ? _networkImage(place.thumbnailUrl.trim(), retryOriginalUrl: false)
-        : const _MarkerImageFallback(),
-  );
+  Widget _networkImage(String url, {required bool retryOriginalUrl}) =>
+      Image.network(
+        url,
+        fit: BoxFit.cover,
+        webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
+        semanticLabel: place.thumbnailAlt.isEmpty
+            ? place.title
+            : place.thumbnailAlt,
+        errorBuilder: (_, _, _) => retryOriginalUrl
+            ? _networkImage(place.thumbnailUrl.trim(), retryOriginalUrl: false)
+            : const _MarkerImageFallback(),
+      );
 }
 
 class _MarkerImageFallback extends StatelessWidget {
@@ -384,10 +406,7 @@ class _MarkerImageFallback extends StatelessWidget {
   Widget build(BuildContext context) => const ColoredBox(
     color: AppColors.skyLight,
     child: Center(
-      child: Icon(
-        Icons.location_on_rounded,
-        color: AppColors.koreanBlue,
-      ),
+      child: Icon(Icons.location_on_rounded, color: AppColors.koreanBlue),
     ),
   );
 }
@@ -435,7 +454,10 @@ class _LocationCoordinateMapState extends State<LocationCoordinateMap> {
       : null;
 
   void _reset() => _controller.fitCamera(
-    CameraFit.bounds(bounds: koreaMapBounds, padding: const EdgeInsets.all(AppSpacing.xl)),
+    CameraFit.bounds(
+      bounds: koreaMapBounds,
+      padding: const EdgeInsets.all(AppSpacing.xl),
+    ),
   );
 
   void _syncCamera() {

@@ -92,60 +92,56 @@ void main() {
     );
     expect(find.text('Không thể đọc dữ liệu hành trình.'), findsNothing);
   });
-  testWidgets('guest exploration does not request personal data', (
+  testWidgets('anonymous guests can render their personal progress', (
     tester,
   ) async {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(1280, 900);
     addTearDown(tester.view.reset);
 
-    final bundle = _buildApp(
-      authUser: _guestAuthUser,
-      personalFails: true,
-      achievementsFail: true,
-    );
+    final bundle = _buildApp(authUser: _guestAuthUser);
     addTearDown(bundle.router.dispose);
     await tester.pumpWidget(bundle.app);
     await tester.pumpAndSettle();
 
     expect(find.text('Bạn muốn bắt đầu từ đâu?'), findsOneWidget);
-    expect(find.text('Không thể tải huy hiệu đã nhận.'), findsNothing);
-    expect(find.text('Không thể đọc dữ liệu hành trình.'), findsNothing);
+    expect(find.text('1/2 địa điểm'), findsOneWidget);
   });
 
-  testWidgets('View all opens the public location list and only released places navigate', (
-    tester,
-  ) async {
-    tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(390, 844);
-    addTearDown(tester.view.reset);
+  testWidgets(
+    'View all opens the public location list and only released places navigate',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(tester.view.reset);
 
-    final bundle = _buildApp();
-    addTearDown(bundle.router.dispose);
-    await tester.pumpWidget(bundle.app);
-    await tester.pumpAndSettle();
+      final bundle = _buildApp();
+      addTearDown(bundle.router.dispose);
+      await tester.pumpWidget(bundle.app);
+      await tester.pumpAndSettle();
 
-    final viewAll = find.byKey(const Key('explore-view-all'));
-    await tester.ensureVisible(viewAll);
-    await tester.tap(viewAll);
-    await tester.pumpAndSettle();
+      final viewAll = find.byKey(const Key('explore-view-all'));
+      await tester.ensureVisible(viewAll);
+      await tester.tap(viewAll);
+      await tester.pumpAndSettle();
 
-    expect(find.byType(AllLocationsPage), findsOneWidget);
-    final released = tester.widget<FilledButton>(
-      find.byKey(const ValueKey('all-location-action-gyeongbokgung')),
-    );
-    final comingSoon = tester.widget<FilledButton>(
-      find.byKey(const ValueKey('all-location-action-jeju')),
-    );
-    expect(released.onPressed, isNotNull);
-    expect(comingSoon.onPressed, isNull);
+      expect(find.byType(AllLocationsPage), findsOneWidget);
+      final released = tester.widget<FilledButton>(
+        find.byKey(const ValueKey('all-location-action-gyeongbokgung')),
+      );
+      final comingSoon = tester.widget<FilledButton>(
+        find.byKey(const ValueKey('all-location-action-jeju')),
+      );
+      expect(released.onPressed, isNotNull);
+      expect(comingSoon.onPressed, isNull);
 
-    await tester.tap(
-      find.byKey(const ValueKey('all-location-action-gyeongbokgung')),
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('Location: gyeongbokgung'), findsOneWidget);
-  });
+      await tester.tap(
+        find.byKey(const ValueKey('all-location-action-gyeongbokgung')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Location: gyeongbokgung'), findsOneWidget);
+    },
+  );
 }
 
 ({Widget app, GoRouter router}) _buildApp({

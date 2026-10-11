@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:korea_quest/app/app_config.dart';
+import 'package:korea_quest/core/services/celebration_sound.dart';
 import 'package:korea_quest/design_system/colors/app_colors.dart';
 import 'package:korea_quest/design_system/components/app_feedback.dart';
 import 'package:korea_quest/design_system/components/app_scroll_view.dart';
@@ -9,8 +13,8 @@ import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/explore/domain/published_location.dart';
 import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
 import 'package:korea_quest/features/explore/presentation/providers/location_content_providers.dart';
-import 'package:korea_quest/features/explore/presentation/widgets/guest_registration_prompt_dialog.dart';
 import 'package:korea_quest/features/explore/presentation/widgets/location_content_view.dart';
+import 'package:korea_quest/features/journey/presentation/widgets/location_completion_dialog.dart';
 import 'package:korea_quest/l10n/app_strings.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
 
@@ -60,15 +64,6 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
   void _openStage(int nextStage, [String locationName = '']) {
     _scrollToTop();
     if (nextStage == 0) {
-      final user = ref.read(authRepositoryProvider).currentUser;
-      if (user?.isGuest == true) {
-        showGuestRegistrationPromptDialog(
-          context,
-          locationName: locationName,
-          guestName: user!.displayName,
-        );
-        return;
-      }
       context.go('/explore');
       return;
     }
@@ -80,7 +75,7 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
     JsonMap answer,
   ) async {
     final user = ref.read(authRepositoryProvider).currentUser;
-    if (user == null || user.isGuest) {
+    if (user == null) {
       _openLogin();
       return const QuizAnswerResult(isCorrect: false, explanation: '');
     }
@@ -97,26 +92,72 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
   }
 
   Future<void> _completeStage(int stageNumber, String locationName) async {
-    final user = ref.read(authRepositoryProvider).currentUser;
-    if (user?.isGuest == true) {
-      _openStage(stageNumber == 9 ? 0 : stageNumber + 1, locationName);
-      return;
-    }
-    if (user == null) {
+    final authUser = ref.read(authRepositoryProvider).currentUser;
+    if (authUser == null) {
       _openLogin();
       return;
     }
-    final reward = await ref
+    final locale = Localizations.localeOf(context).languageCode;
+    if (stageNumber == 9) unawaited(CelebrationSound.prime());
+    final completionCache = ref.read(locationCompletionCacheProvider);
+    final wasCachedCompletion =
+        stageNumber == 9 &&
+        await completionCache
+            .contains(authUser.id, widget.slug)
+            .timeout(const Duration(milliseconds: 250), onTimeout: () => false);
+    var reward = await ref
         .read(locationContentRepositoryProvider)
         .completeStage(
           slug: widget.slug,
           stageNumber: stageNumber,
-          locale: Localizations.localeOf(context).languageCode,
+          locale: locale,
         );
     if (!mounted) return;
+    if (stageNumber == 9 &&
+        wasCachedCompletion &&
+        !AppConfig.hasSupabaseConfiguration) {
+      reward = const GameplayReward(
+        awardedXp: 0,
+        alreadyAwarded: true,
+        stampAwarded: false,
+        newAchievementTitles: [],
+      );
+    }
     _refreshGameplay();
+    if (stageNumber == 9) {
+      unawaited(
+        completionCache.markCompleted(authUser.id, widget.slug).then((_) {
+          if (mounted) {
+            ref.invalidate(cachedCompletedLocationSlugsProvider(authUser.id));
+          }
+        }),
+      );
+      ref
+          .read(recentlyCompletedLocationSlugsProvider.notifier)
+          .add(widget.slug);
+      await showLocationCompletionDialog(
+        context,
+        locationName: locationName,
+        playerName: authUser.displayName,
+        awardedXp: reward.awardedXp,
+        alreadyAwarded: reward.alreadyAwarded,
+        stampAwarded: reward.stampAwarded,
+        achievementTitles: reward.newAchievementTitles,
+        isGuest: authUser.isGuest,
+        onContinue: () => context.go('/explore'),
+        onRegister: authUser.isGuest
+            ? () => context.go(
+                Uri(
+                  path: '/register',
+                  queryParameters: {'name': authUser.displayName},
+                ).toString(),
+              )
+            : null,
+      );
+      return;
+    }
     _showReward(reward);
-    _openStage(stageNumber == 9 ? 0 : stageNumber + 1, locationName);
+    _openStage(stageNumber + 1, locationName);
   }
 
   void _openLogin() {

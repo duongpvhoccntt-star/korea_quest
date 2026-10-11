@@ -20,9 +20,12 @@ void main() {
       }).confidence,
       1,
     );
-    expect(() => LocationCoordinateSuggestion.fromJson({
-      'latitude': 91,
-      'longitude': 126,
-    }), throwsFormatException);
+    expect(
+      () => LocationCoordinateSuggestion.fromJson({
+        'latitude': 91,
+        'longitude': 126,
+      }),
+      throwsFormatException,
+    );
   });
 }

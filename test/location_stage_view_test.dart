@@ -8,8 +8,8 @@ import 'package:korea_quest/features/auth/presentation/providers/auth_providers.
 import 'package:korea_quest/features/explore/domain/published_location.dart';
 import 'package:korea_quest/features/explore/presentation/pages/published_location_page.dart';
 import 'package:korea_quest/features/explore/presentation/providers/location_content_providers.dart';
-import 'package:korea_quest/features/explore/presentation/widgets/guest_registration_prompt_dialog.dart';
 import 'package:korea_quest/features/explore/presentation/widgets/location_content_view.dart';
+import 'package:korea_quest/features/journey/presentation/widgets/location_completion_dialog.dart';
 
 void main() {
   const location = PublishedLocationDetail({
@@ -229,7 +229,7 @@ void main() {
     );
   });
 
-  testWidgets('Guest is prompted to register only after the final stage', (
+  testWidgets('Guest sees the completion celebration after the final stage', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(1200, 2000);
@@ -268,7 +268,7 @@ void main() {
     await tester.tap(finishButton);
     await tester.pumpAndSettle();
 
-    expect(find.byType(GuestRegistrationPromptDialog), findsOneWidget);
+    expect(find.byType(LocationCompletionDialog), findsOneWidget);
     expect(
       router.routeInformationProvider.value.uri.path,
       '/locations/sample/stages/9',

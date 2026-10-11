@@ -53,7 +53,9 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
     final locations = ref.watch(publishedLocationsProvider);
     final authUser = ref.watch(authUserStreamProvider).value;
     _showGuestAccessPromptIfNeeded(authUser);
-    final canUsePersonalFeatures = authUser != null && !authUser.isGuest;
+    // Anonymous Supabase users own a real UUID too, so their stamps and
+    // progress must be rendered just like a registered explorer's data.
+    final canUsePersonalFeatures = authUser != null;
     final achievements = canUsePersonalFeatures
         ? ref.watch(earnedAchievementsProvider)
         : const AsyncValue.data(<Achievement>[]);
@@ -66,6 +68,17 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
     final personalLocations = canUsePersonalFeatures
         ? ref.watch(locationsProvider).value
         : null;
+    final stamps = canUsePersonalFeatures
+        ? ref.watch(earnedPassportStampsProvider).value ??
+              const <PassportStamp>[]
+        : const <PassportStamp>[];
+    final cachedCompletionSlugs = authUser == null
+        ? const <String>{}
+        : ref.watch(cachedCompletedLocationSlugsProvider(authUser.id)).value ??
+              const <String>{};
+    final recentlyCompletedSlugs = ref.watch(
+      recentlyCompletedLocationSlugsProvider,
+    );
     if (achievements.isLoading) {
       return const Center(child: LoadingIndicator());
     }
@@ -91,6 +104,8 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
         user: user,
         progress: progress,
         personalLocations: personalLocations,
+        completedLocationIds: stamps.map((stamp) => stamp.locationId).toSet(),
+        completedSlugs: {...cachedCompletionSlugs, ...recentlyCompletedSlugs},
       ),
     );
   }
@@ -119,6 +134,8 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
     required AppUser? user,
     required UserProgress? progress,
     required List<Location>? personalLocations,
+    required Set<String> completedLocationIds,
+    required Set<String> completedSlugs,
   }) {
     final filters = _filtersFor(items);
     final visible = _filtered(items);
@@ -129,6 +146,8 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
       user: user,
       progress: progress,
       personalLocations: personalLocations,
+      completedLocationIds: completedLocationIds,
+      completedSlugs: completedSlugs,
     );
     final isWide = MediaQuery.sizeOf(context).width >= 1050;
 
@@ -172,6 +191,8 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
                           onSelect: (location) =>
                               setState(() => _selectedSlug = location.slug),
                           onExplore: _openLocation,
+                          completedLocationIds: completedLocationIds,
+                          completedSlugs: completedSlugs,
                           showList: _showLocationList,
                           onToggleView: () => setState(
                             () => _showLocationList = !_showLocationList,
@@ -198,6 +219,8 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
                     onSelect: (location) =>
                         setState(() => _selectedSlug = location.slug),
                     onExplore: _openLocation,
+                    completedLocationIds: completedLocationIds,
+                    completedSlugs: completedSlugs,
                     showList: _showLocationList,
                     onToggleView: () =>
                         setState(() => _showLocationList = !_showLocationList),
@@ -279,18 +302,26 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
     required AppUser? user,
     required UserProgress? progress,
     required List<Location>? personalLocations,
+    required Set<String> completedLocationIds,
+    required Set<String> completedSlugs,
   }) {
     final released = items.where((item) => item.isReleased).toList();
     final personalById = {
       for (final location in personalLocations ?? const <Location>[])
         location.id: location,
     };
-    final completed = personalLocations == null
+    final completed =
+        personalLocations == null &&
+            completedLocationIds.isEmpty &&
+            completedSlugs.isEmpty
         ? null
         : released
               .where(
                 (item) =>
-                    personalById[item.slug]?.status == LocationStatus.completed,
+                    personalById[item.slug]?.status ==
+                        LocationStatus.completed ||
+                    completedLocationIds.contains(item.id) ||
+                    completedSlugs.contains(item.slug),
               )
               .length;
 
@@ -442,6 +473,8 @@ class _MapExperience extends StatelessWidget {
     required this.onFilterChanged,
     required this.onSelect,
     required this.onExplore,
+    required this.completedLocationIds,
+    required this.completedSlugs,
     required this.showList,
     required this.onToggleView,
   });
@@ -455,6 +488,8 @@ class _MapExperience extends StatelessWidget {
   final ValueChanged<String> onFilterChanged;
   final ValueChanged<PublishedLocationSummary> onSelect;
   final ValueChanged<PublishedLocationSummary> onExplore;
+  final Set<String> completedLocationIds;
+  final Set<String> completedSlugs;
   final bool showList;
   final VoidCallback onToggleView;
 
@@ -541,12 +576,16 @@ class _MapExperience extends StatelessWidget {
                     selected: selected,
                     onSelect: onSelect,
                     onExplore: onExplore,
+                    completedLocationIds: completedLocationIds,
+                    completedSlugs: completedSlugs,
                   )
                 : _ExploreGoogleMap(
                     locations: locations,
                     selected: selected,
                     onSelect: onSelect,
                     onExplore: onExplore,
+                    completedLocationIds: completedLocationIds,
+                    completedSlugs: completedSlugs,
                   ),
           ),
       ],
@@ -560,12 +599,16 @@ class _ExploreGoogleMap extends StatelessWidget {
     required this.selected,
     required this.onSelect,
     required this.onExplore,
+    required this.completedLocationIds,
+    required this.completedSlugs,
   });
 
   final List<PublishedLocationSummary> locations;
   final PublishedLocationSummary? selected;
   final ValueChanged<PublishedLocationSummary> onSelect;
   final ValueChanged<PublishedLocationSummary> onExplore;
+  final Set<String> completedLocationIds;
+  final Set<String> completedSlugs;
 
   @override
   Widget build(BuildContext context) {
@@ -581,6 +624,9 @@ class _ExploreGoogleMap extends StatelessWidget {
             thumbnailUrl: location.thumbnailUrl,
             thumbnailAlt: location.thumbnailAlt,
             isReleased: location.isReleased,
+            isCompleted:
+                completedLocationIds.contains(location.id) ||
+                completedSlugs.contains(location.slug),
           ),
         )
         .toList(growable: false);
@@ -607,15 +653,15 @@ class _ExploreGoogleMap extends StatelessWidget {
           unavailableBuilder: (context) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _MapNotice(
-                message: appStrings(context).loadMapError('MapTiler'),
-              ),
+              _MapNotice(message: appStrings(context).loadMapError('MapTiler')),
               const SizedBox(height: AppSpacing.md),
               _DestinationList(
                 locations: locations,
                 selected: selected,
                 onSelect: onSelect,
                 onExplore: onExplore,
+                completedLocationIds: completedLocationIds,
+                completedSlugs: completedSlugs,
               ),
             ],
           ),
@@ -638,12 +684,16 @@ class _DestinationList extends StatelessWidget {
     required this.selected,
     required this.onSelect,
     required this.onExplore,
+    required this.completedLocationIds,
+    required this.completedSlugs,
   });
 
   final List<PublishedLocationSummary> locations;
   final PublishedLocationSummary? selected;
   final ValueChanged<PublishedLocationSummary> onSelect;
   final ValueChanged<PublishedLocationSummary> onExplore;
+  final Set<String> completedLocationIds;
+  final Set<String> completedSlugs;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -663,9 +713,22 @@ class _DestinationList extends StatelessWidget {
                 child: _LocationImage(location: location),
               ),
             ),
-            title: Text(
-              location.name,
-              style: const TextStyle(fontWeight: FontWeight.w800),
+            title: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    location.name,
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  ),
+                ),
+                if (completedLocationIds.contains(location.id) ||
+                    completedSlugs.contains(location.slug))
+                  const Icon(
+                    Icons.check_circle_rounded,
+                    color: AppColors.koreanBlue,
+                    semanticLabel: 'Đã hoàn thành',
+                  ),
+              ],
             ),
             subtitle: Text(
               location.isReleased

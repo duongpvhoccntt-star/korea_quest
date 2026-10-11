@@ -110,6 +110,7 @@ class LocationContentView extends StatelessWidget {
           item.string('long_description'),
         ]),
         media: item.jsonObject('media'),
+        wideMedia: true,
         details: [
           (appStrings(context).address, item.string('address')),
           (
@@ -279,17 +280,6 @@ class _LocationHeader extends StatelessWidget {
           icon: Icons.route_rounded,
           color: AppColors.palePink,
         ),
-        _Chip(
-          label: appStrings(
-            context,
-          ).minutes(location.estimatedDurationMinutes ?? 30),
-          icon: Icons.timelapse_rounded,
-        ),
-        IconButton.outlined(
-          tooltip: appStrings(context).saveLocation,
-          onPressed: () {},
-          icon: const Icon(Icons.bookmark_add_outlined),
-        ),
       ],
     ),
   );
@@ -457,6 +447,7 @@ class _StageNavigation extends StatelessWidget {
     return Align(
       alignment: Alignment.centerRight,
       child: FilledButton.icon(
+        key: ValueKey('stage-navigation-$currentStage'),
         onPressed: onPressed,
         icon: Icon(
           currentStage == 9 ? Icons.map_outlined : Icons.arrow_forward_rounded,
@@ -807,6 +798,16 @@ class _HistoryStageState extends State<_HistoryStage> {
     });
   }
 
+  void _toggleAll() {
+    setState(() {
+      final showAll = _expandedIndex != -1;
+      _expandedIndex = showAll ? -1 : null;
+      if (showAll) {
+        _viewedIndexes.addAll(Iterable<int>.generate(widget.items.length));
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(bottom: AppSpacing.xxl),
@@ -814,6 +815,22 @@ class _HistoryStageState extends State<_HistoryStage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const _HistoryHeader(),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton.icon(
+            onPressed: _toggleAll,
+            icon: Icon(
+              _expandedIndex == -1
+                  ? Icons.keyboard_arrow_up_rounded
+                  : Icons.unfold_more_rounded,
+            ),
+            label: Text(
+              _expandedIndex == -1
+                  ? appStrings(context).collapse
+                  : appStrings(context).viewAll,
+            ),
+          ),
+        ),
         const SizedBox(height: AppSpacing.section),
         if (widget.items.isEmpty)
           _Empty(appStrings(context).historyUpdating)
@@ -935,7 +952,7 @@ class _HistoryDesktopTimeline extends StatelessWidget {
               contentLocale: contentLocale,
               locationSlug: locationSlug,
               index: index,
-              isExpanded: expandedIndex == index,
+              isExpanded: expandedIndex == index || expandedIndex == -1,
               isViewed: viewedIndexes.contains(index),
               onToggle: () => onToggle(index),
             ),
@@ -1038,7 +1055,7 @@ class _HistoryMobileTimeline extends StatelessWidget {
                   width: 64,
                   child: _HistoryMarker(
                     index: index,
-                    isExpanded: expandedIndex == index,
+                    isExpanded: expandedIndex == index || expandedIndex == -1,
                     isViewed: viewedIndexes.contains(index),
                   ),
                 ),
@@ -1051,7 +1068,8 @@ class _HistoryMobileTimeline extends StatelessWidget {
                         contentLocale: contentLocale,
                         locationSlug: locationSlug,
                         index: index,
-                        isExpanded: expandedIndex == index,
+                        isExpanded:
+                            expandedIndex == index || expandedIndex == -1,
                         isViewed: viewedIndexes.contains(index),
                         onToggle: () => onToggle(index),
                       ),
@@ -1631,8 +1649,6 @@ class _FoodCard extends StatelessWidget {
               const SizedBox(height: AppSpacing.xs),
               Text(
                 description,
-                maxLines: 4,
-                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   color: AppColors.stitchMuted,
                   height: 1.5,
@@ -1751,8 +1767,6 @@ class _FunFactsStage extends StatelessWidget {
                         const SizedBox(height: AppSpacing.xs),
                         Text(
                           items[index].string('fact'),
-                          maxLines: 4,
-                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             color: AppColors.stitchMuted,
                             height: 1.5,
@@ -2381,69 +2395,96 @@ class _QuizCardState extends State<_QuizCard> {
     );
   }
 
-  Widget _options() => Column(
-    children: [
-      for (final option in widget.question.mapList('options')) _option(option),
-    ],
+  Widget _options() => LayoutBuilder(
+    builder: (context, constraints) {
+      final options = widget.question.mapList('options');
+      final optionWidth = (constraints.maxWidth - AppSpacing.sm) / 2;
+      return Wrap(
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
+        children: [
+          for (var index = 0; index < options.length; index++)
+            SizedBox(
+              width: optionWidth,
+              child: _option(
+                options[index],
+                optionLabel: String.fromCharCode(65 + index),
+              ),
+            ),
+        ],
+      );
+    },
   );
 
-  Widget _option(JsonMap option) {
+  Widget _option(JsonMap option, {required String optionLabel}) {
     final isSelected = _optionId == option.string('id');
     final result = isSelected ? _result : null;
     final isCorrect = result?.isCorrect ?? false;
     final feedbackColor = isCorrect ? AppColors.green : AppColors.coral;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-      child: _QuizOptionFeedbackFrame(
-        key: ValueKey('quiz-option-feedback-${option.string('id')}'),
-        shake: result != null && !isCorrect,
-        sequence: _feedbackSequence,
-        child: InkWell(
-          onTap: () => setState(() => _optionId = option.string('id')),
-          borderRadius: BorderRadius.circular(AppRadius.medium),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppSpacing.md),
-            decoration: BoxDecoration(
+    return _QuizOptionFeedbackFrame(
+      key: ValueKey('quiz-option-feedback-${option.string('id')}'),
+      shake: result != null && !isCorrect,
+      sequence: _feedbackSequence,
+      child: InkWell(
+        onTap: () => setState(() => _optionId = option.string('id')),
+        borderRadius: BorderRadius.circular(AppRadius.medium),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: result != null
+                ? feedbackColor.withValues(alpha: .18)
+                : isSelected
+                ? AppColors.skyLight
+                : Colors.white,
+            borderRadius: BorderRadius.circular(AppRadius.medium),
+            border: Border.all(
               color: result != null
-                  ? feedbackColor.withValues(alpha: .18)
+                  ? feedbackColor
                   : isSelected
-                  ? AppColors.skyLight
-                  : Colors.white,
-              borderRadius: BorderRadius.circular(AppRadius.medium),
-              border: Border.all(
-                color: result != null
-                    ? feedbackColor
-                    : isSelected
+                  ? AppColors.koreanBlue
+                  : AppColors.borderSoft,
+              width: 2,
+            ),
+            boxShadow: result != null && isCorrect
+                ? [
+                    BoxShadow(
+                      color: AppColors.green.withValues(alpha: .34),
+                      blurRadius: AppSpacing.lg,
+                      spreadRadius: AppSpacing.xxs,
+                    ),
+                  ]
+                : null,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                radius: AppSpacing.sm,
+                backgroundColor: isSelected
                     ? AppColors.koreanBlue
-                    : AppColors.borderSoft,
-                width: 2,
-              ),
-              boxShadow: result != null && isCorrect
-                  ? [
-                      BoxShadow(
-                        color: AppColors.green.withValues(alpha: .34),
-                        blurRadius: AppSpacing.lg,
-                        spreadRadius: AppSpacing.xxs,
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    option.string('text'),
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                  ),
+                    : AppColors.skyLight,
+                foregroundColor: isSelected
+                    ? Colors.white
+                    : AppColors.koreanBlue,
+                child: Text(
+                  optionLabel,
+                  style: const TextStyle(fontWeight: FontWeight.w900),
                 ),
-                if (result != null)
-                  _QuizResultMarker(
-                    isCorrect: isCorrect,
-                    sequence: _feedbackSequence,
-                  ),
-              ],
-            ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  option.string('text'),
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+              if (result != null)
+                _QuizResultMarker(
+                  isCorrect: isCorrect,
+                  sequence: _feedbackSequence,
+                ),
+            ],
           ),
         ),
       ),

@@ -127,6 +127,7 @@ class SupabaseAdminRepository implements AdminRepository {
         )
         .toList(growable: false);
   }
+
   @override
   Future<int> saveSection({
     required AdminLocationDraft draft,

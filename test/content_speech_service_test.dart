@@ -27,39 +27,55 @@ void main() {
     });
   });
 
-  testWidgets('uses the resolved content locale and public selector', (tester) async {
+  testWidgets('uses the resolved content locale and public selector', (
+    tester,
+  ) async {
     final speech = _FakeSpeechService();
     const source = LocationSpeechSource(
       slug: 'gyeongbokgung',
       locale: 'vi',
       segment: LocationSpeechSegment.overview,
     );
-    await tester.pumpWidget(MaterialApp(
-      locale: const Locale('en'),
-      home: Scaffold(body: ContentReadAloudControls(
-        sessionId: 'overview',
-        text: 'Nội dung tiếng Việt',
-        source: source,
-        speechService: speech,
-      )),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('en'),
+        home: Scaffold(
+          body: ContentReadAloudControls(
+            sessionId: 'overview',
+            text: 'Nội dung tiếng Việt',
+            source: source,
+            speechService: speech,
+          ),
+        ),
+      ),
+    );
     await tester.tap(find.byIcon(Icons.volume_up_rounded));
     await tester.pump();
     expect(speech.sources.single.toRequest(), source.toRequest());
   });
 
-  testWidgets('does not start playback when Cloud TTS is unavailable', (tester) async {
-    final speech = _FakeSpeechService(availability: SpeechLocaleAvailability.unavailable);
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(body: ContentReadAloudControls(
-        sessionId: 'overview',
-        text: 'Nội dung',
-        source: const LocationSpeechSource(
-          slug: 'gyeongbokgung', locale: 'vi', segment: LocationSpeechSegment.overview,
+  testWidgets('does not start playback when Cloud TTS is unavailable', (
+    tester,
+  ) async {
+    final speech = _FakeSpeechService(
+      availability: SpeechLocaleAvailability.unavailable,
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ContentReadAloudControls(
+            sessionId: 'overview',
+            text: 'Nội dung',
+            source: const LocationSpeechSource(
+              slug: 'gyeongbokgung',
+              locale: 'vi',
+              segment: LocationSpeechSegment.overview,
+            ),
+            speechService: speech,
+          ),
         ),
-        speechService: speech,
-      )),
-    ));
+      ),
+    );
     expect(find.byIcon(Icons.volume_off_rounded), findsOneWidget);
     expect(speech.sources, isEmpty);
   });
@@ -72,23 +88,38 @@ class _FakeSpeechService implements ContentSpeechService {
   final _voiceChanges = StreamController<void>.broadcast();
   final List<LocationSpeechSource> sources = [];
   SpeechPlayback _playback = const SpeechPlayback.idle();
-  @override bool get isSupported => true;
-  @override SpeechPlayback get playback => _playback;
-  @override Stream<SpeechPlayback> get changes => _changes.stream;
-  @override Stream<void> get voiceChanges => _voiceChanges.stream;
-  @override SpeechLocaleAvailability availabilityFor(String locale) => availability;
-  @override void pause() {}
-  @override void resume() {}
-  @override Future<SpeechStartResult> speak({
-    required String sessionId, required String text, required String locale,
+  @override
+  bool get isSupported => true;
+  @override
+  SpeechPlayback get playback => _playback;
+  @override
+  Stream<SpeechPlayback> get changes => _changes.stream;
+  @override
+  Stream<void> get voiceChanges => _voiceChanges.stream;
+  @override
+  SpeechLocaleAvailability availabilityFor(String locale) => availability;
+  @override
+  void pause() {}
+  @override
+  void resume() {}
+  @override
+  Future<SpeechStartResult> speak({
+    required String sessionId,
+    required String text,
+    required String locale,
     required LocationSpeechSource source,
   }) async {
     sources.add(source);
-    _playback = SpeechPlayback(state: SpeechPlaybackState.speaking, sessionId: sessionId);
+    _playback = SpeechPlayback(
+      state: SpeechPlaybackState.speaking,
+      sessionId: sessionId,
+    );
     _changes.add(_playback);
     return const SpeechStartResult.started();
   }
-  @override void stop() {
+
+  @override
+  void stop() {
     _playback = const SpeechPlayback.idle();
     _changes.add(_playback);
   }
