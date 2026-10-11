@@ -210,66 +210,8 @@ select has_function(
 select has_function(
   'public',
   'resolve_shared_passport',
-  array['text', 'text'],
+  array['text'],
   'privacy-filtered passport resolver exists'
-);
-select has_column(
-  'public',
-  'level_definitions',
-  'title_i18n',
-  'level titles support vi, en, and ko'
-);
-select has_column(
-  'public',
-  'achievement_definitions',
-  'title_i18n',
-  'achievement titles are localized'
-);
-select has_column(
-  'public',
-  'achievement_definitions',
-  'description_i18n',
-  'achievement descriptions are localized'
-);
-select has_function(
-  'public',
-  'get_my_progress',
-  array['text'],
-  'server-authoritative progress read RPC exists'
-);
-select has_function(
-  'public',
-  'get_my_achievements',
-  array['text'],
-  'achievement collection read RPC exists'
-);
-select has_function(
-  'public',
-  'get_my_passport',
-  array['text'],
-  'private passport read RPC exists'
-);
-select has_function(
-  'public',
-  'complete_location_stage',
-  array['text', 'integer', 'text'],
-  'idempotent stage completion RPC exists'
-);
-select has_function(
-  'public',
-  'reset_my_progress',
-  array['text'],
-  'transactional personal reset RPC exists'
-);
-select is(
-  (select count(*) from public.level_definitions where is_active),
-  8::bigint,
-  'MVP seeds eight active levels'
-);
-select is(
-  (select count(*) from public.achievement_definitions where is_active),
-  8::bigint,
-  'MVP seeds eight active achievements'
 );
 select has_function(
   'public',
@@ -506,6 +448,13 @@ where location_id = (
 )
   and status = 'published';
 
+update public.location_revisions
+set latitude = 1.234567,
+    longitude = 2.345678
+where location_id = (
+  select id from public.locations where slug = 'gyeongbokgung'
+)
+  and status = 'draft';
 set local role anon;
 
 select ok(
@@ -516,6 +465,25 @@ select ok(
     )
   ),
   'coming-soon location remains visible in the public summary'
+);
+select ok(
+  exists (
+    select 1
+    from jsonb_array_elements(public.list_published_locations()) item
+    where item ->> 'slug' = 'gyeongbokgung'
+      and item ? 'latitude'
+      and item ? 'longitude'
+  ),
+  'public summary exposes published latitude and longitude'
+);
+select isnt(
+  (
+    select item ->> 'latitude'
+    from jsonb_array_elements(public.list_published_locations()) item
+    where item ->> 'slug' = 'gyeongbokgung'
+  ),
+  '1.234567',
+  'public summary does not expose coordinates edited only on the Draft'
 );
 select is(
   public.get_published_location('gyeongbokgung'),

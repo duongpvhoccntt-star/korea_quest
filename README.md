@@ -71,6 +71,8 @@ Chạy dự án trên Chrome:
 flutter run -d chrome
 ```
 
+Bản đồ MapTiler cần truyền `--dart-define=MAPTILER_API_KEY=<LOCAL_MAPTILER_KEY>`. Key hiển thị trên Flutter Web phải giới hạn theo origin (localhost hoặc GitHub Pages); attribution MapTiler/OpenStreetMap luôn hiển thị trên bản đồ.
+
 Xem danh sách thiết bị có thể sử dụng:
 
 ```bash
@@ -210,3 +212,9 @@ Phase 1 hiện cung cấp đầy đủ page shell, routing, design system, mock 
 
 
 
+
+### AI gợi ý tọa độ trong Admin
+
+Tại **Tổng quan & metadata bản đồ**, Admin có thể yêu cầu gợi ý vị trí. Edge Function dùng Gemini để chuẩn hóa truy vấn khi có cấu hình, sau đó dùng MapTiler Geocoding trả tối đa năm ứng viên. Admin phải xem trước và bấm **Áp dụng** cho một ứng viên; thao tác này chỉ cập nhật Draft, không tự lưu hoặc tự Xuất bản.
+
+`GEMINI_API_KEY` và MapTiler key geocoding chỉ đặt ở Supabase Edge Function secrets. Key tile web đặt riêng trong GitHub secret `MAPTILER_API_KEY` và được giới hạn origin.

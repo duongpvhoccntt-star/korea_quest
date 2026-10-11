@@ -14,29 +14,46 @@ class PublishedLocationSummary {
     required this.thumbnailAlt,
     required this.releaseStatus,
     required this.categories,
+    this.latitude,
+    this.longitude,
     this.estimatedDurationMinutes,
     this.requestedLocale = 'vi',
     this.resolvedLocale = 'vi',
     this.isFallback = false,
   });
 
-  factory PublishedLocationSummary.fromJson(JsonMap json) =>
-      PublishedLocationSummary(
-        id: json.string('id'),
-        slug: json.string('slug'),
-        name: json.string('name'),
-        koreanName: json.string('korean_name'),
-        city: json.string('city'),
-        shortDescription: json.string('short_description'),
-        thumbnailUrl: json.string('thumbnail_url'),
-        thumbnailAlt: json.string('thumbnail_alt'),
-        releaseStatus: LocationReleaseStatus.fromWire(json['release_status']),
-        categories: json.stringList('categories'),
-        estimatedDurationMinutes: json.intOrNull('estimated_duration_minutes'),
-        requestedLocale: json.string('requested_locale'),
-        resolvedLocale: json.string('resolved_locale'),
-        isFallback: json['is_fallback'] == true,
-      );
+  factory PublishedLocationSummary.fromJson(JsonMap json) {
+    final latitude = json.doubleOrNull('latitude');
+    final longitude = json.doubleOrNull('longitude');
+    final hasValidCoordinates =
+        latitude != null &&
+        longitude != null &&
+        latitude.isFinite &&
+        longitude.isFinite &&
+        latitude >= -90 &&
+        latitude <= 90 &&
+        longitude >= -180 &&
+        longitude <= 180;
+
+    return PublishedLocationSummary(
+      id: json.string('id'),
+      slug: json.string('slug'),
+      name: json.string('name'),
+      koreanName: json.string('korean_name'),
+      city: json.string('city'),
+      shortDescription: json.string('short_description'),
+      thumbnailUrl: json.string('thumbnail_url'),
+      thumbnailAlt: json.string('thumbnail_alt'),
+      releaseStatus: LocationReleaseStatus.fromWire(json['release_status']),
+      categories: json.stringList('categories'),
+      latitude: hasValidCoordinates ? latitude : null,
+      longitude: hasValidCoordinates ? longitude : null,
+      estimatedDurationMinutes: json.intOrNull('estimated_duration_minutes'),
+      requestedLocale: json.string('requested_locale'),
+      resolvedLocale: json.string('resolved_locale'),
+      isFallback: json['is_fallback'] == true,
+    );
+  }
 
   final String id;
   final String slug;
@@ -48,12 +65,15 @@ class PublishedLocationSummary {
   final String thumbnailAlt;
   final LocationReleaseStatus releaseStatus;
   final List<String> categories;
+  final double? latitude;
+  final double? longitude;
   final int? estimatedDurationMinutes;
   final String requestedLocale;
   final String resolvedLocale;
   final bool isFallback;
 
   bool get isReleased => releaseStatus.isReleased;
+  bool get hasValidCoordinates => latitude != null && longitude != null;
 }
 
 class PublishedLocationDetail {
@@ -149,6 +169,12 @@ extension JsonMapRead on JsonMap {
     int value => value,
     num value => value.toInt(),
     String value => int.tryParse(value),
+    _ => null,
+  };
+
+  double? doubleOrNull(String key) => switch (this[key]) {
+    num value => value.toDouble(),
+    String value => double.tryParse(value.trim()),
     _ => null,
   };
 

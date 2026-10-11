@@ -75,6 +75,9 @@ class SupabaseKoreaQuestRepository implements KoreaQuestRepository {
 
   @override
   Future<UserProgress> getUserProgress({String locale = 'vi'}) async {
+    if (_client.auth.currentUser == null) {
+      return _fallback.getUserProgress(locale: locale);
+    }
     await _client.rpc('record_daily_visit');
     final response = await _client.rpc(
       'get_my_progress',
@@ -151,6 +154,7 @@ class SupabaseKoreaQuestRepository implements KoreaQuestRepository {
   Future<List<Achievement>> getEarnedAchievements({
     String locale = 'vi',
   }) async {
+    if (_client.auth.currentUser == null) return const [];
     final response = await _client.rpc(
       'get_my_achievements',
       params: {'requested_locale': locale},
@@ -162,6 +166,7 @@ class SupabaseKoreaQuestRepository implements KoreaQuestRepository {
   Future<List<PassportStamp>> getEarnedPassportStamps({
     String locale = 'vi',
   }) async {
+    if (_client.auth.currentUser == null) return const [];
     final response = await _client.rpc(
       'get_my_passport',
       params: {'requested_locale': locale},

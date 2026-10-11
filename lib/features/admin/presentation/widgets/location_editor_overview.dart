@@ -5,6 +5,7 @@ import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/features/admin/domain/admin_models.dart';
 import 'package:korea_quest/features/admin/presentation/widgets/admin_editor_fields.dart';
 import 'package:korea_quest/features/admin/presentation/widgets/admin_image_upload_button.dart';
+import 'package:korea_quest/features/admin/presentation/widgets/location_coordinate_editor.dart';
 
 class LocationOpeningEditor extends StatelessWidget {
   const LocationOpeningEditor({
@@ -186,7 +187,9 @@ class LocationOverviewEditor extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: AppSpacing.md),
+        const SizedBox(height: AppSpacing.lg),
+        LocationCoordinateEditor(draft: draft, onChanged: onChanged),
+        const SizedBox(height: AppSpacing.lg),
         AdminEditorTextField(
           label: 'Mô tả ngắn',
           value: adminText(data, 'short_description'),

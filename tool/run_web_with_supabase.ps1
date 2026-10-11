@@ -1,6 +1,7 @@
 ﻿[CmdletBinding()]
 param(
-  [string]$Device = 'chrome'
+  [string]$Device = 'chrome',
+  [string]$MapTilerApiKey = $env:MAPTILER_API_KEY
 )
 
 $projectRef = 'rsswzbgqapvrutcqasqv'
@@ -16,6 +17,6 @@ if ([string]::IsNullOrWhiteSpace($publishableKey)) {
   throw 'Không tìm thấy publishable key. Hãy đăng nhập Supabase CLI và thử lại.'
 }
 
-flutter run -d $Device `
+flutter run -d $Device --dart-define=MAPTILER_API_KEY=$MapTilerApiKey `
   --dart-define="SUPABASE_URL=$projectUrl" `
   --dart-define="SUPABASE_PUBLISHABLE_KEY=$publishableKey"

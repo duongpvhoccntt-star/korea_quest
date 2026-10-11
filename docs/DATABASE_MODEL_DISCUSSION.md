@@ -1,8 +1,8 @@
 # KoreaQuest Database & Domain Model
 
 > Trạng thái: Tài liệu thảo luận kỹ thuật, chưa phải cam kết triển khai production.
-> Nguồn đối chiếu: migrations đến `20261010113000_fix_progression_rpc_ambiguity.sql`, Edge Function `translate-location`, model/repository Admin, Explore và Gameplay, `CONTEXT.md`, ADR và `TEAM_OWNERSHIP.md` tại ngày 2026-10-10.
-> Trạng thái cloud: đã xác minh ngày 2026-10-10 trên project `KOREAQUEST` (org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`). Cloud đã áp dụng đến `20261010113000_fix_progression_rpc_ambiguity.sql`; lịch sử Local/Remote khớp, dry-run báo database up-to-date và database lint mức error sạch. Reset progression đã hoàn tất: các bảng gameplay chi tiết và share link có 0 bản ghi, 7 bản tổng hợp người dùng được giữ lại ở Level 1/0 XP; seed có 8 Level và 8 Huy hiệu active. Edge Function `translate-location` version 4 đang ACTIVE; các secret `GEMINI_API_KEY` và `GEMINI_TRANSLATION_MODEL=gemini-3.1-flash-lite` đã được cấu hình.
+> Nguồn đối chiếu: migrations đến `20261010130000_expose_location_coordinates.sql`, Edge Function `translate-location` và `suggest-location-coordinates`, model/repository Admin, Explore và Gameplay, `CONTEXT.md`, ADR và `TEAM_OWNERSHIP.md` tại ngày 2026-10-11.
+> Trạng thái cloud: migration `20261010130000_expose_location_coordinates.sql` và Edge Function `suggest-location-coordinates` đã được deploy ngày 2026-10-11 trên project `KOREAQUEST` (org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`). Đã cấu hình `MAPTILER_API_KEY` server-side; tile key web riêng đã lưu trong GitHub Actions secret và chỉ cho phép origin GitHub Pages cùng `localhost`.
 
 ## 1. Mục tiêu và phạm vi
 
@@ -437,7 +437,7 @@ Admin biên tập theo ba tab ngôn ngữ. Tiếng Việt là Bản nguồn. Nú
 | `archive_location` | `location_id` | `void` | Lưu trữ Location sau khi kiểm tra không còn Draft |
 | `admin_list_locations` | — | Bảng summary | Danh sách revision ưu tiên Draft rồi Published |
 | `get_admin_location` | `location_id` | JSON document | Nạp Draft cùng toàn bộ section cho editor |
-| `list_published_locations` | `requested_locale` | JSON summaries | Phủ bản dịch đã duyệt; fallback tiếng Việt khi thiếu. Trả Published chưa archive, gồm `release_status` |
+| `list_published_locations` | `requested_locale` | JSON summaries | Phủ bản dịch đã duyệt; fallback tiếng Việt khi thiếu. Trả Published chưa archive, gồm `release_status`, `latitude` và `longitude` của revision Published |
 | `get_published_location` | slug, `requested_locale` | JSON document | Trả nội dung theo locale, thêm `media.images` cho gallery và metadata `resolved_locale`/`is_fallback` khi `release_status = released` |
 | `submit_quiz_answer` | question, answer, `requested_locale` | JSON result + reward result | Chấm bằng dữ liệu gốc, ghi Câu hỏi/XP idempotent cho user đăng nhập và chỉ bản địa hóa phần giải thích |
 | `record_content_view` | kind, revision, content | `void` | Ghi lượt xem duy nhất, gồm Fun Fact; không mở khóa nội dung |
@@ -452,6 +452,8 @@ Admin biên tập theo ba tab ngôn ngữ. Tiếng Việt là Bản nguồn. Nú
 | `admin_approve_location_translation` | revision, locale | JSON translation | Duyệt nếu `source_lock_version` vẫn khớp |
 
 Các RPC ghi dữ liệu là `security definer`, đặt `search_path` rỗng và gọi kiểm tra Admin. Quyền execute chỉ được cấp cho role `authenticated`.
+
+Edge Function `suggest-location-coordinates` yêu cầu JWT của Admin và gọi `is_admin` trước khi truy cập provider. `MAPTILER_API_KEY` chỉ nằm ở Supabase secrets; `GEMINI_API_KEY` là tùy chọn để chuẩn hóa truy vấn. Function chỉ trả ứng viên, không ghi Draft hoặc Publish.
 
 ## 12. Authentication, Authorization và RLS
 
@@ -472,24 +474,25 @@ Fixture trong `supabase/seed.sql` tạo tài khoản thử nghiệm và chỉ d�
 
 ## 13. Trạng thái hiện tại
 
-Cập nhật ngày 2026-10-09:
+Cập nhật ngày 2026-10-11:
 
 | Hạng mục | Trạng thái hiện tại |
 |---|---|
 | Supabase Cloud project | Project `KOREAQUEST`, org PHAMVAN+, ref `rsswzbgqapvrutcqasqv`, region Northeast Asia (Tokyo) |
-| Migration trên cloud | **Đã áp dụng đến** `20261010113000_fix_progression_rpc_ambiguity.sql`; lịch sử Local/Remote khớp, dry-run báo database up-to-date và database lint mức error sạch ngày 2026-10-10 |
+| Migration trên cloud | `20261010130000_expose_location_coordinates.sql` đã áp dụng ngày 2026-10-11; public read model trả tọa độ của revision Published |
 | Gallery ảnh nội dung | Đã triển khai migration, RPC, Admin editor, public carousel và test; OpenAPI Cloud xác nhận bốn cột `image_gallery`, RPC lưu/validate, và smoke test Published trả đúng `media.images` cùng ảnh đầu tương thích |
 | Bảng trên cloud | Có đầy đủ các bảng Content, Gameplay và bảng mới `location_revision_translations` |
 | Dữ liệu trên cloud | Có 4 Location, 18 Location Revision, 2 Admin; migration đã backfill 18 bản nguồn tiếng Việt trong `location_revision_translations` |
 | Nới rule xuất bản | Các migration `20261008094500_simplify_publish_validation.sql` và `20261008111918_lower_publish_word_minimum.sql` đã áp dụng lên cloud ngày 2026-10-08 |
 | Edge Function | `translate-location` version 4 ACTIVE từ ngày 2026-10-09; endpoint yêu cầu JWT. Bản deploy khóa rõ nguồn/đích, kiểm tra sai ngôn ngữ và retry tối đa một lần; 2 regression test cho trường hợp locale Hàn đã pass |
+| Gợi ý tọa độ | Edge Function `suggest-location-coordinates` đã deploy ngày 2026-10-11. Đã cấu hình `MAPTILER_API_KEY` Supabase và kiểm tra endpoint không có JWT trả 401 ngày 2026-10-11; còn smoke test bằng quyền Admin. Gemini là fallback tùy chọn, không có key nào đi vào Flutter Web |
 | Secret dịch AI | Đã cấu hình `GEMINI_API_KEY` và `GEMINI_TRANSLATION_MODEL=gemini-3.1-flash-lite` trên Supabase; giá trị khóa không lưu trong repository |
 | Mô hình truy cập | Cloud và repo cho phép truy cập trực tiếp mọi Địa điểm `released` cùng toàn bộ chín Chặng; `coming_soon` chỉ có summary |
 | Tiến độ Chặng | `not_started`, `in_progress`, `completed`; dữ liệu `locked`/`available` cũ được chuyển sang `not_started` |
 | Fun Fact | Không còn `unlock_after_stage`, `explorer_fun_fact_unlocks` hoặc counter mở khóa; lịch sử xem dùng `content_views` |
 | Huy hiệu/Thử thách | Metric `unlocked_fun_facts` chuyển sang `content_views` với filter `kind = fun_fact` |
-| Flutter Admin | Có model/repository và UI editor; lỗi quiz được định vị tới số câu cụ thể và nút sửa cuộn tới đúng thẻ |
-| Explore/Journey runtime | Public content dùng Supabase khi có cấu hình và gửi locale `vi`/`en`/`ko`; thiếu bản dịch sẽ fallback tiếng Việt |
+| Flutter Admin | Có model/repository, UI editor và panel duyệt gợi ý tọa độ; chỉ thao tác Áp dụng mới thay đổi Draft, còn Publish luôn qua RPC validator |
+| Explore/Journey runtime | Public content dùng Supabase khi có cấu hình và gửi locale `vi`/`en`/`ko`; thiếu bản dịch sẽ fallback tiếng Việt. Explore dùng tọa độ revision Published để hiện marker MapTiler |
 | Level/Thành tích/Hộ chiếu runtime | Flutter đã dùng read/write RPC thật; Level/Huy hiệu/Dấu mộc không còn fallback mock khi Supabase được cấu hình |
 | Progression MVP | Seed 8 Level, 8 Huy hiệu; XP server-authoritative theo +2/+8/+20/+50; reward result trả delta XP, Huy hiệu/Dấu mộc mới và cờ request lặp |
 | Reset gameplay 2026-10-10 | Đã chạy trên cloud. Các bảng gameplay chi tiết và passport share link có 0 bản ghi; 7 dòng `explorer_progress_summary` được giữ để đặt Level 1/0 XP. Tài khoản, hồ sơ, saved content, memories và nội dung Published được giữ lại |

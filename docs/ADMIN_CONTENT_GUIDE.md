@@ -2,6 +2,8 @@
 
 Trang quản trị nội dung nằm tại `/admin`. MVP này dùng Supabase local cho dữ liệu admin; các màn Explore/Journey hiện tại vẫn dùng mock repository và chưa đọc nội dung mới.
 
+Ở bước **Tổng quan & metadata bản đồ**, Admin có thể click bản đồ MapTiler hoặc kéo ghim để cập nhật latitude/longitude WGS84. Nút **AI gợi ý vị trí** trả tối đa năm ứng viên; phải xem trước và bấm **Áp dụng** thủ công. Hệ thống không tự lưu hoặc Publish. Tọa độ chỉ xuất hiện ở bản đồ công khai sau khi Draft được Publish.
+
 Dashboard có bốn khu độc lập: **Địa điểm**, **Cấp độ**, **Huy hiệu** và **Thử thách**. Có thể chuyển khu bất kỳ; chỉ trình soạn thảo một Địa điểm mới dùng luồng mười bước và cảnh báo thay đổi chưa lưu.
 
 ## Chạy nhanh bản demo không cần email
@@ -32,6 +34,7 @@ Mở `/admin`, chọn **Đăng ký** để tạo tài khoản bằng tên đăng
    flutter run -d chrome `
      --dart-define=SUPABASE_URL=http://127.0.0.1:54321 `
      --dart-define=SUPABASE_PUBLISHABLE_KEY=<LOCAL_ANON_OR_PUBLISHABLE_KEY>
+     --dart-define=MAPTILER_API_KEY=<LOCAL_MAPTILER_KEY>
    ```
 
 4. Mở `http://localhost:<flutter-port>/admin`.
@@ -75,3 +78,11 @@ Tiến trình người chơi được lưu riêng và ghim vào đúng Phiên b�
 ## Production
 
 Không chạy seed local trên production. Tạo tài khoản admin bằng quy trình bảo mật riêng, sau đó thêm UUID người dùng vào `public.admin_users`. Cấu hình URL/key bằng biến build; không ghi key vào repository.
+
+### Gợi ý tọa độ bằng AI
+
+Edge Function `suggest-location-coordinates` yêu cầu JWT của một Admin. Gemini chỉ chuẩn hóa truy vấn và là tùy chọn: khi Gemini không sẵn sàng, MapTiler vẫn geocode trực tiếp tên/địa chỉ từ Draft và trả cảnh báo. `MAPTILER_API_KEY` geocoding cùng `GEMINI_API_KEY` chỉ cấu hình trong Supabase secrets; không đưa các key này vào Flutter Web.
+
+### Phát hành production
+
+Trước khi phát hành, chạy `supabase db push --dry-run`, áp dụng migration `20261010130000_expose_location_coordinates.sql`, deploy Edge Function và smoke test bằng tài khoản Admin. Dùng hai MapTiler key riêng: key tile web trong GitHub secret bị giới hạn origin, key geocoding chỉ nằm trong Supabase secret.

@@ -21,6 +21,9 @@ abstract interface class AdminRepository {
 
   Future<int> saveOverview(AdminLocationDraft draft);
 
+  Future<List<LocationCoordinateSuggestion>> suggestLocationCoordinates(
+    AdminLocationDraft draft,
+  );
   Future<int> saveSection({
     required AdminLocationDraft draft,
     required String sectionName,
@@ -72,6 +75,57 @@ abstract interface class AdminRepository {
 
 abstract interface class AdminRegistrationRepository {
   Future<void> register({required String username, required String password});
+}
+
+class LocationCoordinateSuggestion {
+  const LocationCoordinateSuggestion({
+    required this.latitude,
+    required this.longitude,
+    required this.label,
+    required this.address,
+    required this.source,
+    required this.confidence,
+    required this.reason,
+  });
+
+  factory LocationCoordinateSuggestion.fromJson(Map<String, dynamic> json) {
+    double? number(Object? value) => switch (value) {
+      num n => n.toDouble(),
+      String s => double.tryParse(s),
+      _ => null,
+    };
+    final latitude = number(json['latitude']);
+    final longitude = number(json['longitude']);
+    if (latitude == null ||
+        longitude == null ||
+        !latitude.isFinite ||
+        !longitude.isFinite ||
+        latitude < -90 ||
+        latitude > 90 ||
+        longitude < -180 ||
+        longitude > 180) {
+      throw const FormatException('Tọa độ gợi ý không hợp lệ.');
+    }
+    return LocationCoordinateSuggestion(
+      latitude: latitude,
+      longitude: longitude,
+      label: json['label']?.toString() ?? '',
+      address: json['address']?.toString() ?? '',
+      source: json['source']?.toString() ?? 'maptiler',
+      confidence: (number(json['confidence']) ?? 0).isFinite
+          ? (number(json['confidence']) ?? 0).clamp(0, 1).toDouble()
+          : 0,
+      reason: json['reason']?.toString() ?? '',
+    );
+  }
+
+  final double latitude;
+  final double longitude;
+  final String label;
+  final String address;
+  final String source;
+  final double confidence;
+  final String reason;
 }
 
 class AdminConfigurationException implements Exception {

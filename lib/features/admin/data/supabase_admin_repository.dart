@@ -95,6 +95,39 @@ class SupabaseAdminRepository implements AdminRepository {
   }
 
   @override
+  Future<List<LocationCoordinateSuggestion>> suggestLocationCoordinates(
+    AdminLocationDraft draft,
+  ) async {
+    final data = draft.overview;
+    final response = await _client.functions.invoke(
+      'suggest-location-coordinates',
+      body: {
+        'name': data['name'],
+        'korean_name': data['korean_name'],
+        'english_name': data['english_name'],
+        'address': data['address'],
+        'city': data['city'],
+        'region': data['region'],
+        'country': data['country'],
+        'slug': draft.slug,
+      },
+    );
+    if (response.status < 200 || response.status >= 300) {
+      throw const FormatException('Không thể lấy gợi ý tọa độ.');
+    }
+    final body = _jsonMap(response.data);
+    final raw = body['candidates'];
+    if (raw is! List) return const [];
+    return raw
+        .whereType<Map>()
+        .map(
+          (item) => LocationCoordinateSuggestion.fromJson(
+            Map<String, dynamic>.from(item),
+          ),
+        )
+        .toList(growable: false);
+  }
+  @override
   Future<int> saveSection({
     required AdminLocationDraft draft,
     required String sectionName,

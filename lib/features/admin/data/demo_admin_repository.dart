@@ -113,6 +113,25 @@ class DemoAdminRepository
   Future<int> saveOverview(AdminLocationDraft draft) => _save(draft);
 
   @override
+  Future<List<LocationCoordinateSuggestion>> suggestLocationCoordinates(
+    AdminLocationDraft draft,
+  ) async {
+    if ((draft.overview['name']?.toString().trim() ?? '').isEmpty) {
+      return const [];
+    }
+    return const [
+      LocationCoordinateSuggestion(
+        latitude: 37.5796,
+        longitude: 126.9770,
+        label: 'Gyeongbokgung Palace',
+        address: '161 Sajik-ro, Jongno-gu, Seoul',
+        source: 'demo',
+        confidence: 0.98,
+        reason: 'Gợi ý demo; Admin cần kiểm tra trước khi áp dụng.',
+      ),
+    ];
+  }
+  @override
   Future<int> saveSection({
     required AdminLocationDraft draft,
     required String sectionName,

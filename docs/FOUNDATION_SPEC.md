@@ -384,6 +384,7 @@ Cập nhật README.md bằng tiếng Việt, gồm:
 * Trạng thái hiện tại: Foundation/Phase 1.
 * Những phần chưa triển khai: backend, Supabase thật và logic nghiệp vụ sâu.
 
+Bản đồ Explore dùng raster tiles MapTiler trên nền OpenStreetMap. Key được truyền qua `MAPTILER_API_KEY`, không lưu trong source, và attribution MapTiler/OpenStreetMap luôn hiển thị.
 ## 14. Giới hạn
 
 Trong giai đoạn này không được:

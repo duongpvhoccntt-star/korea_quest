@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,6 +15,7 @@ import 'package:korea_quest/features/explore/presentation/providers/location_con
 import 'package:korea_quest/l10n/app_strings.dart';
 import 'package:korea_quest/shared/models/domain_models.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
+import 'package:korea_quest/shared/widgets/korea_map.dart';
 
 const _allFilter = '__all__';
 const _comingSoonFilter = '__coming_soon__';
@@ -33,6 +32,7 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
   String _query = '';
   String _filter = _allFilter;
   String? _selectedSlug;
+  bool _showLocationList = false;
 
   @override
   Widget build(BuildContext context) {
@@ -128,6 +128,10 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
                           onSelect: (location) =>
                               setState(() => _selectedSlug = location.slug),
                           onExplore: _openLocation,
+                          showList: _showLocationList,
+                          onToggleView: () => setState(
+                            () => _showLocationList = !_showLocationList,
+                          ),
                         ),
                       ),
                     ],
@@ -150,6 +154,9 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
                     onSelect: (location) =>
                         setState(() => _selectedSlug = location.slug),
                     onExplore: _openLocation,
+                    showList: _showLocationList,
+                    onToggleView: () =>
+                        setState(() => _showLocationList = !_showLocationList),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   _RecommendationStrip(
@@ -382,6 +389,8 @@ class _MapExperience extends StatelessWidget {
     required this.onFilterChanged,
     required this.onSelect,
     required this.onExplore,
+    required this.showList,
+    required this.onToggleView,
   });
 
   final List<PublishedLocationSummary> locations;
@@ -393,6 +402,8 @@ class _MapExperience extends StatelessWidget {
   final ValueChanged<String> onFilterChanged;
   final ValueChanged<PublishedLocationSummary> onSelect;
   final ValueChanged<PublishedLocationSummary> onExplore;
+  final bool showList;
+  final VoidCallback onToggleView;
 
   @override
   Widget build(BuildContext context) => _SurfaceCard(
@@ -418,9 +429,15 @@ class _MapExperience extends StatelessWidget {
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   IconButton.filledTonal(
-                    tooltip: appStrings(context).locationList,
-                    onPressed: () {},
-                    icon: const Icon(Icons.format_list_bulleted_rounded),
+                    tooltip: showList
+                        ? 'Map view'
+                        : appStrings(context).locationList,
+                    onPressed: onToggleView,
+                    icon: Icon(
+                      showList
+                          ? Icons.map_outlined
+                          : Icons.format_list_bulleted_rounded,
+                    ),
                   ),
                 ],
               ),
@@ -458,146 +475,181 @@ class _MapExperience extends StatelessWidget {
             ),
           )
         else
-          SizedBox(
-            height: MediaQuery.sizeOf(context).width >= 700 ? 620 : 560,
-            child: LayoutBuilder(
-              builder: (context, constraints) => Stack(
-                children: [
-                  Positioned.fill(
-                    child: RepaintBoundary(
-                      child: CustomPaint(
-                        painter: _KoreaMapPainter(),
-                        isComplex: true,
-                        willChange: false,
-                        child: const SizedBox.expand(),
-                      ),
-                    ),
-                  ),
-                  const Positioned(
-                    top: AppSpacing.lg,
-                    left: AppSpacing.lg,
-                    child: _MapControls(),
-                  ),
-                  for (
-                    var index = 0;
-                    index < math.min(locations.length, 10);
-                    index++
-                  )
-                    _MapMarker(
-                      location: locations[index],
-                      position:
-                          _markerPositions[index % _markerPositions.length],
-                      canvasSize: constraints.biggest,
-                      status: _statusFor(locations[index], selected),
-                      onTap: () => onSelect(locations[index]),
-                    ),
-                  if (selected != null)
-                    Positioned(
-                      left: AppSpacing.lg,
-                      right: AppSpacing.lg,
-                      bottom: AppSpacing.lg,
-                      child: _DestinationPreviewCard(
-                        location: selected!,
-                        onExplore: () => onExplore(selected!),
-                      ),
-                    ),
-                ],
-              ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              0,
+              AppSpacing.lg,
+              AppSpacing.lg,
             ),
+            child: showList
+                ? _DestinationList(
+                    locations: locations,
+                    selected: selected,
+                    onSelect: onSelect,
+                    onExplore: onExplore,
+                  )
+                : _ExploreGoogleMap(
+                    locations: locations,
+                    selected: selected,
+                    onSelect: onSelect,
+                    onExplore: onExplore,
+                  ),
           ),
       ],
     ),
   );
-
-  static _MarkerStatus _statusFor(
-    PublishedLocationSummary item,
-    PublishedLocationSummary? selected,
-  ) {
-    if (!item.isReleased) return _MarkerStatus.comingSoon;
-    if (selected?.slug == item.slug) return _MarkerStatus.selected;
-    return _MarkerStatus.available;
-  }
 }
 
-class _MapMarker extends StatelessWidget {
-  const _MapMarker({
-    required this.location,
-    required this.position,
-    required this.canvasSize,
-    required this.status,
-    required this.onTap,
+class _ExploreGoogleMap extends StatelessWidget {
+  const _ExploreGoogleMap({
+    required this.locations,
+    required this.selected,
+    required this.onSelect,
+    required this.onExplore,
   });
 
-  final PublishedLocationSummary location;
-  final Offset position;
-  final Size canvasSize;
-  final _MarkerStatus status;
-  final VoidCallback onTap;
+  final List<PublishedLocationSummary> locations;
+  final PublishedLocationSummary? selected;
+  final ValueChanged<PublishedLocationSummary> onSelect;
+  final ValueChanged<PublishedLocationSummary> onExplore;
 
   @override
   Widget build(BuildContext context) {
-    final color = switch (status) {
-      _MarkerStatus.selected => AppColors.koreanBlue,
-      _MarkerStatus.comingSoon => AppColors.disabled,
-      _ => AppColors.blossom,
-    };
-    final size = status == _MarkerStatus.selected ? 72.0 : 56.0;
-    final safeMaxLeft = math.max(8.0, canvasSize.width - size - 8.0);
-    final safeMaxTop = math.max(72.0, canvasSize.height - size - 160.0);
-    final left = (position.dx * canvasSize.width - size / 2).clamp(
-      8.0,
-      safeMaxLeft,
-    );
-    final top = (position.dy * canvasSize.height - size / 2).clamp(
-      72.0,
-      safeMaxTop,
-    );
+    final mapped = locations
+        .where((location) => location.hasValidCoordinates)
+        .map(
+          (location) => KoreaMapPlace(
+            id: location.id,
+            title: location.name,
+            subtitle: location.city,
+            latitude: location.latitude!,
+            longitude: location.longitude!,
+            isReleased: location.isReleased,
+          ),
+        )
+        .toList(growable: false);
+    final missingCount = locations.length - mapped.length;
 
-    return Positioned(
-      left: left,
-      top: top,
-      child: Tooltip(
-        message: '${location.name} · ${location.city}',
-        child: Semantics(
-          button: true,
-          label: appStrings(context).chooseLocation(location.name),
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(AppRadius.round),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 220),
-              width: size,
-              height: size,
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: color,
-                  width: status == _MarkerStatus.comingSoon ? 2 : 4,
-                ),
-                boxShadow: AppShadows.small,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (missingCount > 0) ...[
+          _MapNotice(message: appStrings(context).locationCount(missingCount)),
+          const SizedBox(height: AppSpacing.sm),
+        ],
+        KoreaLocationsMap(
+          places: mapped,
+          selectedPlaceId: selected?.id,
+          onPlaceSelected: (id) {
+            final location = locations
+                .where((item) => item.id == id)
+                .firstOrNull;
+            if (location != null) onSelect(location);
+          },
+          resetLabel: appStrings(context).resetMap,
+          unavailableBuilder: (context) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _MapNotice(
+                message: appStrings(context).loadMapError('Google Maps'),
               ),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  ClipOval(child: _LocationImage(location: location)),
-                  if (status == _MarkerStatus.comingSoon)
-                    const ColoredBox(
-                      color: Color(0x88FFFFFF),
-                      child: Icon(
-                        Icons.schedule_rounded,
-                        color: AppColors.disabled,
-                      ),
-                    ),
-                ],
+              const SizedBox(height: AppSpacing.md),
+              _DestinationList(
+                locations: locations,
+                selected: selected,
+                onSelect: onSelect,
+                onExplore: onExplore,
               ),
+            ],
+          ),
+        ),
+        if (selected != null) ...[
+          const SizedBox(height: AppSpacing.md),
+          _DestinationPreviewCard(
+            location: selected!,
+            onExplore: () => onExplore(selected!),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _DestinationList extends StatelessWidget {
+  const _DestinationList({
+    required this.locations,
+    required this.selected,
+    required this.onSelect,
+    required this.onExplore,
+  });
+
+  final List<PublishedLocationSummary> locations;
+  final PublishedLocationSummary? selected;
+  final ValueChanged<PublishedLocationSummary> onSelect;
+  final ValueChanged<PublishedLocationSummary> onExplore;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    children: [
+      for (final location in locations) ...[
+        Material(
+          color: selected?.id == location.id
+              ? AppColors.skyLight
+              : Colors.white,
+          borderRadius: BorderRadius.circular(AppRadius.large),
+          child: ListTile(
+            onTap: () => onSelect(location),
+            leading: ClipRRect(
+              borderRadius: BorderRadius.circular(AppRadius.small),
+              child: SizedBox.square(
+                dimension: 56,
+                child: _LocationImage(location: location),
+              ),
+            ),
+            title: Text(
+              location.name,
+              style: const TextStyle(fontWeight: FontWeight.w800),
+            ),
+            subtitle: Text(
+              location.isReleased
+                  ? location.city
+                  : '${location.city} · ${appStrings(context).comingSoon}',
+            ),
+            trailing: IconButton(
+              tooltip: appStrings(context).explore,
+              onPressed: location.isReleased ? () => onExplore(location) : null,
+              icon: const Icon(Icons.arrow_forward_rounded),
             ),
           ),
         ),
-      ),
-    );
-  }
+        const SizedBox(height: AppSpacing.sm),
+      ],
+    ],
+  );
+}
+
+class _MapNotice extends StatelessWidget {
+  const _MapNotice({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(AppSpacing.md),
+    decoration: BoxDecoration(
+      color: AppColors.skyLight,
+      borderRadius: BorderRadius.circular(AppRadius.medium),
+      border: Border.all(color: AppColors.borderSoft),
+    ),
+    child: Row(
+      children: [
+        const Icon(Icons.info_outline_rounded, color: AppColors.koreanBlue),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(child: Text(message)),
+      ],
+    ),
+  );
 }
 
 class _DestinationPreviewCard extends StatelessWidget {
@@ -1137,145 +1189,3 @@ class _InfoPill extends StatelessWidget {
     ),
   );
 }
-
-class _MapControls extends StatelessWidget {
-  const _MapControls();
-
-  @override
-  Widget build(BuildContext context) => DecoratedBox(
-    decoration: BoxDecoration(
-      color: Colors.white.withValues(alpha: .92),
-      borderRadius: BorderRadius.circular(AppRadius.round),
-      border: Border.all(color: AppColors.borderSoft),
-      boxShadow: AppShadows.small,
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IconButton(
-          tooltip: appStrings(context).zoomIn,
-          onPressed: () {},
-          icon: const Icon(Icons.add_rounded),
-        ),
-        IconButton(
-          tooltip: appStrings(context).zoomOut,
-          onPressed: () {},
-          icon: const Icon(Icons.remove_rounded),
-        ),
-        IconButton(
-          tooltip: appStrings(context).resetMap,
-          onPressed: () {},
-          icon: const Icon(Icons.my_location_rounded),
-        ),
-      ],
-    ),
-  );
-}
-
-class _KoreaMapPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final bg = Paint()
-      ..shader = const LinearGradient(
-        colors: [AppColors.pageBg, Color(0xFFF1E8DC)],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ).createShader(Offset.zero & size);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(24)),
-      bg,
-    );
-
-    final land = Paint()..color = AppColors.mint.withValues(alpha: .58);
-    final coast = Paint()
-      ..color = Colors.white.withValues(alpha: .75)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 8;
-    final path = Path()
-      ..moveTo(size.width * .46, size.height * .10)
-      ..cubicTo(
-        size.width * .60,
-        size.height * .14,
-        size.width * .66,
-        size.height * .30,
-        size.width * .60,
-        size.height * .44,
-      )
-      ..cubicTo(
-        size.width * .73,
-        size.height * .56,
-        size.width * .68,
-        size.height * .74,
-        size.width * .53,
-        size.height * .80,
-      )
-      ..cubicTo(
-        size.width * .40,
-        size.height * .86,
-        size.width * .31,
-        size.height * .70,
-        size.width * .38,
-        size.height * .57,
-      )
-      ..cubicTo(
-        size.width * .26,
-        size.height * .45,
-        size.width * .30,
-        size.height * .24,
-        size.width * .46,
-        size.height * .10,
-      )
-      ..close();
-    canvas.drawPath(path, coast);
-    canvas.drawPath(path, land);
-
-    final jeju = Rect.fromCenter(
-      center: Offset(size.width * .34, size.height * .86),
-      width: size.width * .18,
-      height: size.height * .07,
-    );
-    canvas.drawOval(
-      jeju.inflate(4),
-      Paint()..color = Colors.white.withValues(alpha: .70),
-    );
-    canvas.drawOval(jeju, land);
-
-    final route = Paint()
-      ..color = AppColors.koreanBlue.withValues(alpha: .30)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3;
-    final routePath = Path()
-      ..moveTo(size.width * .36, size.height * .25)
-      ..quadraticBezierTo(
-        size.width * .58,
-        size.height * .36,
-        size.width * .60,
-        size.height * .62,
-      )
-      ..quadraticBezierTo(
-        size.width * .50,
-        size.height * .78,
-        size.width * .34,
-        size.height * .86,
-      );
-    canvas.drawPath(routePath, route);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-enum _MarkerStatus { available, selected, comingSoon }
-
-const _markerPositions = [
-  Offset(.36, .22),
-  Offset(.46, .28),
-  Offset(.30, .76),
-  Offset(.70, .62),
-  Offset(.76, .70),
-  Offset(.58, .48),
-  Offset(.44, .58),
-  Offset(.56, .20),
-  Offset(.80, .46),
-  Offset(.34, .48),
-];

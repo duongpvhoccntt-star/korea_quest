@@ -10,6 +10,7 @@ import 'package:korea_quest/features/admin/domain/admin_models.dart';
 import 'package:korea_quest/features/admin/domain/admin_repository.dart';
 import 'package:korea_quest/features/admin/presentation/providers/admin_providers.dart';
 import 'package:korea_quest/features/admin/presentation/widgets/location_editor_content.dart';
+import 'package:korea_quest/features/admin/presentation/widgets/admin_editor_fields.dart';
 import 'package:korea_quest/features/admin/presentation/widgets/location_editor_overview.dart';
 import 'package:korea_quest/features/admin/presentation/widgets/location_editor_quiz.dart';
 import 'package:korea_quest/features/admin/presentation/widgets/location_translation_editor.dart';
@@ -122,7 +123,28 @@ class _LocationEditorState extends ConsumerState<LocationEditor> {
 
   Future<bool> _saveCurrent({bool advance = false}) async {
     if (_saving) return false;
-    setState(() => _saving = true);
+    if (_currentStep == 1) {
+      final latitude = adminText(_draft.overview, 'latitude').trim();
+      final longitude = adminText(_draft.overview, 'longitude').trim();
+      final hasAny = latitude.isNotEmpty || longitude.isNotEmpty;
+      final parsedLatitude = double.tryParse(latitude);
+      final parsedLongitude = double.tryParse(longitude);
+      if (hasAny &&
+          (latitude.isEmpty ||
+              longitude.isEmpty ||
+              parsedLatitude == null ||
+              parsedLongitude == null ||
+              parsedLatitude < -90 ||
+              parsedLatitude > 90 ||
+              parsedLongitude < -180 ||
+              parsedLongitude > 180)) {
+        AppToast.show(
+          context,
+          'Latitude/longitude phải là số hợp lệ và phải nhập đủ cả hai giá trị.',
+        );
+        return false;
+      }
+    }    setState(() => _saving = true);
     try {
       final repository = ref.read(adminRepositoryProvider);
       final wasPersisted = await _ensurePersisted(repository);

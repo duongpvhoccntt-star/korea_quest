@@ -57,10 +57,34 @@ void main() {
       'thumbnail_alt': '',
       'release_status': 'coming_soon',
       'categories': ['history'],
+      'latitude': '37.579600',
+      'longitude': 126.977,
     });
 
     expect(summary.isReleased, isFalse);
     expect(summary.releaseStatus, LocationReleaseStatus.comingSoon);
     expect(summary.estimatedDurationMinutes, isNull);
+    expect(summary.latitude, 37.5796);
+    expect(summary.longitude, 126.977);
+    expect(summary.hasValidCoordinates, isTrue);
+  });
+
+  test('summary ignores missing, incomplete, and out-of-range coordinates', () {
+    PublishedLocationSummary parse(Object? latitude, Object? longitude) =>
+        PublishedLocationSummary.fromJson({
+          'id': 'location-1',
+          'slug': 'gyeongbokgung',
+          'name': 'Gyeongbokgung',
+          'release_status': 'released',
+          'latitude': latitude,
+          'longitude': longitude,
+        });
+
+    expect(parse(null, null).hasValidCoordinates, isFalse);
+    expect(parse(37.5, null).hasValidCoordinates, isFalse);
+    expect(parse('not-a-number', '126.9').hasValidCoordinates, isFalse);
+    expect(parse(double.nan, 126.9).hasValidCoordinates, isFalse);
+    expect(parse(91, 126.9).hasValidCoordinates, isFalse);
+    expect(parse(37.5, 181).hasValidCoordinates, isFalse);
   });
 }
