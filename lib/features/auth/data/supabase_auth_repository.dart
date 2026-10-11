@@ -1,19 +1,21 @@
 import 'dart:async';
 
-import 'package:korea_quest/app/app_config.dart';
+import 'package:korea_quest/core/services/local_guest_store.dart';
 import 'package:korea_quest/features/auth/domain/auth_models.dart';
 import 'package:korea_quest/features/auth/domain/auth_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 class SupabaseAuthRepository implements AuthRepository {
-  SupabaseAuthRepository(this._client) {
+  SupabaseAuthRepository(this._client, {LocalGuestStore? guestStore})
+    : _guestStore = guestStore ?? LocalGuestStore() {
     final user = _client.auth.currentUser;
-    if (user != null) {
+    if (user != null && !user.isAnonymous) {
       _currentUser = _mapUser(user, role: UserRole.user);
     }
   }
 
   final supabase.SupabaseClient _client;
+  final LocalGuestStore _guestStore;
   final _userStateChanges = StreamController<AuthUser?>.broadcast();
   AuthUser? _currentUser;
 
@@ -23,27 +25,34 @@ class SupabaseAuthRepository implements AuthRepository {
   @override
   Stream<AuthUser?> watchCurrentUser() async* {
     if (_currentUser?.isGuest != true) {
-      final initialUser = _client.auth.currentUser;
-      _currentUser = initialUser == null ? null : await _loadUser(initialUser);
+      final user = _client.auth.currentUser;
+      if (user?.isAnonymous == true) {
+        await _client.auth.signOut();
+        _currentUser = null;
+      } else {
+        _currentUser = user == null ? null : await _loadUser(user);
+      }
+      _currentUser ??= (await _guestStore.read())?.authUser;
     }
     yield _currentUser;
 
     final changes = StreamController<AuthUser?>();
-    final localSubscription = _userStateChanges.stream.listen(
-      changes.add,
-      onError: changes.addError,
-    );
+    final localSubscription = _userStateChanges.stream.listen(changes.add);
     final authSubscription = _client.auth.onAuthStateChange
         .asyncMap((event) async {
           final user = event.session?.user;
           if (user == null && _currentUser?.isGuest == true) {
             return _currentUser;
           }
+          if (user?.isAnonymous == true) {
+            await _client.auth.signOut();
+            _currentUser = (await _guestStore.read())?.authUser;
+            return _currentUser;
+          }
           _currentUser = user == null ? null : await _loadUser(user);
           return _currentUser;
         })
         .listen(changes.add, onError: changes.addError);
-
     try {
       yield* changes.stream;
     } finally {
@@ -64,17 +73,16 @@ class SupabaseAuthRepository implements AuthRepository {
         'Vui lòng đăng nhập bằng địa chỉ email hợp lệ.',
       );
     }
-
     try {
-      final response = await _client.auth.signInWithPassword(
+      final user = (await _client.auth.signInWithPassword(
         email: email,
         password: password,
-      );
-      final user = response.user;
+      )).user;
       if (user == null) {
         throw const AuthException('Không thể tạo phiên đăng nhập.');
       }
       _currentUser = await _loadUser(user);
+      await _guestStore.clear();
       _userStateChanges.add(_currentUser);
       return _currentUser!;
     } on supabase.AuthException catch (error) {
@@ -88,35 +96,13 @@ class SupabaseAuthRepository implements AuthRepository {
     if (trimmed.isEmpty) {
       throw const AuthException('Vui lòng nhập tên của bạn.');
     }
-    try {
-      final response = await _client.auth.signInAnonymously(
-        data: {'display_name': trimmed, 'full_name': trimmed},
-      );
-      final user = response.user;
-      if (user == null) {
-        throw const AuthException('Không thể tạo phiên khách.');
-      }
-      _currentUser = await _loadUser(user);
-      _userStateChanges.add(_currentUser);
-      return _currentUser!;
-    } on supabase.AuthException catch (error) {
-      // The configured runtime must use Anonymous Auth so the UUID can own
-      // progress. Keeping a local identity only makes isolated/offline tests
-      // and the unconfigured demo usable.
-      if (!AppConfig.hasSupabaseConfiguration) {
-        final guestUser = AuthUser(
-          id: 'guest-${DateTime.now().millisecondsSinceEpoch}',
-          usernameOrEmail: 'guest@koreaquest.local',
-          displayName: trimmed,
-          role: UserRole.user,
-          isGuest: true,
-        );
-        _currentUser = guestUser;
-        _userStateChanges.add(guestUser);
-        return guestUser;
-      }
-      throw AuthException(_friendlyMessage(error.message));
+    if (_client.auth.currentUser?.isAnonymous == true) {
+      await _client.auth.signOut();
     }
+    final snapshot = await _guestStore.createOrUpdate(trimmed);
+    _currentUser = snapshot.authUser;
+    _userStateChanges.add(_currentUser);
+    return _currentUser!;
   }
 
   @override
@@ -131,53 +117,30 @@ class SupabaseAuthRepository implements AuthRepository {
     final normalizedDisplayName = displayName.trim().isEmpty
         ? normalizedFullName
         : displayName.trim();
-
     if (!_isValidEmail(normalizedEmail)) {
       throw const AuthException('Email không đúng định dạng.');
     }
     if (password.length < 8) {
       throw const AuthException('Mật khẩu phải có ít nhất 8 ký tự.');
     }
-
     try {
-      final existingUser = _client.auth.currentUser;
-      if (existingUser?.isAnonymous == true) {
-        final response = await _client.auth.updateUser(
-          supabase.UserAttributes(
-            email: normalizedEmail,
-            password: password,
-            data: {
-              'full_name': normalizedFullName,
-              'display_name': normalizedDisplayName,
-            },
-          ),
-        );
-        final upgradedUser = response.user;
-        if (upgradedUser == null) {
-          throw const AuthException('Không thể nâng cấp tài khoản khách.');
-        }
-        _currentUser = await _loadUser(upgradedUser);
-        _userStateChanges.add(_currentUser);
-        return _currentUser!;
-      }
-      final response = await _client.auth.signUp(
+      final user = (await _client.auth.signUp(
         email: normalizedEmail,
         password: password,
         data: {
           'full_name': normalizedFullName,
           'display_name': normalizedDisplayName,
         },
-      );
-      final user = response.user;
+      )).user;
       if (user == null) {
         throw const AuthException('Không thể tạo tài khoản. Vui lòng thử lại.');
       }
       if (user.identities != null && user.identities!.isEmpty) {
         throw const AuthException('Email này đã được sử dụng.');
       }
-
       final mappedUser = _mapUser(user, role: UserRole.user);
-      _currentUser = response.session == null ? null : mappedUser;
+      _currentUser = _client.auth.currentSession == null ? null : mappedUser;
+      await _guestStore.clear();
       _userStateChanges.add(_currentUser);
       return mappedUser;
     } on supabase.AuthException catch (error) {
@@ -227,6 +190,7 @@ class SupabaseAuthRepository implements AuthRepository {
   Future<void> signOut() async {
     try {
       await _client.auth.signOut();
+      await _guestStore.clear();
       _currentUser = null;
       _userStateChanges.add(null);
     } on supabase.AuthException catch (error) {
@@ -234,19 +198,13 @@ class SupabaseAuthRepository implements AuthRepository {
     }
   }
 
-  void dispose() {
-    _userStateChanges.close();
-  }
+  void dispose() => _userStateChanges.close();
 
   Future<AuthUser> _loadUser(supabase.User user) async {
     var role = UserRole.user;
     try {
-      final isAdmin = await _client.rpc('is_admin');
-      if (isAdmin == true) role = UserRole.admin;
-    } catch (_) {
-      // Authentication remains usable if optional profile data is unavailable.
-      // The backend still enforces every admin operation with RLS.
-    }
+      if (await _client.rpc('is_admin') == true) role = UserRole.admin;
+    } catch (_) {}
     return _mapUser(user, role: role);
   }
 

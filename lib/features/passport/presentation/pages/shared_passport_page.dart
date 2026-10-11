@@ -6,6 +6,7 @@ import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/l10n/app_strings.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
 import 'package:korea_quest/shared/widgets/module_page.dart';
+import 'package:korea_quest/features/passport/presentation/widgets/passport_stamp_assets.dart';
 
 class SharedPassportPage extends ConsumerWidget {
   const SharedPassportPage({required this.token, super.key});
@@ -55,7 +56,14 @@ class SharedPassportPage extends ConsumerWidget {
                   children: [
                     for (final stamp in data.stamps)
                       Chip(
-                        avatar: const Icon(Icons.approval_rounded),
+                        avatar: switch (PassportStampAssets.forLocation(
+                          stamp.locationId,
+                        )) {
+                          final assetPath? => CircleAvatar(
+                            backgroundImage: AssetImage(assetPath),
+                          ),
+                          null => const Icon(Icons.approval_rounded),
+                        },
                         label: Text(stamp.name),
                       ),
                     for (final achievement in data.achievements)
