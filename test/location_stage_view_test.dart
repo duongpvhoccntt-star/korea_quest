@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:korea_quest/app/app_router.dart';
 import 'package:korea_quest/app/app_theme.dart';
+import 'package:korea_quest/features/auth/data/mock_auth_repository.dart';
+import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
 import 'package:korea_quest/features/explore/domain/published_location.dart';
 import 'package:korea_quest/features/explore/presentation/pages/published_location_page.dart';
 import 'package:korea_quest/features/explore/presentation/providers/location_content_providers.dart';
+import 'package:korea_quest/features/explore/presentation/widgets/guest_registration_prompt_dialog.dart';
 import 'package:korea_quest/features/explore/presentation/widgets/location_content_view.dart';
 
 void main() {
@@ -178,6 +182,97 @@ void main() {
     await tester.ensureVisible(find.text('Vào khám phá ngay'));
     await tester.tap(find.text('Vào khám phá ngay'));
     expect(selectedStage, 2);
+  });
+
+  testWidgets('Guest continues to the next stage without opening login', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 2000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    final authRepository = MockAuthRepository();
+    await authRepository.signInAsGuest(name: 'Minh Anh');
+    addTearDown(authRepository.dispose);
+
+    final container = ProviderContainer(
+      overrides: [
+        authRepositoryProvider.overrideWithValue(authRepository),
+        publishedLocationProvider(
+          'sample',
+        ).overrideWith((ref) async => location),
+      ],
+    );
+    addTearDown(container.dispose);
+    final router = container.read(appRouterProvider);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp.router(routerConfig: router),
+      ),
+    );
+    router.go('/locations/sample/stages/1');
+    await tester.pumpAndSettle();
+
+    final continueButton = find.ancestor(
+      of: find.byIcon(Icons.arrow_forward_rounded).last,
+      matching: find.byType(FilledButton),
+    );
+    await tester.ensureVisible(continueButton);
+    await tester.tap(continueButton);
+    await tester.pumpAndSettle();
+
+    expect(
+      router.routeInformationProvider.value.uri.path,
+      '/locations/sample/stages/2',
+    );
+  });
+
+  testWidgets('Guest is prompted to register only after the final stage', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 2000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    final authRepository = MockAuthRepository();
+    await authRepository.signInAsGuest(name: 'Minh Anh');
+    addTearDown(authRepository.dispose);
+
+    final container = ProviderContainer(
+      overrides: [
+        authRepositoryProvider.overrideWithValue(authRepository),
+        publishedLocationProvider(
+          'sample',
+        ).overrideWith((ref) async => location),
+      ],
+    );
+    addTearDown(container.dispose);
+    final router = container.read(appRouterProvider);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp.router(routerConfig: router),
+      ),
+    );
+    router.go('/locations/sample/stages/9');
+    await tester.pumpAndSettle();
+
+    final finishButton = find.ancestor(
+      of: find.byIcon(Icons.map_outlined).last,
+      matching: find.byType(FilledButton),
+    );
+    await tester.ensureVisible(finishButton);
+    await tester.tap(finishButton);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(GuestRegistrationPromptDialog), findsOneWidget);
+    expect(
+      router.routeInformationProvider.value.uri.path,
+      '/locations/sample/stages/9',
+    );
   });
 
   testWidgets('allows selecting any stage directly', (tester) async {

@@ -98,7 +98,11 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
 
   Future<void> _completeStage(int stageNumber, String locationName) async {
     final user = ref.read(authRepositoryProvider).currentUser;
-    if (user == null || user.isGuest) {
+    if (user?.isGuest == true) {
+      _openStage(stageNumber == 9 ? 0 : stageNumber + 1, locationName);
+      return;
+    }
+    if (user == null) {
       _openLogin();
       return;
     }
