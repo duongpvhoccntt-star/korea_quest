@@ -60,6 +60,17 @@ void main() {
       find.byKey(const ValueKey('celebration-animated-backdrop')),
       findsOneWidget,
     );
+    final koreanFlag = tester.widget<Image>(
+      find.byKey(const ValueKey('south-korea-flag')),
+    );
+    expect(
+      koreanFlag.image,
+      isA<AssetImage>().having(
+        (image) => image.assetName,
+        'assetName',
+        'assets/images/south_korea_flag.png',
+      ),
+    );
     expect(
       find.byKey(const ValueKey('close-location-completion')),
       findsOneWidget,
