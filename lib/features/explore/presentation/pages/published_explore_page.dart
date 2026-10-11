@@ -953,11 +953,6 @@ class _SuggestionTile extends StatelessWidget {
             ],
           ),
         ),
-        IconButton(
-          tooltip: appStrings(context).saveToJourney,
-          onPressed: () {},
-          icon: const Icon(Icons.bookmark_add_outlined),
-        ),
       ],
     ),
   );

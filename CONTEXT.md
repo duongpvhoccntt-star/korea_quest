@@ -9,8 +9,8 @@ Người dùng tham gia các hành trình văn hóa và tích lũy tiến độ 
 _Avoid_: Người chơi, khách hàng
 
 **Tài khoản khách**:
-Nhà thám hiểm đăng nhập bằng Supabase Anonymous Auth với tên hiển thị, chưa có email/mật khẩu. Khi đăng ký, cùng UUID được nâng cấp để giữ nguyên XP, Dấu mộc và Tiến độ.
-_Avoid_: Phiên thuần cục bộ, tài khoản mới thay thế khách
+Nhà thám hiểm dùng hồ sơ cục bộ trên thiết bị với tên hiển thị, không tạo phiên Supabase. XP, Dấu mộc, Huy hiệu và Tiến độ được giữ khi tải lại nhưng không đồng bộ; đăng ký tạo tài khoản mới và xóa dữ liệu khách.
+_Avoid_: Supabase Anonymous Auth, nâng cấp cùng UUID
 
 **Quản trị viên**:
 Người được phép biên tập, xuất bản và lưu trữ nội dung khám phá.

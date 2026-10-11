@@ -107,9 +107,8 @@ class MockAuthRepository implements AuthRepository {
       throw const AuthException('Email hoặc tên đăng nhập đã được sử dụng.');
     }
 
-    final currentGuest = _currentUser?.isGuest == true ? _currentUser : null;
     final newUser = AuthUser(
-      id: currentGuest?.id ?? 'user-${_nextUserId++}',
+      id: 'user-${_nextUserId++}',
       usernameOrEmail: key,
       displayName: displayName.trim().isEmpty
           ? fullName.trim()

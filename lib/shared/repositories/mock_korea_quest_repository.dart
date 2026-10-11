@@ -312,6 +312,13 @@ class MockKoreaQuestRepository implements KoreaQuestRepository {
             seal: '山',
             earnedDate: DateTime(2026, 8, 9),
           ),
+          PassportStamp(
+            locationId: 'jeju',
+            name: 'Đảo Jeju',
+            koreanName: '제주도',
+            seal: '섬',
+            earnedDate: DateTime(2026, 8, 12),
+          ),
         ];
 
   @override

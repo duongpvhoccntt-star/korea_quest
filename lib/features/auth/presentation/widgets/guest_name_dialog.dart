@@ -44,7 +44,9 @@ class _GuestNameDialogState extends ConsumerState<GuestNameDialog> {
       return;
     }
     if (name.length > 40) {
-      setState(() => _errorMessage = 'Tên không được vượt quá 40 ký tự.');
+      setState(
+        () => _errorMessage = 'TÃªn khÃ´ng Ä‘Æ°á»£c vÆ°á»£t quÃ¡ 40 kÃ½ tá»±.',
+      );
       return;
     }
 
@@ -59,6 +61,7 @@ class _GuestNameDialogState extends ConsumerState<GuestNameDialog> {
       if (kqRepo is MockKoreaQuestRepository) {
         kqRepo.setGuestDisplayName(name);
       }
+      ref.invalidate(koreaQuestRepositoryProvider);
       ref.invalidate(currentUserProvider);
       if (mounted) {
         Navigator.of(context, rootNavigator: true).pop();

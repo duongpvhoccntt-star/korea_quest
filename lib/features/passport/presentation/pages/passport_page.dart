@@ -12,6 +12,7 @@ import 'package:korea_quest/l10n/app_strings.dart';
 import 'package:korea_quest/shared/models/domain_models.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
 import 'package:korea_quest/shared/widgets/module_page.dart';
+import 'package:korea_quest/features/passport/presentation/widgets/passport_stamp_assets.dart';
 
 class PassportPage extends ConsumerStatefulWidget {
   const PassportPage({super.key});
@@ -202,13 +203,26 @@ class _StampGrid extends StatelessWidget {
     ),
     itemBuilder: (context, index) {
       final stamp = items[index];
+      final assetPath = PassportStampAssets.forLocation(stamp.locationId);
       return Card(
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.md),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (stamp.imageUrl.isNotEmpty)
+              if (assetPath != null)
+                ClipOval(
+                  child: Image.asset(
+                    assetPath,
+                    width: 120,
+                    height: 120,
+                    fit: BoxFit.cover,
+                    semanticLabel: stamp.imageAlt.isNotEmpty
+                        ? stamp.imageAlt
+                        : stamp.name,
+                  ),
+                )
+              else if (stamp.imageUrl.isNotEmpty)
                 ClipOval(
                   child: Image.network(
                     stamp.imageUrl,

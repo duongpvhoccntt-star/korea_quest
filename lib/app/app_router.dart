@@ -57,6 +57,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final isGuest = currentUser == null || currentUser.isGuest;
       final isGuestMode = ref.read(guestModeProvider);
 
+      if (currentUser?.isGuest == true &&
+          (state.uri.path == '/' || state.uri.path == '/login')) {
+        return '/explore';
+      }
+
       if (isGuest) {
         final canBrowseAsGuest = currentUser?.isGuest == true || isGuestMode;
         if (!canBrowseAsGuest) {

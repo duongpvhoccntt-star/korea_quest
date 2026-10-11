@@ -79,6 +79,7 @@ flutter:
     - assets/images/auth_gyeongbokgung_mist.jpg
     - assets/images/korea_quest_antique_map.png
     - assets/images/koreaquest_logo_mark.png
+    - assets/images/passport_stamps/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

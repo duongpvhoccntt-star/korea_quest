@@ -1,15 +1,23 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:korea_quest/app/app_config.dart';
+import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
 import 'package:korea_quest/l10n/locale_controller.dart';
 import 'package:korea_quest/shared/models/domain_models.dart';
 import 'package:korea_quest/shared/repositories/korea_quest_repository.dart';
+import 'package:korea_quest/shared/repositories/local_guest_korea_quest_repository.dart';
 import 'package:korea_quest/shared/repositories/mock_korea_quest_repository.dart';
 import 'package:korea_quest/shared/repositories/supabase_korea_quest_repository.dart';
 
 final koreaQuestRepositoryProvider = Provider<KoreaQuestRepository>((ref) {
-  if (AppConfig.hasSupabaseConfiguration) {
-    return SupabaseKoreaQuestRepository();
+  final authUser = ref.watch(authUserStreamProvider).value;
+  if (AppConfig.hasSupabaseConfiguration && authUser?.isGuest == true) {
+    return LocalGuestKoreaQuestRepository(
+      contentRepository: AppConfig.hasSupabaseConfiguration
+          ? SupabaseKoreaQuestRepository()
+          : MockKoreaQuestRepository(),
+    );
   }
+  if (AppConfig.hasSupabaseConfiguration) return SupabaseKoreaQuestRepository();
   return MockKoreaQuestRepository();
 });
 
