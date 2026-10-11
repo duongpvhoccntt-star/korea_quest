@@ -5,6 +5,7 @@ import 'package:korea_quest/app/app.dart';
 import 'package:korea_quest/app/app_router.dart';
 import 'package:korea_quest/features/auth/data/mock_auth_repository.dart';
 import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
+import 'package:korea_quest/features/auth/presentation/widgets/guest_access_prompt_dialog.dart';
 import 'package:korea_quest/features/explore/domain/published_location.dart';
 import 'package:korea_quest/features/explore/presentation/providers/location_content_providers.dart';
 import 'package:korea_quest/shared/models/domain_models.dart';
@@ -57,39 +58,47 @@ void main() {
     expect(router.routeInformationProvider.value.uri.path, '/explore');
   });
 
-  testWidgets('guest users are redirected from member-only routes to login', (
-    tester,
-  ) async {
-    final authRepository = MockAuthRepository();
-    await authRepository.signInAsGuest(name: 'Minh Anh');
-    addTearDown(authRepository.dispose);
+  testWidgets(
+    'guest users are redirected from member-only routes to access prompt',
+    (tester) async {
+      final authRepository = MockAuthRepository();
+      await authRepository.signInAsGuest(name: 'Minh Anh');
+      addTearDown(authRepository.dispose);
 
-    final container = ProviderContainer(
-      overrides: [authRepositoryProvider.overrideWithValue(authRepository)],
-    );
-    addTearDown(container.dispose);
-    final router = container.read(appRouterProvider);
-
-    await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
-        child: MaterialApp.router(routerConfig: router),
-      ),
-    );
-    for (final protectedPath in const [
-      '/passport',
-      '/achievements',
-      '/profile',
-      '/settings',
-    ]) {
-      router.go(protectedPath);
-      await tester.pumpAndSettle();
-
-      expect(router.routeInformationProvider.value.uri.path, '/login');
-      expect(
-        router.routeInformationProvider.value.uri.queryParameters['redirect'],
-        protectedPath,
+      final container = ProviderContainer(
+        overrides: [authRepositoryProvider.overrideWithValue(authRepository)],
       );
-    }
-  });
+      addTearDown(container.dispose);
+      final router = container.read(appRouterProvider);
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp.router(routerConfig: router),
+        ),
+      );
+      for (final protectedPath in const [
+        '/passport',
+        '/achievements',
+        '/profile',
+        '/settings',
+      ]) {
+        router.go(protectedPath);
+        await tester.pumpAndSettle();
+
+        expect(router.routeInformationProvider.value.uri.path, '/explore');
+        expect(
+          router
+              .routeInformationProvider
+              .value
+              .uri
+              .queryParameters['guestAccess'],
+          protectedPath,
+        );
+        if (protectedPath == '/passport') {
+          expect(find.byType(GuestAccessPromptDialog), findsOneWidget);
+        }
+      }
+    },
+  );
 }

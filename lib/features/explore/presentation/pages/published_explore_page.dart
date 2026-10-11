@@ -10,7 +10,9 @@ import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/shadows/app_shadows.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
+import 'package:korea_quest/features/auth/domain/auth_models.dart';
 import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
+import 'package:korea_quest/features/auth/presentation/widgets/guest_access_prompt_dialog.dart';
 import 'package:korea_quest/features/explore/domain/published_location.dart';
 import 'package:korea_quest/features/explore/presentation/providers/location_content_providers.dart';
 import 'package:korea_quest/l10n/app_strings.dart';
@@ -22,7 +24,9 @@ const _allFilter = '__all__';
 const _comingSoonFilter = '__coming_soon__';
 
 class PublishedExplorePage extends ConsumerStatefulWidget {
-  const PublishedExplorePage({super.key});
+  const PublishedExplorePage({super.key, this.guestTargetPath});
+
+  final String? guestTargetPath;
 
   @override
   ConsumerState<PublishedExplorePage> createState() =>
@@ -34,11 +38,21 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
   String _filter = _allFilter;
   String? _selectedSlug;
   bool _showLocationList = false;
+  String? _promptedGuestTarget;
+
+  @override
+  void didUpdateWidget(covariant PublishedExplorePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.guestTargetPath != widget.guestTargetPath) {
+      _promptedGuestTarget = null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final locations = ref.watch(publishedLocationsProvider);
     final authUser = ref.watch(authUserStreamProvider).value;
+    _showGuestAccessPromptIfNeeded(authUser);
     final canUsePersonalFeatures = authUser != null && !authUser.isGuest;
     final achievements = canUsePersonalFeatures
         ? ref.watch(earnedAchievementsProvider)
@@ -79,6 +93,24 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
         personalLocations: personalLocations,
       ),
     );
+  }
+
+  void _showGuestAccessPromptIfNeeded(AuthUser? authUser) {
+    final targetPath = widget.guestTargetPath;
+    if (authUser?.isGuest != true ||
+        targetPath == null ||
+        _promptedGuestTarget == targetPath) {
+      return;
+    }
+    _promptedGuestTarget = targetPath;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      showGuestAccessPromptDialog(
+        context,
+        guestName: authUser!.displayName,
+        targetPath: targetPath,
+      );
+    });
   }
 
   Widget _buildDashboard(

@@ -9,6 +9,14 @@ class AppLocalizationsVi extends AppLocalizations {
   AppLocalizationsVi([String locale = 'vi']) : super(locale);
 
   @override
+  String get guestAccessTitle => 'Đăng nhập để mở khóa tính năng này';
+
+  @override
+  String guestAccessMessage(String name) {
+    return '$name, bạn có thể tiếp tục khám phá. Đăng nhập hoặc đăng ký để sử dụng tính năng này và lưu tiến độ của bạn.';
+  }
+
+  @override
   String get appTitle => 'KoreaQuest';
 
   @override

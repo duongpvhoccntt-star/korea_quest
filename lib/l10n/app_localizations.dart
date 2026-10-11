@@ -100,6 +100,18 @@ abstract class AppLocalizations {
     Locale('vi'),
   ];
 
+  /// No description provided for @guestAccessTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đăng nhập để mở khóa tính năng này'**
+  String get guestAccessTitle;
+
+  /// No description provided for @guestAccessMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'{name}, bạn có thể tiếp tục khám phá. Đăng nhập hoặc đăng ký để sử dụng tính năng này và lưu tiến độ của bạn.'**
+  String guestAccessMessage(String name);
+
   /// No description provided for @appTitle.
   ///
   /// In vi, this message translates to:

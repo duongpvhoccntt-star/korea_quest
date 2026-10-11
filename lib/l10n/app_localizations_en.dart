@@ -9,6 +9,14 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get guestAccessTitle => 'Sign in to unlock this feature';
+
+  @override
+  String guestAccessMessage(String name) {
+    return '$name, you can keep exploring. Sign in or register to use this feature and save your progress.';
+  }
+
+  @override
   String get appTitle => 'KoreaQuest';
 
   @override

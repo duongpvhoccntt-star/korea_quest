@@ -1,5 +1,14 @@
 {
   "@@locale": "en",
+  "guestAccessTitle": "Sign in to unlock this feature",
+  "guestAccessMessage": "{name}, you can keep exploring. Sign in or register to use this feature and save your progress.",
+  "@guestAccessMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "appTitle": "KoreaQuest",
   "home": "Home",
   "cultureAdventure": "CULTURE ADVENTURE",

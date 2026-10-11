@@ -8,7 +8,9 @@ import 'package:korea_quest/design_system/components/progress_components.dart';
 import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
+import 'package:korea_quest/features/auth/domain/auth_models.dart';
 import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
+import 'package:korea_quest/features/auth/presentation/widgets/guest_access_prompt_dialog.dart';
 import 'package:korea_quest/features/auth/presentation/widgets/sign_out_action.dart';
 import 'package:korea_quest/l10n/app_strings.dart';
 import 'package:korea_quest/l10n/locale_controller.dart';
@@ -106,7 +108,8 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                       child: _HeaderLink(
                         label: destination.$1,
                         selected: _isSelected(path, destination.$2),
-                        onPressed: () => context.go(destination.$2),
+                        onPressed: () =>
+                            _navigateTo(context, authUser, destination.$2),
                       ),
                     ),
                   const SizedBox(width: AppSpacing.sm),
@@ -144,14 +147,15 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                       ),
                     IconButton(
                       tooltip: strings.settings,
-                      onPressed: () => context.go('/settings'),
+                      onPressed: () =>
+                          _navigateTo(context, authUser, '/settings'),
                       icon: const Icon(Icons.settings_outlined),
                     ),
                     const SizedBox(width: AppSpacing.xs),
                     PopupMenuButton<String>(
                       tooltip: strings.openAccountMenu,
                       onSelected: (value) =>
-                          _handleMenuSelection(context, ref, value),
+                          _handleMenuSelection(context, ref, authUser, value),
                       itemBuilder: (_) => [
                         PopupMenuItem<String>(
                           enabled: false,
@@ -253,22 +257,39 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
                           ),
                         ),
                       ],
-                      child: UserAvatar(
-                        displayName:
-                            user?.displayName ??
-                            currentUserAccount!.displayName,
-                        avatarPreset: user?.avatarPreset,
-                        avatarBytes: user?.avatarBytes,
-                      ),
+                      child: isGuestUser
+                          ? _GuestAccountTrigger(
+                              displayName: currentUserAccount!.displayName,
+                              badgeLabel: strings.guestBadge,
+                            )
+                          : UserAvatar(
+                              displayName:
+                                  user?.displayName ??
+                                  currentUserAccount!.displayName,
+                              avatarPreset: user?.avatarPreset,
+                              avatarBytes: user?.avatarBytes,
+                            ),
                     ),
                   ],
                 ] else
                   PopupMenuButton<String>(
                     tooltip: strings.openNavigation,
-                    icon: const Icon(Icons.menu_rounded),
+                    icon: isGuestUser
+                        ? const _GuestAvatarIcon()
+                        : const Icon(Icons.menu_rounded),
                     onSelected: (value) =>
-                        _handleMenuSelection(context, ref, value),
+                        _handleMenuSelection(context, ref, authUser, value),
                     itemBuilder: (_) => [
+                      if (isGuestUser) ...[
+                        PopupMenuItem<String>(
+                          enabled: false,
+                          child: _GuestIdentityRow(
+                            displayName: currentUserAccount!.displayName,
+                            badgeLabel: strings.guestBadge,
+                          ),
+                        ),
+                        const PopupMenuDivider(),
+                      ],
                       for (final destination in destinations)
                         PopupMenuItem(
                           value: destination.$2,
@@ -326,13 +347,26 @@ class AppHeader extends ConsumerWidget implements PreferredSizeWidget {
   static void _handleMenuSelection(
     BuildContext context,
     WidgetRef ref,
+    AuthUser? authUser,
     String value,
   ) {
     if (value == _signOutAction) {
       confirmAndSignOut(context, ref);
       return;
     }
-    context.go(value);
+    _navigateTo(context, authUser, value);
+  }
+
+  static void _navigateTo(
+    BuildContext context,
+    AuthUser? authUser,
+    String destination,
+  ) {
+    if (authUser?.isGuest == true && isGuestRestrictedPath(destination)) {
+      context.go(guestAccessRouteFor(Uri.parse(destination)));
+      return;
+    }
+    context.go(destination);
   }
 }
 
@@ -386,7 +420,127 @@ class _AccountMenuItem extends StatelessWidget {
     children: [
       Icon(icon, color: color, size: 20),
       const SizedBox(width: AppSpacing.sm),
-      Text(label, style: TextStyle(color: color)),
+      Expanded(
+        child: Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(color: color),
+        ),
+      ),
+    ],
+  );
+}
+
+class _GuestAvatarIcon extends StatelessWidget {
+  const _GuestAvatarIcon();
+
+  @override
+  Widget build(BuildContext context) => CircleAvatar(
+    radius: 20,
+    backgroundColor: AppColors.coral.withValues(alpha: 0.12),
+    foregroundColor: AppColors.coral,
+    child: const Icon(Icons.person_rounded),
+  );
+}
+
+class _GuestBadge extends StatelessWidget {
+  const _GuestBadge({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(
+      horizontal: AppSpacing.xs,
+      vertical: AppSpacing.xxs,
+    ),
+    decoration: BoxDecoration(
+      color: AppColors.coral.withValues(alpha: 0.12),
+      borderRadius: BorderRadius.circular(AppRadius.round),
+    ),
+    child: Text(
+      label,
+      style: const TextStyle(
+        color: AppColors.coral,
+        fontSize: 10,
+        fontWeight: FontWeight.w700,
+      ),
+    ),
+  );
+}
+
+class _GuestAccountTrigger extends StatelessWidget {
+  const _GuestAccountTrigger({
+    required this.displayName,
+    required this.badgeLabel,
+  });
+
+  final String displayName;
+  final String badgeLabel;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(
+      horizontal: AppSpacing.xs,
+      vertical: AppSpacing.xxs,
+    ),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      border: Border.all(color: AppColors.line),
+      borderRadius: BorderRadius.circular(AppRadius.round),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const _GuestAvatarIcon(),
+        const SizedBox(width: AppSpacing.xs),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 132),
+          child: Text(
+            displayName,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: AppColors.stitchText,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.xs),
+        _GuestBadge(label: badgeLabel),
+      ],
+    ),
+  );
+}
+
+class _GuestIdentityRow extends StatelessWidget {
+  const _GuestIdentityRow({
+    required this.displayName,
+    required this.badgeLabel,
+  });
+
+  final String displayName;
+  final String badgeLabel;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    children: [
+      const _GuestAvatarIcon(),
+      const SizedBox(width: AppSpacing.sm),
+      Expanded(
+        child: Text(
+          displayName,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            color: AppColors.stitchText,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ),
+      const SizedBox(width: AppSpacing.xs),
+      _GuestBadge(label: badgeLabel),
     ],
   );
 }

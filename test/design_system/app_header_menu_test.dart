@@ -13,6 +13,61 @@ void main() {
     displayName: 'Dương',
     role: UserRole.user,
   );
+  const guestUser = AuthUser(
+    id: 'guest-minh-anh',
+    usernameOrEmail: 'guest@koreaquest.local',
+    displayName: 'Minh Anh',
+    role: UserRole.user,
+    isGuest: true,
+  );
+
+  testWidgets('desktop header shows the Guest identity trigger', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(1600, 900);
+    addTearDown(tester.view.reset);
+
+    final router = _router();
+    addTearDown(router.dispose);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          authUserStreamProvider.overrideWith((ref) => Stream.value(guestUser)),
+        ],
+        child: MaterialApp.router(routerConfig: router),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.person_rounded), findsOneWidget);
+    expect(find.text('Minh Anh'), findsOneWidget);
+  });
+
+  testWidgets('mobile Guest menu includes the entered Guest identity', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
+
+    final router = _router();
+    addTearDown(router.dispose);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          authUserStreamProvider.overrideWith((ref) => Stream.value(guestUser)),
+        ],
+        child: MaterialApp.router(routerConfig: router),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.person_rounded));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Minh Anh'), findsOneWidget);
+  });
 
   testWidgets('AppHeader displays account menu for member avatar', (
     tester,

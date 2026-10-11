@@ -5,6 +5,7 @@ import 'package:korea_quest/features/achievements/presentation/pages/achievement
 import 'package:korea_quest/features/admin/presentation/pages/admin_database_page.dart';
 import 'package:korea_quest/features/auth/presentation/pages/auth_page.dart';
 import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
+import 'package:korea_quest/features/auth/presentation/widgets/guest_access_prompt_dialog.dart';
 import 'package:korea_quest/features/explore/presentation/pages/published_explore_page.dart';
 import 'package:korea_quest/features/explore/presentation/pages/published_location_page.dart';
 import 'package:korea_quest/features/landing/presentation/pages/landing_page.dart';
@@ -64,6 +65,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             ).toString();
           }
         } else {
+          if (currentUser?.isGuest == true &&
+              isGuestRestrictedPath(state.uri.path)) {
+            return guestAccessRouteFor(state.uri);
+          }
           final allowedGuestPaths =
               state.uri.path == '/explore' ||
               state.uri.path.startsWith('/locations/') ||
@@ -130,7 +135,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/explore',
             name: AppRouteNames.explore,
-            builder: (context, state) => const PublishedExplorePage(),
+            builder: (context, state) => PublishedExplorePage(
+              guestTargetPath: validGuestAccessTarget(
+                state.uri.queryParameters[guestAccessTargetParameter],
+              ),
+            ),
           ),
           GoRoute(
             path: '/locations/:locationId',

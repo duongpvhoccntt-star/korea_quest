@@ -1,5 +1,14 @@
 {
   "@@locale": "ko",
+  "guestAccessTitle": "\uB85C\uADF8\uC778\uD558\uC5EC \uAE30\uB2A5\uC744 \uC0AC\uC6A9\uD574 \uBCF4\uC138\uC694",
+  "guestAccessMessage": "{name}\uB2D8, \uACC4\uC18D \uD0D0\uD5D8\uD560 \uC218 \uC788\uC5B4\uC694. \uC774 \uAE30\uB2A5\uC744 \uC0AC\uC6A9\uD558\uACE0 \uC9C4\uD589\uB3C4\uB97C \uC800\uC7A5\uD558\uB824\uBA74 \uB85C\uADF8\uC778\uD558\uAC70\uB098 \uD68C\uC6D0 \uAC00\uC785\uD558\uC138\uC694.",
+  "@guestAccessMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "appTitle": "KoreaQuest",
   "home": "홈",
   "cultureAdventure": "한국 문화 탐험",

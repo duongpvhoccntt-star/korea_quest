@@ -9,6 +9,14 @@ class AppLocalizationsKo extends AppLocalizations {
   AppLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
+  String get guestAccessTitle => '로그인하여 기능을 사용해 보세요';
+
+  @override
+  String guestAccessMessage(String name) {
+    return '$name님, 계속 탐험할 수 있어요. 이 기능을 사용하고 진행도를 저장하려면 로그인하거나 회원 가입하세요.';
+  }
+
+  @override
   String get appTitle => 'KoreaQuest';
 
   @override
