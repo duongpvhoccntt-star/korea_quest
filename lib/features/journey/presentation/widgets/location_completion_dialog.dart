@@ -236,12 +236,6 @@ class _RewardCard extends StatelessWidget {
           label: '+$awardedXp XP',
           color: AppColors.gold,
         ),
-      if (stampAwarded)
-        _RewardChip(
-          icon: Icons.verified_rounded,
-          label: strings.passport,
-          color: AppColors.coral,
-        ),
       for (final title in achievementTitles)
         _RewardChip(
           icon: Icons.emoji_events_rounded,
@@ -294,6 +288,10 @@ class _RewardCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
+                if (stampAwarded) ...[
+                  _PassportStampAward(locationName: locationName),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
                 if (rewardChips.isNotEmpty) ...[
                   Wrap(
                     alignment: WrapAlignment.center,
@@ -332,6 +330,78 @@ class _RewardCard extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PassportStampAward extends StatelessWidget {
+  const _PassportStampAward({required this.locationName});
+
+  final String locationName;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = appStrings(context);
+    return Semantics(
+      label:
+          '${strings.newPassportStamp}: $locationName. ${strings.stampSavedToPassport}',
+      child: Container(
+        key: const ValueKey('new-passport-stamp'),
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        decoration: BoxDecoration(
+          color: AppColors.coral.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(AppRadius.medium),
+          border: Border.all(color: AppColors.coral.withValues(alpha: 0.45)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: AppSpacing.section,
+              height: AppSpacing.section,
+              decoration: BoxDecoration(
+                color: AppColors.paper,
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.coral, width: 2),
+              ),
+              child: const Icon(
+                Icons.local_post_office_rounded,
+                color: AppColors.coral,
+                size: AppSpacing.xl,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    strings.newPassportStamp,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: AppColors.coral,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(
+                    locationName,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: AppColors.stitchText,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(
+                    strings.stampSavedToPassport,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.stitchMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

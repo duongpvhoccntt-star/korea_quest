@@ -646,6 +646,15 @@ class AppLocalizationsVi extends AppLocalizations {
   String get backToKoreaMap => 'Trở về bản đồ Hàn Quốc';
 
   @override
+  String get completeJourney => 'Hoàn thành hành trình';
+
+  @override
+  String get newPassportStamp => 'Dấu mộc mới';
+
+  @override
+  String get stampSavedToPassport => 'Đã thêm vào Hộ chiếu';
+
+  @override
   String stageProgress(int current) {
     return 'Chặng $current/9';
   }

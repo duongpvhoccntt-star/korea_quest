@@ -618,6 +618,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get backToKoreaMap => '한국 지도로 돌아가기';
 
   @override
+  String get completeJourney => '여정 완료하기';
+
+  @override
+  String get newPassportStamp => '새 여권 스탬프';
+
+  @override
+  String get stampSavedToPassport => '여권에 추가되었습니다';
+
+  @override
   String stageProgress(int current) {
     return '$current/9 단계';
   }

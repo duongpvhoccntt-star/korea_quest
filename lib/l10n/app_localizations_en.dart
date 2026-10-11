@@ -649,6 +649,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backToKoreaMap => 'Back to the Korea map';
 
   @override
+  String get completeJourney => 'Complete journey';
+
+  @override
+  String get newPassportStamp => 'New passport stamp';
+
+  @override
+  String get stampSavedToPassport => 'Added to your Passport';
+
+  @override
   String stageProgress(int current) {
     return 'Stage $current/9';
   }

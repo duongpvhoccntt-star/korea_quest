@@ -260,10 +260,7 @@ void main() {
     router.go('/locations/sample/stages/9');
     await tester.pumpAndSettle();
 
-    final finishButton = find.ancestor(
-      of: find.byIcon(Icons.map_outlined).last,
-      matching: find.byType(FilledButton),
-    );
+    final finishButton = find.byKey(const ValueKey('stage-navigation-9'));
     await tester.ensureVisible(finishButton);
     await tester.tap(finishButton);
     await tester.pumpAndSettle();
@@ -556,15 +553,18 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('returns to the map after the travel stage', (tester) async {
+  testWidgets('completes the travel stage through the final action', (
+    tester,
+  ) async {
     var selectedStage = -1;
 
     await tester.pumpWidget(
       buildApp(stage: 9, onStage: (stage) => selectedStage = stage),
     );
 
-    await tester.ensureVisible(find.text('Trở về bản đồ Hàn Quốc'));
-    await tester.tap(find.text('Trở về bản đồ Hàn Quốc'));
+    final finishButton = find.byKey(const ValueKey('stage-navigation-9'));
+    await tester.ensureVisible(finishButton);
+    await tester.tap(finishButton);
     expect(selectedStage, 0);
   });
 }

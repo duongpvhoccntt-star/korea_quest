@@ -64,7 +64,8 @@ void main() {
       find.byKey(const ValueKey('close-location-completion')),
       findsOneWidget,
     );
-    expect(find.textContaining('Gyeongbokgung'), findsOneWidget);
+    expect(find.textContaining('Gyeongbokgung'), findsAtLeastNWidgets(1));
+    expect(find.byKey(const ValueKey('new-passport-stamp')), findsOneWidget);
     expect(find.text('+50 XP'), findsOneWidget);
     expect(find.text('Người khám phá'), findsOneWidget);
 
@@ -152,6 +153,9 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+
+      expect(find.text('Trở về bản đồ Hàn Quốc'), findsNothing);
+      expect(find.byIcon(Icons.emoji_events_rounded), findsOneWidget);
 
       final finishButton = find.byKey(const ValueKey('stage-navigation-9'));
       await tester.ensureVisible(finishButton);

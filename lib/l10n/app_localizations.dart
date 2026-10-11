@@ -1264,6 +1264,24 @@ abstract class AppLocalizations {
   /// **'Trở về bản đồ Hàn Quốc'**
   String get backToKoreaMap;
 
+  /// No description provided for @completeJourney.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hoàn thành hành trình'**
+  String get completeJourney;
+
+  /// No description provided for @newPassportStamp.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dấu mộc mới'**
+  String get newPassportStamp;
+
+  /// No description provided for @stampSavedToPassport.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã thêm vào Hộ chiếu'**
+  String get stampSavedToPassport;
+
   /// No description provided for @stageProgress.
   ///
   /// In vi, this message translates to:

@@ -442,7 +442,7 @@ class _StageNavigation extends StatelessWidget {
       strings.travel,
     ];
     final label = currentStage == 9
-        ? strings.backToKoreaMap
+        ? strings.completeJourney
         : strings.continueTo(stageLabels[currentStage]);
     return Align(
       alignment: Alignment.centerRight,
@@ -450,7 +450,9 @@ class _StageNavigation extends StatelessWidget {
         key: ValueKey('stage-navigation-$currentStage'),
         onPressed: onPressed,
         icon: Icon(
-          currentStage == 9 ? Icons.map_outlined : Icons.arrow_forward_rounded,
+          currentStage == 9
+              ? Icons.emoji_events_rounded
+              : Icons.arrow_forward_rounded,
         ),
         label: Text(label),
       ),

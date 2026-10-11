@@ -261,6 +261,9 @@
   "quiz": "Quiz",
   "travel": "Du lịch",
   "backToKoreaMap": "Trở về bản đồ Hàn Quốc",
+  "completeJourney": "Hoàn thành hành trình",
+  "newPassportStamp": "Dấu mộc mới",
+  "stampSavedToPassport": "Đã thêm vào Hộ chiếu",
   "stageProgress": "Chặng {current}/9",
   "@stageProgress": {
     "placeholders": {

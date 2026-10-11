@@ -251,6 +251,9 @@
   "quiz": "퀴즈",
   "travel": "여행 정보",
   "backToKoreaMap": "한국 지도로 돌아가기",
+  "completeJourney": "여정 완료하기",
+  "newPassportStamp": "새 여권 스탬프",
+  "stampSavedToPassport": "여권에 추가되었습니다",
   "stageProgress": "{current}/9 단계",
   "@stageProgress": {
     "placeholders": {
