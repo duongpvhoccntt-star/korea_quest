@@ -50,11 +50,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         '/forgot-password',
         '/admin',
       };
-      final isGuest = ref.read(authRepositoryProvider).currentUser == null;
+      final currentUser = ref.read(authRepositoryProvider).currentUser;
+      final isGuest = currentUser == null || currentUser.isGuest;
       final isGuestMode = ref.read(guestModeProvider);
 
       if (isGuest) {
-        if (!isGuestMode) {
+        final canBrowseAsGuest = currentUser?.isGuest == true || isGuestMode;
+        if (!canBrowseAsGuest) {
           if (!authPaths.contains(state.uri.path)) {
             return Uri(
               path: '/login',

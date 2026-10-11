@@ -79,7 +79,8 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
     String questionId,
     JsonMap answer,
   ) async {
-    if (ref.read(authRepositoryProvider).currentUser == null) {
+    final user = ref.read(authRepositoryProvider).currentUser;
+    if (user == null || user.isGuest) {
       _openLogin();
       return const QuizAnswerResult(isCorrect: false, explanation: '');
     }
@@ -96,7 +97,8 @@ class _PublishedLocationPageState extends ConsumerState<PublishedLocationPage> {
   }
 
   Future<void> _completeStage(int stageNumber, String locationName) async {
-    if (ref.read(authRepositoryProvider).currentUser == null) {
+    final user = ref.read(authRepositoryProvider).currentUser;
+    if (user == null || user.isGuest) {
       _openLogin();
       return;
     }

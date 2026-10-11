@@ -56,4 +56,40 @@ void main() {
 
     expect(router.routeInformationProvider.value.uri.path, '/explore');
   });
+
+  testWidgets('guest users are redirected from member-only routes to login', (
+    tester,
+  ) async {
+    final authRepository = MockAuthRepository();
+    await authRepository.signInAsGuest(name: 'Minh Anh');
+    addTearDown(authRepository.dispose);
+
+    final container = ProviderContainer(
+      overrides: [authRepositoryProvider.overrideWithValue(authRepository)],
+    );
+    addTearDown(container.dispose);
+    final router = container.read(appRouterProvider);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp.router(routerConfig: router),
+      ),
+    );
+    for (final protectedPath in const [
+      '/passport',
+      '/achievements',
+      '/profile',
+      '/settings',
+    ]) {
+      router.go(protectedPath);
+      await tester.pumpAndSettle();
+
+      expect(router.routeInformationProvider.value.uri.path, '/login');
+      expect(
+        router.routeInformationProvider.value.uri.queryParameters['redirect'],
+        protectedPath,
+      );
+    }
+  });
 }

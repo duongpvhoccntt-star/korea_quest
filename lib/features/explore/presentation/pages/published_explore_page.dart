@@ -10,6 +10,7 @@ import 'package:korea_quest/design_system/components/responsive_content.dart';
 import 'package:korea_quest/design_system/radius/app_radius.dart';
 import 'package:korea_quest/design_system/shadows/app_shadows.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
+import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
 import 'package:korea_quest/features/explore/domain/published_location.dart';
 import 'package:korea_quest/features/explore/presentation/providers/location_content_providers.dart';
 import 'package:korea_quest/l10n/app_strings.dart';
@@ -37,10 +38,20 @@ class _PublishedExplorePageState extends ConsumerState<PublishedExplorePage> {
   @override
   Widget build(BuildContext context) {
     final locations = ref.watch(publishedLocationsProvider);
-    final achievements = ref.watch(earnedAchievementsProvider);
-    final user = ref.watch(currentUserProvider).value;
-    final progress = ref.watch(userProgressProvider).value;
-    final personalLocations = ref.watch(locationsProvider).value;
+    final authUser = ref.watch(authUserStreamProvider).value;
+    final canUsePersonalFeatures = authUser != null && !authUser.isGuest;
+    final achievements = canUsePersonalFeatures
+        ? ref.watch(earnedAchievementsProvider)
+        : const AsyncValue.data(<Achievement>[]);
+    final user = canUsePersonalFeatures
+        ? ref.watch(currentUserProvider).value
+        : null;
+    final progress = canUsePersonalFeatures
+        ? ref.watch(userProgressProvider).value
+        : null;
+    final personalLocations = canUsePersonalFeatures
+        ? ref.watch(locationsProvider).value
+        : null;
     if (achievements.isLoading) {
       return const Center(child: LoadingIndicator());
     }
