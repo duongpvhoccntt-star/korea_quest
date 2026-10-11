@@ -455,7 +455,7 @@ Các RPC ghi dữ liệu là `security definer`, đặt `search_path` rỗng và
 
 Edge Function `suggest-location-coordinates` yêu cầu JWT của Admin và gọi `is_admin` trước khi truy cập provider. `MAPTILER_API_KEY` chỉ nằm ở Supabase secrets; `GEMINI_API_KEY` là tùy chọn để chuẩn hóa truy vấn. Function chỉ trả ứng viên, không ghi Draft hoặc Publish.
 
-Edge Function `synthesize-location-speech` cho phép khách không đăng nhập phát audio của nội dung đã Publish. Client chỉ gửi `slug`, `locale`, `segment` hợp lệ và index khi cần; function gọi `get_published_location` bằng anon role để không thể đọc Draft, tự dựng prose phía server và gọi Google Cloud Text-to-Speech. MP3 được cache công khai ở bucket `location-speech` theo revision, locale, segment, nội dung và voice version. Browser roles chỉ có quyền đọc bucket; service role của Edge Function là bên duy nhất ghi. Cache miss bị giới hạn nguyên tử 12 lần/phút theo IP băm với `SPEECH_RATE_LIMIT_SALT` trong bảng `location_speech_rate_limits`. Secrets cần khi deploy: `GOOGLE_CLOUD_TTS_API_KEY` và `SPEECH_RATE_LIMIT_SALT`; không đưa vào Flutter Web.
+Edge Function `synthesize-location-speech` là phương án Cloud TTS dự phòng, chưa triển khai trên production. Flutter Web hiện dùng Web Speech API của trình duyệt để khách không đăng nhập cũng có thể nghe nội dung Published, nên không gửi prose sang server và không cần Google Cloud billing/API key. Nếu bật Cloud TTS về sau, client chỉ gửi `slug`, `locale`, `segment` hợp lệ và index khi cần; function gọi `get_published_location` bằng anon role để không thể đọc Draft, tự dựng prose phía server và gọi Google Cloud Text-to-Speech. MP3 được cache công khai ở bucket `location-speech`; cache miss bị giới hạn nguyên tử 12 lần/phút theo IP băm với `SPEECH_RATE_LIMIT_SALT`.
 
 ## 12. Authentication, Authorization và RLS
 
@@ -488,7 +488,7 @@ Cập nhật ngày 2026-10-11:
 | Nới rule xuất bản | Các migration `20261008094500_simplify_publish_validation.sql` và `20261008111918_lower_publish_word_minimum.sql` đã áp dụng lên cloud ngày 2026-10-08 |
 | Edge Function | `translate-location` version 4 ACTIVE từ ngày 2026-10-09; endpoint yêu cầu JWT. Bản deploy khóa rõ nguồn/đích, kiểm tra sai ngôn ngữ và retry tối đa một lần; 2 regression test cho trường hợp locale Hàn đã pass |
 | Gợi ý tọa độ | Edge Function `suggest-location-coordinates` đã deploy ngày 2026-10-11. Đã cấu hình `MAPTILER_API_KEY` Supabase và kiểm tra endpoint không có JWT trả 401 ngày 2026-10-11; còn smoke test bằng quyền Admin. Gemini là fallback tùy chọn, không có key nào đi vào Flutter Web |
-| Cloud TTS | Migration/bucket/cache và Edge Function `synthesize-location-speech` đã có trong repository, chưa deploy. Cần bật billing + Text-to-Speech API trong Google Cloud, đặt `GOOGLE_CLOUD_TTS_API_KEY` và `SPEECH_RATE_LIMIT_SALT` ở Supabase secrets, rồi deploy với JWT verification tắt. |
+| Âm thanh đọc nội dung | Flutter Web dùng Web Speech API của trình duyệt, không cần API key hoặc billing; Guest được sử dụng. Migration/bucket/cache và Edge Function `synthesize-location-speech` vẫn có trong repository nhưng chưa deploy, là phương án Cloud TTS dự phòng. |
 | Secret dịch AI | Đã cấu hình `GEMINI_API_KEY` và `GEMINI_TRANSLATION_MODEL=gemini-3.1-flash-lite` trên Supabase; giá trị khóa không lưu trong repository |
 | Mô hình truy cập | Cloud và repo cho phép truy cập trực tiếp mọi Địa điểm `released` cùng toàn bộ chín Chặng; `coming_soon` chỉ có summary |
 | Tiến độ Chặng | `not_started`, `in_progress`, `completed`; dữ liệu `locked`/`available` cũ được chuyển sang `not_started` |

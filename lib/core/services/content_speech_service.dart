@@ -9,10 +9,7 @@ enum SpeechLocaleAvailability { loading, available, unavailable }
 
 enum SpeechStartStatus { started, emptyText, unavailable, failed }
 
-/// A public, server-validated segment of a published location.
-///
-/// The browser never sends the text to synthesize. The Edge Function rebuilds
-/// it from the published read model only.
+/// A public location-content selector used to identify a read-aloud control.
 enum LocationSpeechSegment {
   overview,
   history,
@@ -85,13 +82,6 @@ String speechLocaleFor(String locale) => switch (_languageCode(locale)) {
   'ko' => 'ko-KR',
   'en' => 'en-US',
   _ => 'vi-VN',
-};
-
-/// Fixed voices are intentionally versioned in the cache input server-side.
-String cloudSpeechVoiceFor(String locale) => switch (_languageCode(locale)) {
-  'ko' => 'ko-KR-Neural2-A',
-  'en' => 'en-US-Neural2-F',
-  _ => 'vi-VN-Neural2-A',
 };
 
 String _languageCode(String locale) => locale.toLowerCase().split('-').first;

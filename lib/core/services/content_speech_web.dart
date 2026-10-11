@@ -1,26 +1,31 @@
 import 'dart:async';
 import 'dart:js_interop';
 
-import 'package:korea_quest/app/app_config.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:web/web.dart' as web;
 
 import 'content_speech_service.dart';
 
 ContentSpeechService createPlatformContentSpeechService() =>
-    _CloudContentSpeechService();
+    _BrowserContentSpeechService();
 
-/// Plays cached Cloud TTS MP3. Native Web Speech is deliberately never used:
-/// published content therefore sounds the same on every supported device.
-class _CloudContentSpeechService implements ContentSpeechService {
+/// Uses the browser's speech synthesis so reading content works without a
+/// third-party API key, billing account, or audio download.
+class _BrowserContentSpeechService implements ContentSpeechService {
+  _BrowserContentSpeechService() : _synthesis = web.window.speechSynthesis {
+    _synthesis.onvoiceschanged = ((web.Event _) {
+      _availabilityChanges.add(null);
+    }).toJS;
+  }
+
+  final web.SpeechSynthesis _synthesis;
   final _changes = StreamController<SpeechPlayback>.broadcast();
   final _availabilityChanges = StreamController<void>.broadcast();
   SpeechPlayback _playback = const SpeechPlayback.idle();
-  web.HTMLAudioElement? _audio;
+  web.SpeechSynthesisUtterance? _utterance;
   int _generation = 0;
 
   @override
-  bool get isSupported => AppConfig.hasSupabaseConfiguration;
+  bool get isSupported => true;
 
   @override
   SpeechPlayback get playback => _playback;
@@ -33,9 +38,7 @@ class _CloudContentSpeechService implements ContentSpeechService {
 
   @override
   SpeechLocaleAvailability availabilityFor(String locale) =>
-      isSupported
-          ? SpeechLocaleAvailability.available
-          : SpeechLocaleAvailability.unavailable;
+      SpeechLocaleAvailability.available;
 
   @override
   Future<SpeechStartResult> speak({
@@ -45,33 +48,28 @@ class _CloudContentSpeechService implements ContentSpeechService {
     required LocationSpeechSource source,
   }) async {
     if (text.trim().isEmpty) return const SpeechStartResult.emptyText();
-    if (!isSupported) return const SpeechStartResult.unavailable();
 
     final generation = ++_generation;
-    _stopAudio();
-    try {
-      final response = await Supabase.instance.client.functions.invoke(
-        'synthesize-location-speech',
-        body: source.toRequest(),
-      );
-      final data = response.data;
-      final audioUrl = data is Map ? data['audio_url'] : null;
-      if (audioUrl is! String || audioUrl.isEmpty || !_isCurrent(generation)) {
-        return const SpeechStartResult.failed();
-      }
+    _synthesis.cancel();
+    final utterance = web.SpeechSynthesisUtterance(text)
+      ..lang = speechLocaleFor(locale)
+      ..voice = _preferredVoice(locale)
+      ..onend = ((web.Event _) {
+        if (_isCurrent(generation)) {
+          _utterance = null;
+          _setPlayback(const SpeechPlayback.idle());
+        }
+      }).toJS
+      ..onerror = ((web.Event _) {
+        if (_isCurrent(generation)) {
+          _utterance = null;
+          _setPlayback(const SpeechPlayback.idle());
+        }
+      }).toJS;
 
-      final audio = web.HTMLAudioElement()
-        ..src = audioUrl
-        ..preload = 'auto'
-        ..onended = ((web.Event _) {
-          if (_isCurrent(generation)) _setPlayback(const SpeechPlayback.idle());
-        }).toJS
-        ..onerror = ((web.Event _) {
-          if (_isCurrent(generation)) _setPlayback(const SpeechPlayback.idle());
-        }).toJS;
-      _audio = audio;
-      await audio.play().toDart;
-      if (!_isCurrent(generation)) return const SpeechStartResult.failed();
+    try {
+      _utterance = utterance;
+      _synthesis.speak(utterance);
       _setPlayback(
         SpeechPlayback(
           state: SpeechPlaybackState.speaking,
@@ -87,7 +85,8 @@ class _CloudContentSpeechService implements ContentSpeechService {
 
   @override
   void pause() {
-    _audio?.pause();
+    if (_utterance == null) return;
+    _synthesis.pause();
     if (_playback.state == SpeechPlaybackState.speaking) {
       _setPlayback(
         SpeechPlayback(
@@ -100,9 +99,8 @@ class _CloudContentSpeechService implements ContentSpeechService {
 
   @override
   void resume() {
-    final audio = _audio;
-    if (audio == null) return;
-    unawaited(audio.play().toDart);
+    if (_utterance == null) return;
+    _synthesis.resume();
     if (_playback.state == SpeechPlaybackState.paused) {
       _setPlayback(
         SpeechPlayback(
@@ -116,19 +114,25 @@ class _CloudContentSpeechService implements ContentSpeechService {
   @override
   void stop() {
     _generation++;
-    _stopAudio();
+    _synthesis.cancel();
+    _utterance = null;
     _setPlayback(const SpeechPlayback.idle());
   }
 
-  bool _isCurrent(int generation) => generation == _generation;
-
-  void _stopAudio() {
-    final audio = _audio;
-    if (audio == null) return;
-    audio.pause();
-    audio.currentTime = 0;
-    _audio = null;
+  web.SpeechSynthesisVoice? _preferredVoice(String locale) {
+    final expectedLanguage = speechLocaleFor(locale).toLowerCase();
+    final expectedCode = expectedLanguage.split('-').first;
+    final voices = _synthesis.getVoices().toDart;
+    for (final voice in voices) {
+      if (voice.lang.toLowerCase() == expectedLanguage) return voice;
+    }
+    for (final voice in voices) {
+      if (voice.lang.toLowerCase().startsWith('$expectedCode-')) return voice;
+    }
+    return null;
   }
+
+  bool _isCurrent(int generation) => generation == _generation;
 
   void _setPlayback(SpeechPlayback playback) {
     _playback = playback;
