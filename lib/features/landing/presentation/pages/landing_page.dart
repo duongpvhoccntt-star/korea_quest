@@ -15,6 +15,7 @@ import 'package:korea_quest/design_system/shadows/app_shadows.dart';
 import 'package:korea_quest/design_system/spacing/app_spacing.dart';
 import 'package:korea_quest/shared/models/domain_models.dart';
 import 'package:korea_quest/shared/providers/repository_providers.dart';
+import 'package:korea_quest/features/auth/presentation/providers/auth_providers.dart';
 import 'package:korea_quest/features/auth/presentation/widgets/guest_name_dialog.dart';
 import 'package:korea_quest/l10n/app_strings.dart';
 
@@ -81,8 +82,19 @@ class _LandingContent extends ConsumerWidget {
       (location) => location.status == LocationStatus.inProgress,
       orElse: () => locations.first,
     );
-    final journey = ref.watch(journeyProvider(active.id)).value;
+    final authUser = ref.watch(authUserStreamProvider).value;
+    final canReadPersonalProgress = authUser != null && !authUser.isGuest;
+    final journey = canReadPersonalProgress
+        ? ref.watch(journeyProvider(active.id)).value
+        : null;
     final missions = ref.watch(missionsProvider(active.id)).value ?? const [];
+    final displayedMissions = missions
+        .where(
+          (mission) =>
+              mission.stage == JourneyStage.checkIn ||
+              mission.stage == JourneyStage.culture,
+        )
+        .toList(growable: false);
 
     return AppScrollView(
       child: Stack(
@@ -106,7 +118,10 @@ class _LandingContent extends ConsumerWidget {
                 onShowHowItWorks: onShowHowItWorks,
               ),
               const _FeatureStrip(),
-              _HowItWorksSection(key: howItWorksKey, missions: missions),
+              _HowItWorksSection(
+                key: howItWorksKey,
+                missions: displayedMissions,
+              ),
               _FeaturedLocations(locations: locations, active: active),
               const AppFooter(),
             ],
@@ -356,11 +371,26 @@ class _QuestMap extends StatelessWidget {
           return Stack(
             children: [
               const Positioned.fill(
-                child: RepaintBoundary(
-                  child: CustomPaint(
-                    painter: _MapPainter(),
-                    isComplex: true,
-                    willChange: false,
+                child: Image(
+                  image: AssetImage(
+                    'assets/images/korea_quest_antique_map.png',
+                  ),
+                  fit: BoxFit.cover,
+                  filterQuality: FilterQuality.high,
+                ),
+              ),
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.white24,
+                        Colors.transparent,
+                        AppColors.navy.withValues(alpha: .08),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -529,92 +559,6 @@ class _QuestTicket extends StatelessWidget {
   );
 }
 
-class _MapPainter extends CustomPainter {
-  const _MapPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final water = Paint()..color = AppColors.water;
-    canvas.save();
-    canvas.rotate(-.08);
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(size.width * .88, size.height * .42),
-        width: size.width * .64,
-        height: size.height * 1.08,
-      ),
-      water,
-    );
-    canvas.restore();
-
-    final land = Paint()..color = AppColors.land;
-    final landPath = Path()
-      ..moveTo(size.width * .47, size.height * .14)
-      ..cubicTo(
-        size.width * .67,
-        size.height * .18,
-        size.width * .67,
-        size.height * .48,
-        size.width * .60,
-        size.height * .66,
-      )
-      ..cubicTo(
-        size.width * .54,
-        size.height * .84,
-        size.width * .38,
-        size.height * .76,
-        size.width * .40,
-        size.height * .53,
-      )
-      ..cubicTo(
-        size.width * .42,
-        size.height * .34,
-        size.width * .37,
-        size.height * .18,
-        size.width * .47,
-        size.height * .14,
-      )
-      ..close();
-    canvas.drawPath(landPath, land);
-
-    final route = Path()
-      ..moveTo(size.width * .22, size.height * .45)
-      ..cubicTo(
-        size.width * .36,
-        size.height * .10,
-        size.width * .76,
-        size.height * .15,
-        size.width * .77,
-        size.height * .62,
-      )
-      ..cubicTo(
-        size.width * .67,
-        size.height * .78,
-        size.width * .43,
-        size.height * .83,
-        size.width * .30,
-        size.height * .76,
-      );
-    final routePaint = Paint()
-      ..color = AppColors.coral
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3;
-    for (final metric in route.computeMetrics()) {
-      var distance = 0.0;
-      while (distance < metric.length) {
-        canvas.drawPath(
-          metric.extractPath(distance, math.min(distance + 7, metric.length)),
-          routePaint,
-        );
-        distance += 14;
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
 class _FeatureStrip extends StatelessWidget {
   const _FeatureStrip();
 
@@ -749,9 +693,9 @@ class _HowItWorksSection extends StatelessWidget {
       child: Column(
         children: [
           _SectionHeading(
-            eyebrow: appStrings(context).threeStages,
+            eyebrow: appStrings(context).journey,
             title: appStrings(context).cultureIsAGame,
-            description: appStrings(context).threeStagesDesc,
+            description: appStrings(context).journeyLearningDesc,
           ),
           const SizedBox(height: AppSpacing.xl),
           if (missions.isEmpty)

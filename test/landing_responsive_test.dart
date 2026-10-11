@@ -23,6 +23,17 @@ void main() {
 
       expect(find.textContaining('Mỗi điểm đến'), findsOneWidget);
       expect(find.text('Bản đồ phiêu lưu'), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is Image &&
+              widget.image is AssetImage &&
+              (widget.image as AssetImage).assetName ==
+                  'assets/images/korea_quest_antique_map.png',
+        ),
+        findsOneWidget,
+      );
+      expect(find.byIcon(Icons.translate_rounded), findsNothing);
       expect(find.text('Chọn nơi câu chuyện bắt đầu'), findsOneWidget);
       expect(find.text('Sắp ra mắt'), findsNothing);
       expect(find.byIcon(Icons.lock_rounded), findsNothing);
